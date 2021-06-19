@@ -2,18 +2,18 @@
   {
     "path": "posts/welcome/",
     "title": "Welcome to Visual Analytics Project",
-    "description": "Welcome to our new blog, Visual Analytics Project. We hope you enjoy \nreading what we have to say!",
+    "description": "Group 1 Team 8 - VAST Challenge 2021",
     "author": [
       {
-        "name": "Nora Jones",
-        "url": "https://example.com/norajones"
+        "name": "Rhoda Tong, Nikki & Davmes",
+        "url": {}
       }
     ],
     "date": "2021-06-19",
     "categories": [],
     "contents": "\r\n\r\n\r\n\r\n",
     "preview": {},
-    "last_modified": "2021-06-19T20:47:04+08:00",
+    "last_modified": "2021-06-19T21:16:26+08:00",
     "input_file": {}
   }
 ]

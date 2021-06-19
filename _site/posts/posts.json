@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2021-06-19-project-proposal/",
+    "title": "Project Proposal",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Nora Jones",
+        "url": "https://example.com/norajones"
+      }
+    ],
+    "date": "2021-06-19",
+    "categories": [],
+    "contents": "\r\nVAST Challenge 2021\r\nAS part of ISSS608 - Visual Analytics and VAST Challenge 2021, our team would be embarking onto a project based on the context provided within VAST Challenge 2021\r\nContext\r\nIn January, 2014, the leaders of GAStech are celebrating their new-found fortune as a result of the initial public offering of their very successful company. In the midst of this celebration, several employees of GAStech go missing. An organization known as the Protectors of Kronos (POK) is suspected in the disappearance, but things may not be what they seem. - extracted from VAST Challenge 2021 website here\r\nMotivation of the Project\r\nWe are the Visual Analytics Project Team that called in to help the law enforcement from Kronos and Tethys. In broad, we would attempt to merge/ link the insights discovered at Mini-Challenge 1 and Mini-Challenge 2. We would attempt to:\r\nEstablish linkages between organisations, people, places and events.\r\nIdentify possible official/ non-official relationships among GASTech, POK, the APA and Government.\r\nPick up any anomalies with regard to people, activities and locations.\r\nEstablish possible linkages between the insights discovered.\r\nOur Approach\r\nThe following are the broad approaches that we would be adopting:\r\nTransactions and Location Analysis: Gain insights based on possible linkage between credit card and loyalty card transactions. In addition, with the GPS data, discover insights or linkages among them.\r\nSocial Network Analysis: Gain insights between the relationships among the people.\r\nMovement Analysis: With the location of the transactions, and the GPS data, to gain insights on the movement of individuals or groups.\r\nNew Analysis: To establish a timeline of a series of events, analysing trending articles from primary/ derivative sources.\r\nSocial Network Visualsation\r\nGeographical Trajectory of car movement\r\nVisual Story Telling\r\nThe Tasks\r\nMini-Challenge 1\r\nPossible relationships between personnel. (from resumes, possible colleagues?)\r\nPossible relationships between personnel. (from news) – standalone data for Assignment (background of incidents that evolved for that period)\r\nPossible relationships between personnel. (from email correspondences)\r\nInteractions between personnel. (official and personal) – from email {group titles, categorize personal and official}\r\nApply centrality concepts, text mining concepts. (co-occurrence)\r\nMini-Challenge 2\r\nGeolocation data of personnel, which would be tied to the car assigned.\r\nSuspicious meet-ups between cars.\r\nMeet-ups at odd timings.\r\nAny notable purchase patterns.\r\nCredit Card & Loyalty Card data could be integrated.\r\nLoyalty Card – frequency of visit.\r\nCredit Cards – Who is the one visiting the location / outlet.\r\nGPS – possibly deduce the owner of the credit card. Transaction mapped nicely with GPS data could imply owner.\r\nCredit Card – look at transaction frequency at different locations and purchase patterns.\r\nLink loyalty card transactions, credit card transactions, with car ID via timestamp/location ; car ID would then lead to personnel assigned.\r\nCredit card activities that are linked. (cross-check with email from MC1)\r\nApply interactivity, set up the visualisation to facilitate data query.\r\n\r\n\r\n\r\n",
+    "preview": {},
+    "last_modified": "2021-06-19T21:58:29+08:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/welcome/",
     "title": "Welcome to Visual Analytics Project",
     "description": "Group 1 Team 8 - VAST Challenge 2021",
@@ -15,22 +32,5 @@
     "preview": {},
     "last_modified": "2021-06-19T21:17:22+08:00",
     "input_file": {}
-  },
-  {
-    "path": "posts/2021-06-19-project-proposal/",
-    "title": "Project Proposal",
-    "description": "A short description of the post.",
-    "author": [
-      {
-        "name": "Nora Jones",
-        "url": "https://example.com/norajones"
-      }
-    ],
-    "date": "2021-06-19",
-    "categories": [],
-    "contents": "\r\nVAST Challenge 2021\r\nAS part of ISSS608 - Visual Analytics and VAST Challenge 2021, our team would be embarking onto a project based on the context provided within VAST Challenge 2021\r\nContext\r\nIn January, 2014, the leaders of GAStech are celebrating their new-found fortune as a result of the initial public offering of their very successful company. In the midst of this celebration, several employees of GAStech go missing. An organization known as the Protectors of Kronos (POK) is suspected in the disappearance, but things may not be what they seem. - extracted from VAST Challenge 2021 website here\r\nMotivation of the Project\r\nWe are the Visual Analytics Project Team that called in to help the law enforcement from Kronos and Tethys. In broad, we would attempt to merge/ link the insights discovered at Mini-Challenge 1 and Mini-Challenge 2. We would attempt to:\r\nEstablish linkages between organisations, people, places and events.\r\nIdentify possible official/ non-official relationships among GASTech, POK, the APA and Government.\r\nPick up any anomalies with regard to people, activities and locations.\r\nEstablish possible linkages between the insights discovered.\r\nOur Approach\r\nThe following are the broad approaches that we would be adopting:\r\nTransactions and Location Analysis: Gain insights based on possible linkage between credit card and loyalty card transactions. In addition, with the GPS data, discover insights or linkages among them.\r\nSocial Network Analysis: Gain insights between the relationships among the people.\r\nMovement Analysis: With the location of the transactions, and the GPS data, to gain insights on the movement of individuals or groups.\r\nNew Analysis: To establish a timeline of a series of events, analysing trending articles from primary/ derivative sources.\r\nSocial Network Visualsation\r\nGeographical Trajectory of car movement\r\nVisual Story Telling\r\nThe Tasks\r\nMini-Challenge 1\r\nPossible relationships between personnel. (from resumes, possible colleagues?)\r\nPossible relationships between personnel. (from news) – standalone data for Assignment (background of incidents that evolved for that period)\r\nPossible relationships between personnel. (from email correspondences)\r\nInteractions between personnel. (official and personal) – from email {group titles, categorize personal and official}\r\nApply centrality concepts, text mining concepts. (co-occurrence)\r\nMini-Challenge 2\r\nGeolocation data of personnel, which would be tied to the car assigned.\r\nSuspicious meet-ups between cars.\r\nMeet-ups at odd timings.\r\nAny notable purchase patterns.\r\nCredit Card & Loyalty Card data could be integrated.\r\nLoyalty Card – frequency of visit.\r\nCredit Cards – Who is the one visiting the location / outlet.\r\nGPS – possibly deduce the owner of the credit card. Transaction mapped nicely with GPS data could imply owner.\r\nCredit Card – look at transaction frequency at different locations and purchase patterns.\r\nLink loyalty card transactions, credit card transactions, with car ID via timestamp/location ; car ID would then lead to personnel assigned.\r\nCredit card activities that are linked. (cross-check with email from MC1)\r\nApply interactivity, set up the visualisation to facilitate data query.\r\n\r\n\r\n\r\n",
-    "preview": {},
-    "last_modified": "2021-06-19T21:58:29+08:00",
-    "input_file": "project-proposal.knit.md"
   }
 ]

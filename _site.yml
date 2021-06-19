@@ -8,11 +8,11 @@ navbar:
     - text: "Home"
       href: index.html
     - text: "Rhoda Tong"
-      href: https://mttong.netlify.app/posts/
+      href: https://mttong.netlify.app/
     - text: "Nikki"
       href: https://arychopra.netlify.app/
     - text: "Davmes Tan"
-      href: https://dtcs.netlify.app/posts/
+      href: https://dtcs.netlify.app/
     - text: "VAST Challenge 2021"
       href: https://vast-challenge.github.io/2021/
 output: distill::distill_article

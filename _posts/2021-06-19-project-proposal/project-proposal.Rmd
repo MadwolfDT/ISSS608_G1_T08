@@ -1,7 +1,7 @@
 ---
 title: "Project Proposal"
 description: |
-  A short description of the post.
+  Group 1 Team 8 - VAST Challenge 2021.
 author:
   - name: Nora Jones
     url: https://example.com/norajones

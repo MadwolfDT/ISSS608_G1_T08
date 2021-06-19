@@ -3,8 +3,10 @@ title: "Project Proposal"
 description: |
   Group 1 Team 8 - VAST Challenge 2021.
 author:
-  - name: Nora Jones
-    url: https://example.com/norajones
+  - name: Rhoda Tong, Nikki & Davmes 
+    url: 
+    affiliation: School of Computing and Information Systems
+    affiliation_url: https://https://scis.smu.edu.sg/
 date: 06-19-2021
 output:
   distill::distill_article:

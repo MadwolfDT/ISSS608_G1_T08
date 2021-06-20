@@ -3,7 +3,7 @@ title: "Project Proposal"
 description: |
   Group 1 Team 8 - VAST Challenge 2021.
 author:
-  - name: Rhoda Tong, Nikki & Davmes 
+  - name: Aryah Umralkar Chopra, Davmes Tan, Rhoda Tong 
     url: 
     affiliation: School of Computing and Information Systems
     affiliation_url: https://https://scis.smu.edu.sg/
@@ -19,65 +19,49 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # VAST Challenge 2021
-AS part of ISSS608 - Visual Analytics and VAST Challenge 2021, our team would be embarking onto a project based on the context provided within VAST Challenge 2021
+As part of our module ISSS608 - Visual Analytics and Applications and VAST Challenge 2021, our team would be embarking on a project based on the context provided within VAST Challenge 2021.
 
 # Context
 In January, 2014, the leaders of GAStech are celebrating their new-found fortune as a result of the initial public offering of their very successful company. In the midst of this celebration, several employees of GAStech go missing. An organization known as the Protectors of Kronos (POK) is suspected in the disappearance, but things may not be what they seem. - *extracted from VAST Challenge 2021 website [here](https://vast-challenge.github.io/2021/)*
 
 # Motivation of the Project
-We are the Visual Analytics Project Team that called in to help the law enforcement from Kronos and Tethys. In broad, we would attempt to merge/ link the insights discovered at Mini-Challenge 1 and Mini-Challenge 2. We would attempt to:
+We are the Visual Analytics Project Team that are called in to help the law enforcement from Kronos and Tethys. In broad, we would be attempting to merge/ link the insights discovered in Mini-Challenge 1 and Mini-Challenge 2. We would attempt to:
 
 * Establish linkages between organisations, people, places and events.
-* Identify possible official/ non-official relationships among GASTech, POK, the APA and Government.
+* Identify possible official/non-official relationships among GASTech, POK, the APA and Government.
 * Pick up any anomalies with regard to people, activities and locations.
-* Establish possible linkages between the insights discovered.
+* Establish possible linkages between the insights discovered
 
 # Our Approach
-The following are the broad approaches that we would be adopting:
+The following are the broad approaches that we would be exploring:
 
-* Transactions and Location Analysis: Gain insights based on possible linkage between credit card and loyalty card transactions. In addition, with the GPS data, discover insights or linkages among them.
-* Social Network Analysis: Gain insights between the relationships among the people.
+* Transactions and Location Analysis and Visualization: Gain insights based on possible linkage between credit card and loyalty card transactions. In addition, with the GPS data, discover insights or linkages among them. We envisage development of a geographical trajectory of car movement with time for visualization.
+* Social Network Analysis and Visualization: Gain insights between the relationships among the people from their activities and communication. A social network would then be drawn up.
 * Movement Analysis: With the location of the transactions, and the GPS data, to gain insights on the movement of individuals or groups.
 * New Analysis: To establish a timeline of a series of events, analysing trending articles from primary/ derivative sources.
-* Social Network Visualsation
-* Geographical Trajectory of car movement
-* Visual Story Telling
+* Facilitate story telling and aid in investigation via interesting and interactive Visuals
 
 # The Tasks
 **Mini-Challenge 1**
 
-* Possible relationships between personnel. (from resumes, possible colleagues?) 
+* Establish possible relationships between personnel. (Sources: resumes, email correspondences) 
 
-* Possible relationships between personnel. (from news) – standalone data for Assignment (background of incidents that evolved for that period) 
+  + Resumes (go through employment history)
+  + Email Correspondences (group titles, categorize personal and official notes etc.)
+  + Identify any possible links with data from Mini-Challenge 2
 
-* Possible relationships between personnel. (from email correspondences) 
-
-* Interactions between personnel. (official and personal) – from email {group titles, categorize personal and official} 
-
-* Apply centrality concepts, text mining concepts. (co-occurrence) 
+* Apply centrality and text mining concepts for correspondences
 
 **Mini-Challenge 2**
 
-* Geolocation data of personnel, which would be tied to the car assigned. 
+* Trace the geolocation data of each personnel via the car assigned 
 
-* Suspicious meet-ups between cars.
+* Identify suspicious meet-ups between cars, meet-ups at odd timings
 
-* Meet-ups at odd timings.
+* Analyse credit card and loyalty card transactions
 
-* Any notable purchase patterns.
+  + Integrate credit card and loyalty card transaction data
+  + Identify notable purchase patterns, establish frequency of visits at specific outlets
+  + Trace the person who is making the purchase via location and timing incidences of cars
+  + Identify any possible links with data from Mini-Challenge 1
 
-* Credit Card & Loyalty Card data could be integrated.
-
-* Loyalty Card – frequency of visit.
-
-* Credit Cards – Who is the one visiting the location / outlet. 
-
-* GPS – possibly deduce the owner of the credit card. Transaction mapped nicely with GPS data could imply owner. 
-
-* Credit Card – look at transaction frequency at different locations and purchase patterns.
-
-* Link loyalty card transactions, credit card transactions, with car ID via timestamp/location ; car ID would then lead to personnel assigned.
-
-* Credit card activities that are linked. (cross-check with email from MC1)
-
-* Apply interactivity, set up the visualisation to facilitate data query.

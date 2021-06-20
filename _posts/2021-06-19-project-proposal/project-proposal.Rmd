@@ -65,3 +65,9 @@ The following are the broad approaches that we would be exploring:
   + Trace the person who is making the purchase via location and timing incidences of cars
   + Identify any possible links with data from Mini-Challenge 1
 
+# R Shiny Plans
+* Transactions Tab
+* Social Network Tab (Rel)
+* Person Location Tracking Tab (Map of the island, person's whereabout, path tracking)
+* News Tab
+

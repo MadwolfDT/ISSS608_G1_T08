@@ -66,8 +66,8 @@ The following are the broad approaches that we would be exploring:
   + Identify any possible links with data from Mini-Challenge 1
 
 # R Shiny Plans
-* Transactions Tab
-* Social Network Tab (Rel)
+* Transactions Tab (Transactional data)
+* Social Network Tab (Mapping relationships, both personal and professional)
 * Person Location Tracking Tab (Map of the island, person's whereabout, path tracking)
 * News Tab
 

@@ -2,12 +2,14 @@ library(shiny)
 library(rsconnect)
 library(shinythemes)
 library(clock)
+library(tidyverse)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
 ##################import MC 2 data into variables##############################
 
-emply_data <- read_csv("data/car-assignments.csv")
+employee <- read_csv("data/EmployeeRecords.csv")
+car_data <- read_csv("data/car-assignments.csv")
 cc_data <- read_csv("data/cc_data.csv")
 loyalty_data <- read_csv("data/loyalty_data.csv")
 gps <- read_csv("data/gps.csv")
@@ -75,7 +77,7 @@ ui <- navbarPage(
                                  
                                  inputId = "dtemployee_name",
                                  label = "Employee Name",
-                                 choices = c(paste(emply_data$FirstName, emply_data$LastName, sep = " ")),
+                                 choices = c(paste(car_data$FirstName, car_data$LastName, sep = " ")),
                                  
                                ),
                                

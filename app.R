@@ -3,6 +3,9 @@ library(rsconnect)
 library(shinythemes)
 library(clock)
 library(tidyverse)
+library(plotly)
+library(lubridate)
+library(hms)       
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
@@ -48,7 +51,7 @@ loyalty_data <- loyalty_data %>%
 
 #Creating Time Bins
 
-#Create breaks
+#Creating breaks
 breaks <- hour(hm("00:00", "7:00","10:00", "12:00", "14:30", "17:00", "19:00", "23:59"))
 #Create labels for the breaks
 labels <- c("Midnight", "Morning", "Pre-Lunch", "LunchTime", "Afternoon", "Evening", "Night")
@@ -67,7 +70,7 @@ Others <- c("Abila Airport")
 distinctloc <- cc_data %>% distinct(location)
 distinctloc <- distinctloc %>% 
   mutate(category = case_when(location %in% Shops ~ 'Shops',
-                              location %in% FoodnBev ~ 'FoodnBev',
+                              location %in% FoodnBev ~ 'F & B',
                               location %in% Hotel ~ 'Hotel',
                               location %in% Industrial ~ 'Industrial',
                               location %in% Recreational ~ 'Recreational',
@@ -159,6 +162,16 @@ ui <- navbarPage(
 
              tabPanel("Transaction Amount Analysis", 
                       titlePanel("Transaction Amount Analysis"),
+                      
+                      fluidRow(
+                        column(2,
+                               selectInput(
+                                 inputId = "rtlocationcat",
+                                 label = "Location Category",
+                                 choices = c(distinctloc$category),
+                               ))
+                        
+                      ),
                       "To Be Updated")
 
 
@@ -168,7 +181,19 @@ ui <- navbarPage(
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {}
+server <- function(input, output) {
+  
+#########################SOCIAL NETWORK ANALYSIS################################
+
+  
+#########################GPS TRACKING ANALYSIS##################################
+
+  
+#########################TRANSACTION ANALYSIS###################################
+  
+  
+  
+}
 
 # Run the application 
 shinyApp(ui = ui, server = server)

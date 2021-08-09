@@ -196,9 +196,7 @@ ui <- navbarPage(
                               plotlyOutput(outputId = "TxnBoxPlotA"),
                       )
                     ),
-                    fluidRow(column(12)
-                      
-                    ),
+                    
                     fluidRow(
                       column(2,
                               radioButtons(

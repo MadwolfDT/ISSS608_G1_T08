@@ -260,6 +260,57 @@ server <- function(input, output) {
     
   })
     
+  ###For Transaction Card-Specific Plots###
+  
+  #For Credit Card Plot
+  output$TxnScatterCredit <- renderPlotly({
+    
+    #From User selection
+    ccselection <- cc_data %>% filter(last4ccnum == input$rtcreditcard)
+    
+    p2e <- ccselection %>%  
+      ggplot(aes(x=location, y=price, text=paste("CC No.:", last4ccnum))) +
+      geom_point(alpha=1) + scale_y_log10() + coord_flip() +
+      
+      ggtitle("Card-Specific Transaction Amounts (Credit Card)") +
+      theme(axis.title=element_blank(),
+            plot.title=element_text(size=16, face="bold")) +
+      xlab("Transaction Amount") +
+      scale_x_discrete(limits = rev)
+    
+    plotp2e <- ggplotly(p2e, width_svg = 7, height_svg = 7)
+    plotp2e$x$data[[1]]$marker$line$color = "red"
+    plotp2e$x$data[[1]]$marker$color = "red"
+    plotp2e$x$data[[1]]$marker$outliercolor = "red"
+    
+    plotp2e
+    
+  })
+  
+  #For Loyalty Card Plot
+  output$TxnScatterLoyalty <- renderPlotly({
+    
+    #From User selection
+    lcselection <- loyalty_data %>% filter(loyaltynum == input$rtloyalcard)
+    
+    p2f <- lcselection %>%  
+      ggplot(aes(x=location, y=price, text=paste("LC No.:", loyaltynum))) +
+      geom_point(alpha=1) + scale_y_log10() + coord_flip() +
+      
+      ggtitle("Card-Specific Transaction Amounts (Loyalty)") +
+      theme(axis.title=element_blank(),
+            plot.title=element_text(size=16, face="bold")) +
+      xlab("Transaction Amount") +
+      scale_x_discrete(limits = rev)
+    
+    plotp2f <- ggplotly(p2f, width_svg = 7, height_svg = 7)
+    plotp2f$x$data[[1]]$marker$line$color = "red"
+    plotp2f$x$data[[1]]$marker$color = "red"
+    plotp2f$x$data[[1]]$marker$outliercolor = "red"
+    
+    plotp2f
+    
+  })
 ################################################################################  
   
 }

@@ -241,7 +241,8 @@ ui <- navbarPage(
                     "To Be Updated")
 
 ################################################################################
-  )
+  ),
+navbarMenu('Network Analysis')
 )
 
 # Define server logic required to draw a histogram

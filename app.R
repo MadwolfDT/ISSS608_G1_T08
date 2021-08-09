@@ -160,24 +160,62 @@ ui <- navbarPage(
 
 ################################################################################
 
-             tabPanel("Transaction Amount Analysis", 
-                      titlePanel("Transaction Amount Analysis"),
-                      
-                      fluidRow(
-                        column(2,
-                               selectInput(
-                                 inputId = "rtlocationcat",
-                                 label = "Location Category",
-                                 choices = c(distinctloc$category),
-                                 selected = "F & B")
-                              ),
-                        column(10,
-                               plotlyOutput(outputId = "TxnBoxPlotA"),
-                              )
-                        
+            tabPanel("Transaction Amount Analysis", 
+                    titlePanel("Transaction Amount Analysis"),
+         
+                    fluidRow(
+                      column(2,
+                              selectInput(
+                                inputId = "rtlocationcat",
+                                label = "Location Category",
+                                choices = c(distinctloc$category),
+                                selected = "Shops"),
+                              submitButton("Apply Selected")
                       ),
-                      
-                      "To Be Updated")
+                      column(10,
+                              plotlyOutput(outputId = "TxnBoxPlotA"),
+                      )
+                    ),
+                    fluidRow(
+                      column(2,
+                              radioButtons(
+                                inputId = "rtradio",
+                                label = "View Transactions for Specific Cards",
+                                choices = c("Credit Card", "Loyalty Card"),
+                                selected = "Credit Card"),
+                  
+                              conditionalPanel(
+                                condition = "input.rtradio == 'Credit Card'",
+                                selectInput(
+                                  inputId = "rtcreditcard",
+                                  label = "Last 4 Digits of Card",
+                                  choices = unique(cc_data$last4ccnum)
+                                ),
+                             ),
+                              conditionalPanel(
+                                condition = "input.rtradio == 'Loyalty Card'",
+                                selectInput(
+                                  inputId = "rtloyalcard",
+                                  label = "Loyalty Card No.",
+                                  choices = unique(loyalty_data$loyaltynum)
+                                )
+                              ),
+                              submitButton("Apply Selected"),
+                      ),
+                      column(10,
+                             conditionalPanel(
+                               condition = "input.rtradio == 'Credit Card'",
+                               plotlyOutput(outputId = "TxnScatterCredit")
+                             ),
+                             conditionalPanel(
+                               condition = "input.rtradio == 'Loyalty Card'",
+                               plotlyOutput(outputId = "TxnScatterLoyalty")
+                             )
+                        
+                      )
+                    ),
+         
+                    "To Be Updated")
 
 ################################################################################
   )
@@ -193,6 +231,8 @@ server <- function(input, output) {
 
   
 #########################TRANSACTION ANALYSIS###################################
+  
+  ###For Transaction Boxplot A###
   output$TxnBoxPlotA <- renderPlotly({
     
     #Combining the cc_data and loyalty_data
@@ -203,7 +243,7 @@ server <- function(input, output) {
       geom_boxplot(aes(fill = Source), 
                    position = position_dodge(1)) +
       geom_point(alpha=0) + scale_y_log10() +
-      ggtitle("Boxplot of Credit Card Transaction Amounts by Category") +
+      ggtitle("Boxplot of Transaction Amounts by Category") +
       theme(axis.title=element_blank(),
             plot.title=element_text(size=16, face="bold"),
             legend.position = "bottom") +
@@ -218,11 +258,9 @@ server <- function(input, output) {
     
     plotp2c
     
-      
   })
     
-  
-  
+################################################################################  
   
 }
 

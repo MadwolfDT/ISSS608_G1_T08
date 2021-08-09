@@ -176,6 +176,9 @@ ui <- navbarPage(
                               plotlyOutput(outputId = "TxnBoxPlotA"),
                       )
                     ),
+                    fluidRow(column(12)
+                      
+                    ),
                     fluidRow(
                       column(2,
                               radioButtons(
@@ -204,11 +207,11 @@ ui <- navbarPage(
                       ),
                       column(10,
                              conditionalPanel(
-                               condition = "input.rtradio == 'Credit Card'",
+                               condition = "input.rtradio == 'Credit Card'", br(),
                                plotlyOutput(outputId = "TxnScatterCredit")
                              ),
                              conditionalPanel(
-                               condition = "input.rtradio == 'Loyalty Card'",
+                               condition = "input.rtradio == 'Loyalty Card'", br(),
                                plotlyOutput(outputId = "TxnScatterLoyalty")
                              )
                         

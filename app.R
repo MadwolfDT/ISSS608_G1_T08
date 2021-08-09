@@ -18,7 +18,7 @@ loyalty_data <- read_csv("data/loyalty_data.csv")
 gps <- read_csv("data/gps.csv")
 
 ##################import MC 2 data into variables##############################
-
+browser()
 ##########################cleaning MC 2 data###################################
 gps$Timestamp <- date_time_parse(gps$Timestamp,
                                  zone = "",
@@ -169,12 +169,15 @@ ui <- navbarPage(
                                  inputId = "rtlocationcat",
                                  label = "Location Category",
                                  choices = c(distinctloc$category),
-                               ))
+                                 selected = "F & B")
+                              ),
+                        column(10,
+                               plotlyOutput(outputId = "TxnBoxPlotA"),
+                              )
                         
                       ),
+                      
                       "To Be Updated")
-
-
 
 ################################################################################
   )
@@ -190,6 +193,34 @@ server <- function(input, output) {
 
   
 #########################TRANSACTION ANALYSIS###################################
+  output$TxnBoxPlotA <- renderPlotly({
+    
+    #Combining the cc_data and loyalty_data
+    ccloyal <- dplyr::bind_rows(list(cc_data = cc_data, loyalty_data = loyalty_data), .id='Source')
+    
+    p2c <- ccloyal %>% filter(category == input$rtlocationcat) %>% 
+      ggplot(aes(x=location, y=price, text=paste("Timestamp:", timestamp,"<br />CC No.:", last4ccnum, "<br />LC No.:", loyaltynum))) +
+      geom_boxplot(aes(fill = Source), 
+                   position = position_dodge(1)) +
+      geom_point(alpha=0) + scale_y_log10() +
+      ggtitle("Boxplot of Credit Card Transaction Amounts by Category") +
+      theme(axis.title=element_blank(),
+            plot.title=element_text(size=16, face="bold"),
+            legend.position = "bottom") +
+      scale_x_discrete(limits = rev) + coord_flip()
+    
+    plotp2c <- p2c %>% ggplotly() %>% 
+      layout(boxmode = "group",
+             legend = list(orientation = "h", x=0.2, y=-0.1))
+    plotp2c$x$data[[1]]$marker$line$color = "red"
+    plotp2c$x$data[[1]]$marker$color = "red"
+    plotp2c$x$data[[1]]$marker$outliercolor = "red"
+    
+    plotp2c
+    
+      
+  })
+    
   
   
   

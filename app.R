@@ -56,7 +56,7 @@ loyalty_data <- loyalty_data %>%
 #Creating Time Bins
 
 #Creating breaks
-breaks <- hour(hm("00:00", "7:00","10:00", "12:00", "14:30", "17:00", "19:00", "23:59"))
+breaks <- hour(hm("00:00", "6:00","9:00", "11:00", "13:30", "16:00", "18:00", "23:59"))
 #Create labels for the breaks
 labels <- c("Midnight", "Morning", "Pre-Lunch", "LunchTime", "Afternoon", "Evening", "Night")
 

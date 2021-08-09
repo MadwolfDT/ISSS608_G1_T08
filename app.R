@@ -9,6 +9,7 @@ library(hms)
 library(raster)
 library(sf)
 library(tmap)
+library(rgdal)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
@@ -187,8 +188,8 @@ ui <- navbarPage(
                               selectInput(
                                 inputId = "rtlocationcat",
                                 label = "Location Category",
-                                choices = c(distinctloc$category),
-                                selected = "Shops"),
+                                choices = unique(distinctloc$category),
+                                selected = distinctloc$category[1]),
                               submitButton("Apply Selected")
                       ),
                       column(10,

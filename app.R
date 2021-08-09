@@ -5,7 +5,10 @@ library(clock)
 library(tidyverse)
 library(plotly)
 library(lubridate)
-library(hms)       
+library(hms)
+library(raster)
+library(sf)
+library(tmap)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
@@ -18,7 +21,7 @@ loyalty_data <- read_csv("data/loyalty_data.csv")
 gps <- read_csv("data/gps.csv")
 
 ##################import MC 2 data into variables##############################
-browser()
+#browser()
 ##########################cleaning MC 2 data###################################
 gps$Timestamp <- date_time_parse(gps$Timestamp,
                                  zone = "",
@@ -108,6 +111,19 @@ loyalty_data <- loyalty_data %>%
 
 ##########################DT Variables###################################
 
+#initiate mapping
+bgmap <- raster("data/Geospatial/MC2-tourist.tif")
+
+Abila_st <- st_read(dsn = "data/Geospatial", 
+                    layer = 'Abila')
+
+tmBase <- tm_shape(bgmap) +
+  tm_rgb(bgmap, r = 1, g = 2, b = 3,
+         alpha = 0.5,
+         saturation = 1,
+         interpolate = TRUE,
+         max.value = 255)
+
 gps_date <- gps %>%
   distinct(datestamp)
 
@@ -125,38 +141,41 @@ ui <- navbarPage(
              
 ################################################################################             
              
-             tabPanel("Personnel Movement Plot",
-                      titlePanel("Personnel Movement Plot"),
-                      
-                      fluidRow(
-                        column(3,
-                               
-                               selectInput(
-                                 
-                                 inputId = "dtemployee_name",
-                                 label = "Employee Name",
-                                 choices = c(paste(car_data$FirstName, car_data$LastName, sep = " ")),
-                                 
-                               ),
-                               
-                               selectInput(
-                                 
-                                 inputId = "dtdate",
-                                 label = "Date",
-                                 choices = c(gps_date$datestamp),
-                                 
-                               ),
-                               
-                               ),
-                        column(9,"Plotted Map to be displayed here"),
-                      ),
-                      
-                      fluidRow(
-                        column(6,"Selected Personnel Parking Details"),
-                        column(6,"Population Parking Details"),
-                      ),
-                      
-                      ),
+              tabPanel("Personnel Movement Plot",
+                       titlePanel("Personnel Movement Plot"),
+                       
+                       fluidRow(
+                         column(3,
+                                
+                                selectInput(
+                                  
+                                  inputId = "dtemployee_name",
+                                  label = "Employee Name",
+                                  choices = c(paste(car_data$FirstName, car_data$LastName, sep = " ")),
+                                  #choices = c(car_data$CarID),
+                                  
+                                ),
+                                
+                                selectInput(
+                                  
+                                  inputId = "dtdate",
+                                  label = "Date",
+                                  choices = c(gps_date$datestamp),
+                                  
+                                ),
+                                
+                                submitButton("Apply changes")
+                                
+                         ),
+                         column(9,tmapOutput("mapPlot")),
+                       ),
+                       
+                       fluidRow(
+                         column(6,"Selected Personnel Details"),
+                         column(6,"Population Parking Details"),
+                       ),
+                       
+              ),
 
 ################################################################################
 
@@ -231,7 +250,40 @@ server <- function(input, output) {
 
   
 #########################GPS TRACKING ANALYSIS##################################
-
+  
+  observe({
+    
+    inputFirstName <- strsplit(input$dtemployee_name, " ")[[1]][1]
+    inputLastName <- strsplit(input$dtemployee_name, " ")[[1]][2]
+    
+    selectedID <- car_data %>%
+      filter(FirstName == inputFirstName & LastName == inputLastName) %>%
+      distinct(CarID)
+    
+    selected_gps <- gps %>%
+      filter(id == selectedID$CarID & datestamp == input$dtdate)
+    
+    gps_sf <- st_as_sf(selected_gps,
+                       coords = c("long", "lat"),
+                       crs = 4326)
+    
+    #create GPS path
+    gps_path <- gps_sf %>%
+      summarize(m = mean(Timestamp),
+                do_union = FALSE) %>%
+      st_cast("LINESTRING")
+    
+    output$mapPlot <- renderTmap({
+      tmBase + 
+        tm_shape(gps_path) + 
+        tm_lines()
+      
+      #print(selectedID)
+      
+    })
+    
+  })
+  
   
 #########################TRANSACTION ANALYSIS###################################
   

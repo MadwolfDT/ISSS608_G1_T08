@@ -5,7 +5,10 @@ library(clock)
 library(tidyverse)
 library(plotly)
 library(lubridate)
-library(hms)       
+library(hms)
+library(raster)
+library(sf)
+library(tmap)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 

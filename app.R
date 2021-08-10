@@ -198,6 +198,35 @@ ui <- navbarPage(
              tabPanel("Transactions Overview",
                       titlePanel("Transactions Overview"),
                       
+                      fluidRow(
+                        column(2,
+                               selectInput(
+                                 inputId = "rtlevelone",
+                                 label = "Select Variable One",
+                                 choices = list(),
+                                 selected = ,
+                                 
+                               ),
+                               
+                               selectInput(
+                                 inputId = "rtleveltwo",
+                                 label = "Select Variable Two",
+                                 choices = list(),
+                                 selected = ,
+                               ),
+                               
+                               #can add more selectInputs
+                               ),
+                        
+                        column(10,
+                              parcoordsOutput(
+                                outputId = ,
+                                width = "100%",
+                                height = "400px"
+                              ) 
+                          
+                              ),
+                      ),
                       
                       
                       )

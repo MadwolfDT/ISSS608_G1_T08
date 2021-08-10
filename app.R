@@ -22,57 +22,13 @@ rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE',
 
 ##################import MC 2 data into variables##############################
 
-employee <- read_csv("data/EmployeeRecords.csv")
-car_data <- read_csv("data/car-assignments.csv")
-cc_data <- read_csv("data/cc_data.csv")
-loyalty_data <- read_csv("data/loyalty_data.csv")
-gps <- read_csv("data/gps.csv")
-manual_tagging <- read_csv("data/manual_tagging.csv") %>%
-  dplyr::select(Lat, Long)
+source('scripts/read_data.r')
 
-##################import MC 2 data into variables##############################
+###############################################################################
 
 ##########################cleaning MC 2 data###################################
-gps$Timestamp <- date_time_parse(gps$Timestamp,
-                                 zone = "",
-                                 format = "%m/%d/%Y %H:%M:%S")
 
-gps <- gps %>%
-  mutate(datestamp = as.Date(Timestamp + 60*60*8))
-
-#convert timestamp from character into date/time format
-#cc_data$timestamp <- date_time_parse(cc_data$timestamp,
-                                     #zone = "",
-                                     #format = "%m/%d/%Y %H:%M")
-
-#convert timestamp from character into date/time format
-#loyalty_data$timestamp <- date_time_parse(loyalty_data$timestamp,
-                                          #zone = "",
-                                          #format = "%m/%d/%Y")
-
-#Amend string text for Katrina's Cafe
-cc_data <- cc_data %>%
-  mutate(location = str_replace_all(location,
-                                    pattern = "Katerin.+",
-                                    replacement = "Katrina\x27s Caf\xe9"))
-
-
-loyalty_data <- loyalty_data %>%
-  mutate(location = str_replace_all(location,
-                                    pattern = "Katerin.+",
-                                    replacement = "Katrina\x27s Caf\xe9"))
-
-location_gps <- gps %>%
-  group_by(id) %>%
-  mutate(lat11 = round(lat, digits = 4)) %>%
-  mutate(long11 = round(long, digits = 4)) %>%
-  mutate(stop = Timestamp - lag(Timestamp)) %>%
-  mutate(parked = ifelse(stop >60*3, TRUE,FALSE)) %>%
-  ungroup() %>%
-  filter(parked == TRUE)
-
-emply_name <- car_data %>%
-  filter(!is.na(CarID))
+source('scripts/dt_clean_data.r')
 
 #Creating Time Bins
 
@@ -133,73 +89,7 @@ loyalty_data <- loyalty_data %>%
 
 ##########################DT Variables###################################
 
-#initiate mapping
-bgmap <- raster("data/Geospatial/MC2-tourist.tif")
-
-Abila_st <- st_read(dsn = "data/Geospatial", 
-                    layer = 'Abila')
-
-tmBase <- tm_shape(bgmap) +
-  tm_rgb(bgmap, r = 1, g = 2, b = 3,
-         alpha = 0.5,
-         saturation = 1,
-         interpolate = TRUE,
-         max.value = 255)
-
-gps_date <- gps %>%
-  distinct(datestamp)
-
-stats_location_gps <- location_gps %>%
-  group_by(lat11,long11) %>%
-  mutate(mean_time = mean(stop)) %>%
-  mutate(median_time = median(stop)) %>%
-  mutate(min_time = min(stop)) %>%
-  mutate(max_time = max(stop)) %>%
-  dplyr::select(-c(Timestamp, datestamp, parked, stop, lat, long)) %>%
-  ungroup() %>%
-  distinct(lat11, long11, .keep_all = TRUE)
-
-POI_gps <- location_gps %>%
-  group_by(lat11, long11) %>%
-  count(lat11, long11, name = "numberoflocations") %>%
-  ungroup() %>%
-  mutate(lat_interval = lat11 - lag(lat11)) %>%
-  mutate(long_interval = long11 - lag(long11)) %>%
-  mutate(lat = lat11, long = long11)
-
-refinedPOI_gps <- POI_gps %>%
-  filter(!between(lat_interval, -0.0001, 0.0001) & !between(long_interval, -0.0001,0.0001) | is.na(lat_interval)) %>%
-  dplyr::select(-c(lat_interval, long_interval, numberoflocations)) %>%
-  mutate(lat = lat11, long = long11)
-
-home_POI <- stats_location_gps %>%
-  filter(mean_time >= 60*60*7) %>%
-  distinct(id, .keep_all = TRUE) %>%
-  dplyr::select(-c(mean_time, median_time, min_time, max_time)) %>%
-  left_join(car_data, by = c("id" = "CarID")) %>%
-  mutate(lat = lat11, long = long11)
-
-less_homePOI <- anti_join(POI_gps, manual_tagging, by = c("lat11" = "Lat", "long11" = "Long")) %>%
-  dplyr::select(-c(lat_interval, long_interval, numberoflocations)) %>%
-  group_by(lat11, long11) %>%
-  ungroup() %>%
-  mutate(lat_interval = lat11 - lag(lat11)) %>%
-  mutate(long_interval = long11 - lag(long11)) %>%
-  mutate(lat = lat11, long = long11) %>%
-  filter(!between(lat_interval, -0.0001, 0.0001) & !between(long_interval, -0.0001,0.0001) | is.na(lat_interval)) %>%
-  dplyr::select(-c(lat_interval, long_interval))
-
-home_POI <- home_POI[c(4,5,6,7,2,3,1,8,9)]
-
-home_POI_sf <- st_as_sf(home_POI, 
-                        coords = c("long11", "lat11"), 
-                        crs = 4326) %>%
-  st_cast("POINT")
-
-tmap_home <- tm_shape(home_POI_sf) + 
-  tm_dots(size = 0.05,
-          alpha = 1,
-          col = "red")
+source('scripts/dt_variables.r')
 
 ##########################DT Variables###################################
 
@@ -452,7 +342,7 @@ server <- function(input, output) {
       st_cast("LINESTRING")
     
     output$mapPlot <- renderTmap({
-      tmBase + tmap_home +
+      tmap_Base + tmap_home + tmap_refinedPOI +
         tm_shape(gps_path) + 
         tm_lines()
       

@@ -13,6 +13,7 @@ library(rgdal)
 library(dplyr)
 library(ggplot2)
 library(ggiraph)
+library(parcoords)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
@@ -27,7 +28,7 @@ manual_tagging <- read_csv("data/manual_tagging.csv") %>%
   dplyr::select(Lat, Long)
 
 ##################import MC 2 data into variables##############################
-#browser()
+
 ##########################cleaning MC 2 data###################################
 gps$Timestamp <- date_time_parse(gps$Timestamp,
                                  zone = "",
@@ -145,6 +146,16 @@ tmBase <- tm_shape(bgmap) +
 gps_date <- gps %>%
   distinct(datestamp)
 
+stats_location_gps <- location_gps %>%
+  group_by(lat11,long11) %>%
+  mutate(mean_time = mean(stop)) %>%
+  mutate(median_time = median(stop)) %>%
+  mutate(min_time = min(stop)) %>%
+  mutate(max_time = max(stop)) %>%
+  dplyr::select(-c(Timestamp, datestamp, parked, stop, lat, long)) %>%
+  ungroup() %>%
+  distinct(lat11, long11, .keep_all = TRUE)
+
 POI_gps <- location_gps %>%
   group_by(lat11, long11) %>%
   count(lat11, long11, name = "numberoflocations") %>%
@@ -203,24 +214,40 @@ ui <- navbarPage(
                                selectInput(
                                  inputId = "rtlevelone",
                                  label = "Select Variable One",
-                                 choices = list(),
-                                 selected = ,
+                                 choices = list(
+                                   "Location" = "location",
+                                   "Price" = "price",
+                                   "CC No." = "last4ccnum",
+                                   "LC No." = "loyaltynum",
+                                   "Date" = "date",
+                                   "Time" = "hour",
+                                   "Period of Day" = "TimeCat"
+                                 ),
+                                 selected = "location",
                                  
                                ),
                                
                                selectInput(
                                  inputId = "rtleveltwo",
                                  label = "Select Variable Two",
-                                 choices = list(),
-                                 selected = ,
+                                 choices = list(
+                                   "Location" = "location",
+                                   "Price" = "price",
+                                   "CC No." = "last4ccnum",
+                                   "LC No." = "loyaltynum",
+                                   "Date" = "date",
+                                   "Time" = "hour",
+                                   "Period of Day" = "TimeCat"
+                                 ),
+                                 selected = "last4ccnum",
                                ),
                                
                                #can add more selectInputs
-                               ),
+                        ),
                         
                         column(10,
                               parcoordsOutput(
-                                outputId = ,
+                                outputId = "rtparacoord",
                                 width = "100%",
                                 height = "400px"
                               ) 

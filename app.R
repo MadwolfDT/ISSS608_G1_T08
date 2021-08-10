@@ -135,7 +135,17 @@ ui <- navbarPage(
   theme = shinytheme("superhero"),
   "Investigation Tool into Personnel Disappearance",   
   tabPanel("Background Situation", "To be Updated"),
-  tabPanel("Exploratory Data Analysis", "To be Updated"),
+  navbarMenu("Exploratory Data Analysis", "To be Updated",
+             tabPanel("Transactions Overview",
+                      titlePanel("Transactions Overview"),
+                      
+                      
+                      
+                      )
+             
+##########END of EDA (BRACKET BELOW is CLOSING for EDA)#################             
+             ),
+##########BEGINNING of INFERENTIAL STATS################################            
   navbarMenu("Inferential Statistics", 
              tabPanel("Network Associations",
                       "To Be Updated"),

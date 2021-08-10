@@ -22,7 +22,11 @@ rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE',
 
 ##################import MC 2 data into variables##############################
 
-source('scripts/read_data.r')
+employee <- read_csv("data/EmployeeRecords.csv")
+car_data <- read_csv("data/car-assignments.csv")
+cc_data <- read_csv("data/cc_data.csv")
+loyalty_data <- read_csv("data/loyalty_data.csv")
+gps <- read_csv("data/gps.csv")
 
 ###############################################################################
 
@@ -312,7 +316,7 @@ ui <- navbarPage(
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
+server <- function(input, output, session) {
   
 #########################SOCIAL NETWORK ANALYSIS################################
 

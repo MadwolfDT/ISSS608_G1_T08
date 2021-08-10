@@ -258,7 +258,7 @@ ui <- navbarPage(
                       
                       )
              
-##########END of EDA (BRACKET BELOW is CLOSING for EDA)#################             
+##########END of EDA (BRACKET & COMMA BELOW is CLOSING for EDA)###############             
              ),
 ##########BEGINNING of INFERENTIAL STATS################################            
   navbarMenu("Inferential Statistics", 
@@ -410,6 +410,35 @@ server <- function(input, output) {
   
   
 #########################TRANSACTION ANALYSIS###################################
+  
+  ###For Parallel Coord ###
+  
+  output$rtparacoord <- renderParcoords({
+    
+    #Matching credit card and loyalty card transactions
+    
+    ccloyalty <- full_join(cc_data, loyalty_data, by = c("date" = "timestamp", "price" = "price", "location" = "location")) %>% 
+      left_join(distinctloc, by = "location") %>% 
+      dplyr::select(-c("category.x","category.y")) %>%
+      mutate(hour = hms::as_hms(round_date(timestamp,"60 mins"))) %>% 
+      mutate(lcnum = str_sub(loyaltynum,start = -4))
+    
+    #Filtering to user selection and plotting
+    
+    selectedccloyalty <- ccloyalty %>% 
+         select(input$rtlevelone,input$rtleveltwo)
+    
+    parcoords(
+      selectedccloyalty,
+      rownames = FALSE,
+      reorderable = T,
+      brushMode = '1D-axes'
+    )
+    
+  }
+    
+  )
+  
   
   ###For Transaction Boxplot A###
   output$TxnBoxPlotA <- renderPlotly({

@@ -14,6 +14,9 @@ library(dplyr)
 library(ggplot2)
 library(ggiraph)
 library(parcoords)
+library(GGally)
+library(htmltools)
+library(shinyscreenshot)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
@@ -217,13 +220,13 @@ ui <- navbarPage(
                                  choices = list(
                                    "Location" = "location",
                                    "Price" = "price",
-                                   "CC No." = "last4ccnum",
+                                   "CC No." = "ccnum",
                                    "LC No." = "loyaltynum",
                                    "Date" = "date",
                                    "Time" = "hour",
                                    "Period of Day" = "TimeCat"
                                  ),
-                                 selected = "location",
+                                 selected = "location"
                                  
                                ),
                                
@@ -233,26 +236,77 @@ ui <- navbarPage(
                                  choices = list(
                                    "Location" = "location",
                                    "Price" = "price",
-                                   "CC No." = "last4ccnum",
+                                   "CC No." = "ccnum",
                                    "LC No." = "loyaltynum",
                                    "Date" = "date",
                                    "Time" = "hour",
                                    "Period of Day" = "TimeCat"
                                  ),
-                                 selected = "last4ccnum",
+                                 selected = "last4ccnum"
                                ),
                                
                                #can add more selectInputs
+                               
+                               selectInput(
+                                 inputId = "rtlevelthree",
+                                 label = "Select Variable Three",
+                                 choices = list(
+                                   "Location" = "location",
+                                   "Price" = "price",
+                                   "CC No." = "ccnum",
+                                   "LC No." = "loyaltynum",
+                                   "Date" = "date",
+                                   "Time" = "hour",
+                                   "Period of Day" = "TimeCat"
+                                 ),
+                                 selected = "loyaltynum"
+                               ),
+                               
+                               selectInput(
+                                 inputId = "rtlevelfour",
+                                 label = "Select Variable Four",
+                                 choices = list(
+                                   "Location" = "location",
+                                   "Price" = "price",
+                                   "CC No." = "ccnum",
+                                   "LC No." = "loyaltynum",
+                                   "Date" = "date",
+                                   "Time" = "hour",
+                                   "Period of Day" = "TimeCat"
+                                 ),
+                                 selected = "date"
+                               ),
+                               
+                               selectInput(
+                                 inputId = "rtlevelfive",
+                                 label = "Select Variable Five",
+                                 choices = list(
+                                   "Location" = "location",
+                                   "Price" = "price",
+                                   "CC No." = "ccnum",
+                                   "LC No." = "loyaltynum",
+                                   "Date" = "date",
+                                   "Time" = "hour",
+                                   "Period of Day" = "TimeCat"
+                                 ),
+                                 selected = "hour"
+                               ),
+                               
+                               sliderInput("rtslider", label = "Range of CC No.",
+                                           min = 0, max = 9736, value = c(1000,2000)
+                                ),
+                               submitButton("Apply Selected")
+                               
                         ),
                         
                         column(10,
                               parcoordsOutput(
                                 outputId = "rtparacoord",
                                 width = "100%",
-                                height = "400px"
-                              ) 
-                          
-                              ),
+                                height = "600px"
+                              ), 
+                              screenshotButton("Take a Screenshot!")
+                              )
                       ),
                       
                       
@@ -317,7 +371,7 @@ ui <- navbarPage(
                               submitButton("Apply Selected")
                       ),
                       column(10,
-                              plotlyOutput(outputId = "TxnBoxPlotA"),
+                              plotlyOutput(outputId = "TxnBoxPlotA")
                       )
                     ),
                     
@@ -335,7 +389,7 @@ ui <- navbarPage(
                                   inputId = "rtcreditcard",
                                   label = "Last 4 Digits of Card",
                                   choices = unique(cc_data$last4ccnum)
-                                ),
+                                )
                              ),
                               conditionalPanel(
                                 condition = "input.rtradio == 'Loyalty Card'",
@@ -345,7 +399,7 @@ ui <- navbarPage(
                                   choices = unique(loyalty_data$loyaltynum)
                                 )
                               ),
-                              submitButton("Apply Selected"),
+                              submitButton("Apply Selected")
                       ),
                       column(10,
                              conditionalPanel(
@@ -411,7 +465,7 @@ server <- function(input, output) {
   
 #########################TRANSACTION ANALYSIS###################################
   
-  ###For Parallel Coord ###
+   ###For Parallel Coord ###
   
   output$rtparacoord <- renderParcoords({
     
@@ -425,20 +479,21 @@ server <- function(input, output) {
     
     #Filtering to user selection and plotting
     
-    selectedccloyalty <- ccloyalty %>% 
-         select(input$rtlevelone,input$rtleveltwo)
+    selectedccloyalty <- ccloyalty %>%
+          filter(between(last4ccnum,input$rtslider[1],input$rtslider[2])) %>%
+          mutate(last4ccnum = as.character(last4ccnum)) %>%
+          mutate(ccnum = str_c("C",last4ccnum)) %>% 
+          dplyr::select(input$rtlevelone,input$rtleveltwo,input$rtlevelthree,
+                       input$rtlevelfour,input$rtlevelfive)
     
     parcoords(
       selectedccloyalty,
       rownames = FALSE,
       reorderable = T,
-      brushMode = '1D-axes'
-    )
+      brushMode = '1D-axes-multi'
+          )
     
-  }
-    
-  )
-  
+  })
   
   ###For Transaction Boxplot A###
   output$TxnBoxPlotA <- renderPlotly({

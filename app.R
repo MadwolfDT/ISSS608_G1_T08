@@ -15,7 +15,7 @@ library(ggplot2)
 library(ggiraph)
 library(parcoords)
 library(GGally)
-library(htmltools)
+library(scales)
 library(shinyscreenshot)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')

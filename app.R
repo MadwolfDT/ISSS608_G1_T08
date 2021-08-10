@@ -203,16 +203,32 @@ ui <- navbarPage(
                                selectInput(
                                  inputId = "rtlevelone",
                                  label = "Select Variable One",
-                                 choices = list(),
-                                 selected = ,
+                                 choices = list(
+                                   "Location" = "location",
+                                   "Price" = "price",
+                                   "CC No." = "last4ccnum",
+                                   "LC No." = "loyaltynum",
+                                   "Date" = "date",
+                                   "Time" = "hour",
+                                   "Period of Day" = "TimeCat"
+                                 ),
+                                 selected = "location",
                                  
                                ),
                                
                                selectInput(
                                  inputId = "rtleveltwo",
                                  label = "Select Variable Two",
-                                 choices = list(),
-                                 selected = ,
+                                 choices = list(
+                                   "Location" = "location",
+                                   "Price" = "price",
+                                   "CC No." = "last4ccnum",
+                                   "LC No." = "loyaltynum",
+                                   "Date" = "date",
+                                   "Time" = "hour",
+                                   "Period of Day" = "TimeCat"
+                                 ),
+                                 selected = "last4ccnum",
                                ),
                                
                                #can add more selectInputs
@@ -220,7 +236,7 @@ ui <- navbarPage(
                         
                         column(10,
                               parcoordsOutput(
-                                outputId = ,
+                                outputId = "rtparacoord",
                                 width = "100%",
                                 height = "400px"
                               ) 
@@ -231,7 +247,7 @@ ui <- navbarPage(
                       
                       )
              
-##########END of EDA (BRACKET BELOW is CLOSING for EDA)#################             
+##########END of EDA (BRACKET & COMMA BELOW is CLOSING for EDA)###############             
              ),
 ##########BEGINNING of INFERENTIAL STATS################################            
   navbarMenu("Inferential Statistics", 
@@ -383,6 +399,35 @@ server <- function(input, output) {
   
   
 #########################TRANSACTION ANALYSIS###################################
+  
+  ###For Parallel Coord ###
+  
+  output$rtparacoord <- renderParcoords({
+    
+    #Matching credit card and loyalty card transactions
+    
+    ccloyalty <- full_join(cc_data, loyalty_data, by = c("date" = "timestamp", "price" = "price", "location" = "location")) %>% 
+      left_join(distinctloc, by = "location") %>% 
+      dplyr::select(-c("category.x","category.y")) %>%
+      mutate(hour = hms::as_hms(round_date(timestamp,"60 mins"))) %>% 
+      mutate(lcnum = str_sub(loyaltynum,start = -4))
+    
+    #Filtering to user selection and plotting
+    
+    selectedccloyalty <- ccloyalty %>% 
+         select(input$rtlevelone,input$rtleveltwo)
+    
+    parcoords(
+      selectedccloyalty,
+      rownames = FALSE,
+      reorderable = T,
+      brushMode = '1D-axes'
+    )
+    
+  }
+    
+  )
+  
   
   ###For Transaction Boxplot A###
   output$TxnBoxPlotA <- renderPlotly({

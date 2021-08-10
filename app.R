@@ -17,8 +17,17 @@ library(parcoords)
 library(GGally)
 library(scales)
 library(shinyscreenshot)
+library(DT)
+library(visNetwork)
+library(igraph)
+library(ggraph)
+library(tidygraph)
+library(widyr)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
+##################import & clean MC 1 data/variables ##############################
+
+source('scripts/mc1_clean_and_import.R')
 
 ##################import MC 2 data into variables##############################
 
@@ -204,6 +213,57 @@ ui <- navbarPage(
                       ),
                       
                       
+                      ),
+             tabPanel('Correspondence',
+                      titlePanel('Email Conversations within GasTech Employees'),
+                      sidebarLayout(
+                        sidebarPanel('Inputs',
+                                     dateRangeInput(inputId = 'date', 
+                                                    label = 'Date Filter', 
+                                                    start = min(df.emails$Date.Date), 
+                                                    end=max(df.emails$Date.Date)
+                                     ),
+                                     sliderInput(inputId = 'time',
+                                                 label = 'Time Filter', 
+                                                 min = as.POSIXct("1990-01-01 00:00:10", tz = 'GMT'), 
+                                                 max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
+                                                 value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
+                                                           as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')),
+                                                 step = 1,
+                                                 timeFormat = "%H:%M",
+                                                 timezone = "GMT"
+                                     ),
+                                     selectInput(inputId = 'person', 
+                                                 label= 'Employee', 
+                                                 choices = unique(df.emp$FullName)
+                                     ),
+                                     radioButtons(inputId = 'dt_select', 
+                                                  label='DataTable Displayed by:', 
+                                                  choices = c('Person','Keywords', 'Both')
+                                     ),
+                                     textInput(inputId = 'search', label = 'Email Text Search'),
+                                     
+                                     actionButton(inputId = 'go', label = "Display")
+                        ),
+                        
+                        mainPanel(
+                          tabsetPanel(
+                            tabPanel('ggplot_convo',
+                                     plotlyOutput(outputId = 'email_convo')),
+                            tabPanel('dt_convo',
+                                     DT::dataTableOutput(outputId = 'table')),
+                            tabPanel('vis_email',
+                                     visNetworkOutput(outputId = 'vis_email')
+                            )
+                          )
+                        )
+                      )
+                      
+                      
+                      
+                      
+                      
+                      
                       )
              
 ##########END of EDA (BRACKET & COMMA BELOW is CLOSING for EDA)###############             
@@ -311,8 +371,9 @@ ui <- navbarPage(
                     "To Be Updated")
 
 ################################################################################
-  )#, (If Nikki is to have a separate tab, to remove this comment and include the comma)
-#navbarMenu('Network Analysis') <- for Nikki, if needed
+  )#,   # (If Nikki is to have a separate tab, to remove this comment and include the comma)
+#navbarMenu('Network Analysis',
+#           tabPanel('Text Conversations')) #<- for Nikki, if needed
 )
 
 # Define server logic required to draw a histogram

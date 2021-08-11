@@ -43,6 +43,19 @@ browser()
 
 source('scripts/dt_clean_data.r')
 
+#Amend string text for Katrina's Cafe
+cc_data <- cc_data %>%
+  mutate(location = str_replace_all(location,
+                                    pattern = "Katerin.+",
+                                    replacement = "Katrina\x27s Caf\xe9"))
+
+
+loyalty_data <- loyalty_data %>%
+  mutate(location = str_replace_all(location,
+                                    pattern = "Katerin.+",
+                                    replacement = "Katrina\x27s Caf\xe9"))
+
+
 #Creating Time Bins
 
 #Creating breaks

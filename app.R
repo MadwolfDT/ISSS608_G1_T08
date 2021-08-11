@@ -42,14 +42,15 @@ source('scripts/rt_clean_data.r')
 # Define UI
 ui <- navbarPage(
   
-  theme = shinytheme("superhero"),
+  title =  "Investigation Tool into Personnel Disappearance",
   
-  "Investigation Tool into Personnel Disappearance",
-  
+  theme = shinytheme("journal"),
+
   tabPanel("Background Situation", "To be Updated"),
   
-  tabPanel("Exploratory Data Analysis", 
-           titlePanel("Transactions - For Exploration!"),
+  navbarMenu(
+    "Exploratory Data Analysis",
+    tabPanel(title = "Transactions - For Exploration!",
            fluidRow(
              column(2, 
                     
@@ -160,6 +161,19 @@ ui <- navbarPage(
            
            
            ), #close brackets for tabPanel for EDA, need comma
+    tabPanel(title = 'Employees of GasTech',
+             
+             column(width=3,
+                    radioButtons(inputId = 'view_select', label='Overview or Person Look-up', choices = c('Person','Overview'))
+        
+                    )
+             
+             
+             )  #close brackets for tabPanel for Emp of GasTech
+    
+    
+    
+    ), #close brackets for NavbarMenu
 
   navbarMenu("Inferential Statistics", 
              tabPanel("Email Network Analysis",
@@ -196,11 +210,11 @@ ui <- navbarPage(
                         
                         mainPanel(
                           tabsetPanel(
-                            tabPanel('ggplot_convo',
+                            tabPanel('Email Overview',
                                      plotlyOutput(outputId = 'email_convo')),
-                            tabPanel('dt_convo',
+                            tabPanel('Tabular Overview',
                                      DT::dataTableOutput(outputId = 'table')),
-                            tabPanel('vis_email',
+                            tabPanel('Network Overview',
                                      visNetworkOutput(outputId = 'vis_email')
                                     )#close bracket for tabpanel
                             

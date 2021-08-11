@@ -1,27 +1,19 @@
 #To avoid getting scientific notation for numbers. To disable, set it to 0
 options(scipen = 999)
 
-#gps$Timestamp <- date_time_parse(gps$Timestamp,
-                                 #zone = "",
-                                 #format = "%m/%d/%Y %H:%M:%S")
-
-gps$Timestamp <- mdy_hm(gps$Timestamp)
+gps$Timestamp <- mdy_hms(gps$Timestamp)
 
 gps <- gps %>%
-  mutate(datestamp = as.Date(Timestamp + 60*60*8))
+  mutate(datestamp = as.Date(Timestamp))
 
 gps_date <- gps %>%
   distinct(datestamp)
 
 #convert timestamp from character into date/time format
-cc_data$timestamp <- date_time_parse(cc_data$timestamp,
-                                     zone = "",
-                                     format = "%m/%d/%Y %H:%M")
+cc_data$timestamp <- mdy_hm(cc_data$timestamp)
 
 #convert timestamp from character into date/time format
-loyalty_data$timestamp <- date_time_parse(loyalty_data$timestamp,
-                                          zone = "",
-                                          format = "%m/%d/%Y")
+loyalty_data$timestamp <- mdy(loyalty_data$timestamp)
 
 
 location_gps <- gps %>%

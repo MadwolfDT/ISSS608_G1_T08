@@ -49,7 +49,7 @@ ui <- navbarPage(
   tabPanel("Background Situation", "To be Updated"),
   
   tabPanel("Exploratory Data Analysis", 
-           titlePanel("Parallel Coordinate Plot - Transactions Overview"),
+           
            fluidRow(
              column(2, 
                     
@@ -332,73 +332,7 @@ ui <- navbarPage(
                         
                         ),#close bracket with comma for fluidRow()
                       
-                      ),#close bracket with comma for tabPanel: TxnAmtAnalysis
-             
-             tabPanel("Analysis for Specific Cards",
-                      titlePanel("Transactions for Specific Cards"),
-                      
-                      fluidRow(
-                        column(2,
-                               radioButtons(
-                                  inputId = "rtradiospeccardA",
-                                  label = "Select Card Type",
-                                  choices = c("Credit Card", "Loyalty Card"),
-                                  selected = "Credit Card"
-                                  ), #close bracket w comma for radiobutton
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Credit Card'",
-                                 selectInput(
-                                   inputId = "rtspeccreditA",
-                                   label = "Last 4 Digits of Card",
-                                   choices = unique(cc_data$last4ccnum)
-                                   )
-                                ), #close bracket w comma for conPanel
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Credit Card'",
-                                 radioButtons(
-                                   inputId = "rtradiospeccardfillA",
-                                   label = "Select Fill Type",
-                                   choices = list(
-                                     "Transaction Price" = "price",
-                                     "Time Period" = "TimeCat"
-                                      ),
-                                   selected = "price"
-                                   ) #close bracket wo comma for radioButton
-                               ), #close bracket w comma for conPanel
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Loyalty Card'",
-                                 selectInput(
-                                   inputId = "rtspecloyaltyA",
-                                   label = "Loyalty Card No.",
-                                   choices = unique(loyalty_data$loyaltynum)
-                                 )
-                               )
-                               ), #close bracket w comma for column
-                        column(10,
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardfillA == 'price'",
-                                 plotlyOutput(outputId = "rtspecccpriceA"),
-                                 DT::dataTableOutput("rtspeccctableA")
-                               ),
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardfillA == 'TimeCat'",
-                                 plotlyOutput(outputId = "rtspeccctimeA"),
-                                 DT::dataTableOutput("rtspeccctableA")
-                               ),
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Loyalty Card'",
-                                 plotlyOutput(outputId = "rtspeclcA"),
-                                 DT::dataTableOutput("rtspeclctableA")
-                                 
-                               ) #close bracket wo comma for last ConPanel
-                               ) #close bracket wo comma for last column
-                      ),#close bracket with comma for fluidRow
-                      
-                      #fluidRow(
-                        
-                      #) #close bracket without comma for last fluidRow of SpecificCards
-               
-             )#close bracket without comma, maybe because last TabPanel, for Txn Specific CardAnalysis
+                      )#close bracket without comma, maybe because last TabPanel, for Txn Analysis
              
   ) #close brackets for navbarMenu, do not need comma
   
@@ -1067,81 +1001,6 @@ server <- function(input, output, session) {
     plotp2f
     
   })#close curly and brackers for output$TxnScatterLoyalty, without comma
-  
-  ###############################
-  ###Specific Card Tile Plots####
-  ###############################
-  
-  #####Set A######
-  
-  #Specific Credit Card ; Fill by Price
-  output$rtspecccpriceA <- renderPlotly({
-  
-    # User Selection
-    
-    indivcc <- cc_data %>% dplyr::filter(last4ccnum == input$rtspeccreditA) %>% 
-      mutate(date = as.POSIXct.Date(date))
-    
-    indivccplotA <- ggplot(indivcc, aes(date, location)) +
-      geom_tile(aes(fill = price)) +
-      scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-      labs(title = "All Transactions (for Selected Credit Card)") +
-      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-      theme(axis.text.x = element_text(angle = 0),
-            axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
-      theme(legend.key.height = unit(1, "cm"))
-    
-    ggplotly(indivccplotA)
-      
-  }) #close curly and brackets for output$rtspecccpriceA, without comma
-  
-  #Specific Credit Card ; Fill by Time Period of Day
-  output$rtspeccctimeA <- renderPlotly({
-    
-    # User Selection
-    
-    indivcc <- cc_data %>% dplyr::filter(last4ccnum == input$rtspeccreditA) %>% 
-      mutate(date = as.POSIXct.Date(date))
-    
-    indivccplotB <- ggplot(indivcc, aes(date, location)) +
-      geom_tile(aes(fill = TimeCat)) +
-      scale_color_brewer(palette = "Set2")+
-      labs(title = "All Transactions (for Selected Credit Card)") +
-      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-      theme(axis.text.x = element_text(angle = 0),
-            axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
-      theme(legend.key.height = unit(1, "cm"))
-    
-    ggplotly(indivccplotB)
-    
-  }) #close curly and brackets for output$rtspeccctimeA, without comma
-  
-  # Specific Loyalty Card
-  output$rtspeclcA <- renderPlotly({
-    
-    # User Selection
-    indivlc <- loyalty_data %>% dplyr::filter(loyaltynum == input$rtspecloyaltyA) %>% 
-      mutate(date = as.POSIXct.Date(timestamp))
-    
-    indivlcplot <- ggplot(indivlc, aes(date, location)) +
-      geom_tile(aes(fill = price)) +
-      scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-      labs(title = "All Transactions (for Selected Loyalty Card)") +
-      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-      theme(axis.text.x = element_text(angle = 0),
-            axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
-      theme(legend.key.height = unit(1, "cm"))
-    
-    ggplotly(indivlcplot)
-    
-  }) #close curly and brackets for output$rtspeclcA, without comma
-  
-  
-  #####Set B######
-  
   
   
 }#close curly bracket for server

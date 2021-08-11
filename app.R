@@ -158,7 +158,7 @@ ui <- navbarPage(
                                    "Time" = "hour",
                                    "Period of Day" = "TimeCat"
                                  ),
-                                 selected = "ccnum"
+                                 selected = "last4ccnum"
                                ),
                                
                                #can add more selectInputs

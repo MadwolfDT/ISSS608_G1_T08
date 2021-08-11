@@ -1,9 +1,11 @@
 #To avoid getting scientific notation for numbers. To disable, set it to 0
 options(scipen = 999)
 
-gps$Timestamp <- date_time_parse(gps$Timestamp,
-                                 zone = "",
-                                 format = "%m/%d/%Y %H:%M:%S")
+#gps$Timestamp <- date_time_parse(gps$Timestamp,
+                                 #zone = "",
+                                 #format = "%m/%d/%Y %H:%M:%S")
+
+gps$Timestamp <- mdy_hm(gps$Timestamp)
 
 gps <- gps %>%
   mutate(datestamp = as.Date(Timestamp + 60*60*8))

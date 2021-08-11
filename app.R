@@ -248,23 +248,33 @@ ui <- navbarPage(
                         
                       ), #close bracket with comma for tab Panel Email
              
-             tabPanel("Networks",
+             tabPanel(title = "Networks",
                       
                         column(width = 3,
+                               h3("Node Sizing"),
                                radioButtons(inputId = 'node_sizings',
-                                            label="Size by",
+                                            label=NULL,
                                             choices = c('None','Betweenness', 'Degree', 'Out-Degree', 'In-Degree', 'Closeness'),
                                             selected = 'None'),
-                               checkboxInput(inputId = 'arrow',label = "Show Arrow", value = T)
-                               
+                               h3("Modifying Aesthetics"),
+                               checkboxInput(inputId = 'arrow',label = "Show", value = T),
+                               actionButton(inputId = 'about', label=NULL, icon = icon(name='info')),
+                               numericInput(inputId = 'min_width', label='Minimum Width', min =0.1, max=5, value = 0.5),
+                               numericInput(inputId = 'max_width', label='Maximum Width', min =5, max=15,value = 7)
+                              
                                ), # close bracket for column
+                        
                       
                         column(width=6, 
-                               visNetworkOutput(outputId = 'vis_dept',width = "100%", height = 700)
+                               visNetworkOutput(outputId = 'vis_dept',
+                                                width = "100%", 
+                                                height = 700)
                                ),
                       
                         column(width=3, 
-                               visNetworkOutput(outputId = 'vis_dept_sub',width = "100%", height = 700)
+                               visNetworkOutput(outputId = 'vis_dept_sub',
+                                                width = "100%", 
+                                                height = 700)
                                ),
                         
 
@@ -476,6 +486,11 @@ server <- function(input, output, session) {
   #########################
   ###For Email Convo    ###
   #########################  
+  
+  observeEvent(input$about,
+               {showModal(modalDialog(title = "Help Box",
+                                      "Adjust the minimum and maximum width of the edges"))
+                 })
   
   output$email_convo <- renderPlotly({
     
@@ -795,7 +810,7 @@ server <- function(input, output, session) {
                  #selectedBy = "group"
                  
       ) %>% 
-      visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
+      visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=input$min_width, max=input$max_width)) %>% 
       visLayout(randomSeed = 123) %>%
       visNodes(labelHighlightBold = T) %>%
       #visPhysics(stabilization = 5,

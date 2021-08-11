@@ -23,212 +23,147 @@ library(igraph)
 library(ggraph)
 library(tidygraph)
 library(widyr)
+library(tidytext)
+library(ggwordcloud)
+#library(textnets)
+library(textdata)
+library(corporaexplorer) 
+library(topicmodels)
+library(widyr)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
-##################import & clean MC 1 data/variables ##############################
 
-source('scripts/mc1_clean_and_import.R')
-
-##################import MC 2 data into variables##############################
-
-employee <- read_csv("data/EmployeeRecords.csv")
-car_data <- read_csv("data/car-assignments.csv")
-cc_data <- read_csv("data/cc_data.csv")
-loyalty_data <- read_csv("data/loyalty_data.csv")
-gps <- read_csv("data/gps.csv")
-
-###############################################################################
-
-##########################cleaning MC 2 data###################################
-
+source('scripts/read_data.r')
 source('scripts/dt_clean_data.r')
-
-#Amend string text for Katrina's Cafe
-cc_data <- cc_data %>%
-  mutate(location = str_replace_all(location,
-                                    pattern = "Katerin.+",
-                                    replacement = "Katrina\x27s Caf\xe9"))
-
-
-loyalty_data <- loyalty_data %>%
-  mutate(location = str_replace_all(location,
-                                    pattern = "Katerin.+",
-                                    replacement = "Katrina\x27s Caf\xe9"))
-
-
-#Creating Time Bins
-
-#Creating breaks
-breaks <- hour(hm("00:00", "6:00","9:00", "11:00", "13:30", "16:00", "18:00", "23:59"))
-#Create labels for the breaks
-labels <- c("Midnight", "Morning", "Pre-Lunch", "LunchTime", "Afternoon", "Evening", "Night")
-
-#Creating Location Categories
-
-Shops <- c("Albert's Fine Clothing","Shoppers' Delight","Octavio's Office Supplies","Roberts and Sons","Daily Dealz","Frydos Autosupply n' More")
-FoodnBev <- c("Brew've Been Served","Hallowed Grounds", "Coffee Cameleon", "Coffee Shack","Bean There Done That","Brewed Awakenings","Jack's Magical Beans","Katrina's Café","Hippokampos","Abila Zacharo","Gelatogalore","Kalami Kafenion","Ouzeri Elian","Guy's Gyros")
-Hotel <- c("Chostus Hotel")
-Industrial <- c("Kronos Pipe and Irrigation","Nationwide Refinery","Maximum Iron and Steel","Stewart and Sons Fabrication","Carlyle Chemical Inc.","Abila Scrapyard")
-Recreational <- c("Ahaggo Museum","Desafio Golf Course")
-Supermarket <- c("General Grocer","Kronos Mart")
-Refuel <- c("U-Pump","Frank's Fuel")
-Others <- c("Abila Airport")
-
-distinctloc <- cc_data %>% distinct(location)
-distinctloc <- distinctloc %>% 
-  mutate(category = case_when(location %in% Shops ~ 'Shops',
-                              location %in% FoodnBev ~ 'F & B',
-                              location %in% Hotel ~ 'Hotel',
-                              location %in% Industrial ~ 'Industrial',
-                              location %in% Recreational ~ 'Recreational',
-                              location %in% Supermarket ~ 'Supermarket',
-                              location %in% Refuel ~ 'Refuel',
-                              location %in% Others ~ 'Others'
-  ))
-
-#Converting timestamp from character into date/time format
-#Extracting Date and Time
-#Adding Time Labels and Location Categories
-
-#cc_data
-
-cc_data <- cc_data %>% 
-  #Extract date and time
-  mutate(timestamp = mdy_hm(cc_data$timestamp)) %>% 
-  mutate(date = as.Date(timestamp),
-         time = hms::as_hms(timestamp)) %>% 
-  #Add Time Labels
-  mutate(TimeCat = cut(x=hour(time), breaks=breaks, labels=labels, include.lowest=TRUE)) %>% 
-  #Add Location Categories
-  left_join(distinctloc, by = "location")
-
-#loyalty_data
-
-loyalty_data <- loyalty_data %>% 
-  #Convert date
-  mutate(timestamp = mdy(loyalty_data$timestamp)) %>% 
-  #Add Location Categories
-  left_join(distinctloc, by = "location")
-
-
-##########################cleaning MC 2 data###################################
-
-##########################DT Variables###################################
-
 source('scripts/dt_variables.r')
-
-##########################DT Variables###################################
+source('scripts/mc1_clean_and_import.r')
+source('scripts/rt_clean_data.r')
 
 # Define UI
 ui <- navbarPage(
+  
   theme = shinytheme("superhero"),
-  "Investigation Tool into Personnel Disappearance",   
+  
+  "Investigation Tool into Personnel Disappearance",
+  
   tabPanel("Background Situation", "To be Updated"),
-  navbarMenu("Exploratory Data Analysis", "To be Updated",
-             tabPanel("Transactions Overview",
-                      titlePanel("Transactions Overview"),
-                      
-                      fluidRow(
-                        column(2,
-                               selectInput(
-                                 inputId = "rtlevelone",
-                                 label = "Select Variable One",
-                                 choices = list(
-                                   "Location" = "location",
-                                   "Price" = "price",
-                                   "CC No." = "ccnum",
-                                   "LC No." = "loyaltynum",
-                                   "Date" = "date",
-                                   "Time" = "hour",
-                                   "Period of Day" = "TimeCat"
-                                 ),
-                                 selected = "location"
-                                 
-                               ),
-                               
-                               selectInput(
-                                 inputId = "rtleveltwo",
-                                 label = "Select Variable Two",
-                                 choices = list(
-                                   "Location" = "location",
-                                   "Price" = "price",
-                                   "CC No." = "ccnum",
-                                   "LC No." = "loyaltynum",
-                                   "Date" = "date",
-                                   "Time" = "hour",
-                                   "Period of Day" = "TimeCat"
-                                 ),
-                                 selected = "ccnum"
-                               ),
-                               
-                               #can add more selectInputs
-                               
-                               selectInput(
-                                 inputId = "rtlevelthree",
-                                 label = "Select Variable Three",
-                                 choices = list(
-                                   "Location" = "location",
-                                   "Price" = "price",
-                                   "CC No." = "ccnum",
-                                   "LC No." = "loyaltynum",
-                                   "Date" = "date",
-                                   "Time" = "hour",
-                                   "Period of Day" = "TimeCat"
-                                 ),
-                                 selected = "loyaltynum"
-                               ),
-                               
-                               selectInput(
-                                 inputId = "rtlevelfour",
-                                 label = "Select Variable Four",
-                                 choices = list(
-                                   "Location" = "location",
-                                   "Price" = "price",
-                                   "CC No." = "ccnum",
-                                   "LC No." = "loyaltynum",
-                                   "Date" = "date",
-                                   "Time" = "hour",
-                                   "Period of Day" = "TimeCat"
-                                 ),
-                                 selected = "date"
-                               ),
-                               
-                               selectInput(
-                                 inputId = "rtlevelfive",
-                                 label = "Select Variable Five",
-                                 choices = list(
-                                   "Location" = "location",
-                                   "Price" = "price",
-                                   "CC No." = "ccnum",
-                                   "LC No." = "loyaltynum",
-                                   "Date" = "date",
-                                   "Time" = "hour",
-                                   "Period of Day" = "TimeCat"
-                                 ),
-                                 selected = "hour"
-                               ),
-                               
-                               sliderInput("rtslider", label = "Range of CC No.",
-                                           min = 0, max = 9736, value = c(1000,2000)
-                                ),
-                               submitButton("Apply Selected")
-                               
-                        ),
-                        
-                        column(10,
-                              parcoordsOutput(
-                                outputId = "rtparacoord",
-                                width = "100%",
-                                height = "600px"
-                              ), 
-                              screenshotButton("Take a Screenshot!")
-                              )
+  
+  tabPanel("Exploratory Data Analysis", 
+           
+           fluidRow(
+             column(2, 
+                    
+                    selectInput(
+                      inputId = "rtlevelone",
+                      label = "Select Variable One",
+                      choices = list(
+                        "Location" = "location",
+                        "Price" = "price",
+                        "CC No." = "ccnum",
+                        "LC No." = "loyaltynum",
+                        "Date" = "date",
+                        "Time" = "hour",
+                        "Period of Day" = "TimeCat"
                       ),
+                      selected = "location"
                       
-                      
+                    ), #close bracket and comma for selectInput
+                    
+                    selectInput(
+                      inputId = "rtleveltwo",
+                      label = "Select Variable Two",
+                      choices = list(
+                        "Location" = "location",
+                        "Price" = "price",
+                        "CC No." = "ccnum",
+                        "LC No." = "loyaltynum",
+                        "Date" = "date",
+                        "Time" = "hour",
+                        "Period of Day" = "TimeCat"
                       ),
-             tabPanel('Correspondence',
-                      titlePanel('Email Conversations within GasTech Employees'),
+                      selected = "ccnum"
+                      
+                    ),#close bracket and comma for selectInput
+                    
+                    selectInput(
+                      inputId = "rtlevelthree",
+                      label = "Select Variable Three",
+                      choices = list(
+                        "Location" = "location",
+                        "Price" = "price",
+                        "CC No." = "ccnum",
+                        "LC No." = "loyaltynum",
+                        "Date" = "date",
+                        "Time" = "hour",
+                        "Period of Day" = "TimeCat"
+                      ),
+                      selected = "loyaltynum"
+                    
+                      ),#close bracket and comma for selectInput
+                    
+                    selectInput(
+                      inputId = "rtlevelfour",
+                      label = "Select Variable Four",
+                      choices = list(
+                        "Location" = "location",
+                        "Price" = "price",
+                        "CC No." = "ccnum",
+                        "LC No." = "loyaltynum",
+                        "Date" = "date",
+                        "Time" = "hour",
+                        "Period of Day" = "TimeCat"
+                      ),
+                      selected = "date"
+                      
+                    ),#close bracket and comma for selectInput
+                    
+                    selectInput(
+                      inputId = "rtlevelfive",
+                      label = "Select Variable Five",
+                      choices = list(
+                        "Location" = "location",
+                        "Price" = "price",
+                        "CC No." = "ccnum",
+                        "LC No." = "loyaltynum",
+                        "Date" = "date",
+                        "Time" = "hour",
+                        "Period of Day" = "TimeCat"
+                      ),
+                      selected = "hour"
+                      
+                    ),#close bracket and comma for selectInput
+                    
+                    
+                    sliderInput("rtslider", label = "Range of CC No.",
+                                min = 0, max = 9736, value = c(1000,2000)
+                    ),#close bracket for sliderInput
+                    
+                    submitButton("Apply Selected")
+                    
+                    
+                    ), #close brackets for column(2), need comma
+             
+             column(10,
+                    
+                    parcoordsOutput(
+                      outputId = "rtparacoord",
+                      width = "100%",
+                      height = "600px"
+                    ),#close brackets for parcoordsOutput
+                    
+                    screenshotButton("Take a Screenshot!")
+                    
+                    ), #close brackets for column(10), need comma
+             
+             
+           ),#close brackets for fluidRow(), need comma
+           
+           
+           ), #close brackets for tabPanel for EDA, need comma
+
+  navbarMenu("Inferential Statistics", 
+             tabPanel("Email Network Analysis",
+                      
                       sidebarLayout(
                         sidebarPanel('Inputs',
                                      dateRangeInput(inputId = 'date', 
@@ -267,135 +202,682 @@ ui <- navbarPage(
                                      DT::dataTableOutput(outputId = 'table')),
                             tabPanel('vis_email',
                                      visNetworkOutput(outputId = 'vis_email')
-                            )
-                          )
-                        )
-                      )
-                      
-                      
-                      
-                      
-                      
-                      
-                      )
-             
-##########END of EDA (BRACKET & COMMA BELOW is CLOSING for EDA)###############             
-             ),
-##########BEGINNING of INFERENTIAL STATS################################            
-  navbarMenu("Inferential Statistics", 
-             tabPanel("Network Associations",
-                      "To Be Updated"),
-             
-################################################################################             
-             
-              tabPanel("Personnel Movement Plot",
-                       titlePanel("Personnel Movement Plot"),
-                       
-                       fluidRow(
-                         column(4,
-                                
-                                selectInput(
-                                  
-                                  inputId = "dtemployee_name",
-                                  label = "Employee Name",
-                                  choices = c(paste(emply_name$FirstName, emply_name$LastName, sep = " ")),
-                                  
-                                ),
-                                
-                                selectInput(
-                                  
-                                  inputId = "dtdate",
-                                  label = "Date",
-                                  choices = c(gps_date$datestamp),
-                                  
-                                ),
-                                
-                                submitButton("Apply changes")
-                                
-                         ),
-                         column(8,tmapOutput("mapPlot")),
-                       ),
-                       
-                       fluidRow(
-                         column(6,"Selected Personnel Details"),
-                         column(6,"Population Parking Details"),
-                       ),
-                       
-              ),
-
-################################################################################
-
-            tabPanel("Transaction Amount Analysis", 
-                    titlePanel("Transaction Amount Analysis"),
-         
-                    fluidRow(
-                      column(2,
-                              selectInput(
-                                inputId = "rtlocationcat",
-                                label = "Location Category",
-                                choices = unique(distinctloc$category),
-                                selected = distinctloc$category[1]),
-                              submitButton("Apply Selected")
-                      ),
-                      column(10,
-                              plotlyOutput(outputId = "TxnBoxPlotA")
-                      )
-                    ),
-                    
-                    fluidRow(
-                      column(2,
-                              radioButtons(
-                                inputId = "rtradio",
-                                label = "View Transactions for Specific Cards",
-                                choices = c("Credit Card", "Loyalty Card"),
-                                selected = "Credit Card"),
-                  
-                              conditionalPanel(
-                                condition = "input.rtradio == 'Credit Card'",
-                                selectInput(
-                                  inputId = "rtcreditcard",
-                                  label = "Last 4 Digits of Card",
-                                  choices = unique(cc_data$last4ccnum)
-                                )
-                             ),
-                              conditionalPanel(
-                                condition = "input.rtradio == 'Loyalty Card'",
-                                selectInput(
-                                  inputId = "rtloyalcard",
-                                  label = "Loyalty Card No.",
-                                  choices = unique(loyalty_data$loyaltynum)
-                                )
-                              ),
-                              submitButton("Apply Selected")
-                      ),
-                      column(10,
-                             conditionalPanel(
-                               condition = "input.rtradio == 'Credit Card'", br(),
-                               plotlyOutput(outputId = "TxnScatterCredit")
-                             ),
-                             conditionalPanel(
-                               condition = "input.rtradio == 'Loyalty Card'", br(),
-                               plotlyOutput(outputId = "TxnScatterLoyalty")
-                             )
+                                    )#close bracket for tabpanel
+                            
+                                  )#close bracket without comma for tabsetPanel
+                          
+                               )#close bracket without comma for mainPanel
                         
-                      )
-                    ),
-         
-                    "To Be Updated")
+                          )#close bracket without comma for sidebarLayout
+                      
+                      ),#close bracket with comma for Email
+             
+             tabPanel("Networks",
+                      
+                      sidebarLayout(
+                        sidebarPanel('Inputs',
+                                     radioButtons(inputId = 'node_sizings',
+                                                  label="Size by",
+                                                  choices = c('None','Betweenness', 'Degree', 'Closeness'),
+                                                  selected = 'None')),
+                        mainPanel(column(width=5, 
+                                         visNetworkOutput(outputId = 'vis_dept',width = "100%", height = 700)),
+                                  column(width = 5, 
+                                         visNetworkOutput(outputId = 'vis_dept_sub',width = "100%", height = 700))
+                                  )#close without comma bracket for mainPanel
+                        
+                              )#close bracket without comma for sidebarLayout
+                      
+                      ),#close bracket with comma for Networks
+             
+             tabPanel("Employee Movement Plot",
+                      
+                      titlePanel("Personnel Movement Plot"),
+                      
+                      fluidRow(
+                        column(4,
+                               
+                               selectInput(
+                                 
+                                 inputId = "dtemployee_name",
+                                 label = "Employee Name",
+                                 choices = c(paste(emply_name$FirstName, emply_name$LastName, sep = " ")),
+                                 
+                               ),#close bracket with comma for selectInput
+                               
+                               selectInput(
+                                 
+                                 inputId = "dtdate",
+                                 label = "Date",
+                                 choices = c(gps_date$datestamp),
+                                 
+                               ),#close bracket with comma for selectInput
+                               
+                               submitButton("Apply changes")
+                               
+                              ),#close bracket with comma for column(4)
+                        
+                        column(8,tmapOutput("mapPlot")
+                               ),#close bracket with comma for column(8)
+                              
+                              ),#close bracket with comma for fluidRow()
+                      
+                      fluidRow(
+                        column(6,"Selected Personnel Details"),#close bracket with comma for column(6)
+                        column(6,"Population Parking Details"),#close bracket with comma for column(6)
+                              ),#close bracket with comma for fluidRow()
+                      
+                      ),#close bracket with comma for Plot
+             
+             
+             tabPanel("Transaction Amount Analysis",
+                      
+                      titlePanel("Transaction Amount Analysis"),
+                      
+                      fluidRow(
+                        column(2,
+                               selectInput(
+                                 inputId = "rtlocationcat",
+                                 label = "Location Category",
+                                 choices = unique(distinctloc$category),
+                                 selected = distinctloc$category[1]),
+                               submitButton("Apply Selected")
+                        ),#close bracket with comma for column(2)
+                        
+                        column(10,
+                               plotlyOutput(outputId = "TxnBoxPlotA")
+                        )#close bracket with comma for column(10)
+                        
+                      ),#close bracket with comma for fluidRow()
+                      
+                      fluidRow(
+                        column(2,
+                               radioButtons(
+                                 inputId = "rtradio",
+                                 label = "View Transactions for Specific Cards",
+                                 choices = c("Credit Card", "Loyalty Card"),
+                                 selected = "Credit Card"),
+                               
+                               conditionalPanel(
+                                 condition = "input.rtradio == 'Credit Card'",
+                                 selectInput(
+                                   inputId = "rtcreditcard",
+                                   label = "Last 4 Digits of Card",
+                                   choices = unique(cc_data$last4ccnum)
+                                 )
+                               ),#close bracket with comma for conditionalPanel
+                               conditionalPanel(
+                                 condition = "input.rtradio == 'Loyalty Card'",
+                                 selectInput(
+                                   inputId = "rtloyalcard",
+                                   label = "Loyalty Card No.",
+                                   choices = unique(loyalty_data$loyaltynum)
+                                 )
+                               ),#close bracket with comma for conditionalPanel
+                               
+                               submitButton("Apply Selected")
+                        ),#close bracket with comma for column(2)
+                        
+                        column(10,
+                               conditionalPanel(
+                                 condition = "input.rtradio == 'Credit Card'", br(),
+                                 plotlyOutput(outputId = "TxnScatterCredit")
+                               ),#close bracket with comma for conditionalPanel
+                               conditionalPanel(
+                                 condition = "input.rtradio == 'Loyalty Card'", br(),
+                                 plotlyOutput(outputId = "TxnScatterLoyalty")
+                               ),#close bracket with comma for conditionalPanel
+                               
+                          ),#close bracket with comma for column(10)
+                        
+                        ),#close bracket with comma for fluidRow()
+                      
+                      )#close bracket without comma, maybe because last TabPanel, for Txn Analysis
+             
+  ) #close brackets for navbarMenu, do not need comma
+  
+) #close brackets for navbarPage, do not need comma
 
-################################################################################
-  )#,   # (If Nikki is to have a separate tab, to remove this comment and include the comma)
-#navbarMenu('Network Analysis',
-#           tabPanel('Text Conversations')) #<- for Nikki, if needed
-)
-
-# Define server logic required to draw a histogram
+#server codes
 server <- function(input, output, session) {
+  #########################
+  ###For Parallel Coord ###
+  #########################
+  output$rtparacoord <- renderParcoords({
+    
+    #Matching credit card and loyalty card transactions
+    
+    ccloyalty <- full_join(cc_data, loyalty_data, by = c("date" = "timestamp", "price" = "price", "location" = "location")) %>% 
+      left_join(distinctloc, by = "location") %>% 
+      dplyr::select(-c("category.x","category.y")) %>%
+      mutate(hour = hms::as_hms(round_date(timestamp,"60 mins"))) %>% 
+      mutate(lcnum = str_sub(loyaltynum,start = -4))
+    
+    #Filtering to user selection and plotting
+    
+    selectedccloyalty <- ccloyalty %>%
+      filter(between(last4ccnum,input$rtslider[1],input$rtslider[2])) %>%
+      mutate(last4ccnum = as.character(last4ccnum)) %>%
+      mutate(ccnum = str_c("C",last4ccnum)) %>% 
+      dplyr::select(input$rtlevelone,input$rtleveltwo,input$rtlevelthree,
+                    input$rtlevelfour,input$rtlevelfive)
+    
+    parcoords(
+      selectedccloyalty,
+      rownames = FALSE,
+      reorderable = T,
+      brushMode = '1D-axes-multi'
+    )#close bracket for parcoords
+    
+  })#close brackets for output$paracoord
   
-#########################SOCIAL NETWORK ANALYSIS################################
-
+  #########################
+  ###For Email Convo    ###
+  #########################  
   
-#########################GPS TRACKING ANALYSIS##################################
+  output$email_convo <- renderPlotly({
+    
+    dat <- x_full %>%
+      filter(From == input$person) %>%
+      filter(Date.Time >= as_hms(str_extract(input$time[1], pattern = '\\d\\d:\\d\\d:\\d\\d')), 
+             Date.Time <= as_hms(str_extract(input$time[2], pattern = '\\d\\d:\\d\\d:\\d\\d')) 
+      ) %>%
+      filter(Date.Date >= input$date[1], 
+             Date.Date <= input$date[2])
+    
+    details <- x_full %>% 
+      filter(From == input$person) %>% 
+      select(From_dep, From_title)
+    
+    g <- ggplot(dat, aes(y=To, x=Date.Time))+ 
+      geom_point(#position=position_dodge(width=1),
+        size=2, alpha = 0.6, stroke=0.5, shape=21,
+        aes(text = sprintf("Sub: %s<br>Date: %s<br>To: %s<br>To_Title: %s<br>To_Dep: %s<br>Time Sent: %s<br>", 
+                           Subject2, 
+                           Date.Date, 
+                           To,
+                           To_title, 
+                           To_dep,
+                           Date.Time))) +
+      geom_line(aes(group = Subject2, color= Subject2), size=0.2) +
+      labs(y="",x="Time",title = paste(input$person,paste(unique(details), collapse = ',')), 
+           group="", 
+           color="") +
+      theme(legend.text = element_text(size = 8),
+            panel.background = element_rect(fill="white"),
+            panel.grid.major.y = element_line(color="#f0f0f0"),
+            plot.title = element_text(size=14))
+    
+    gg <- ggplotly(g, tooltip = c("text")) 
+    gg
+    
+  })#close brackets for output$email_convo
+  
+  #########################
+  ###For temp_g_vf      ###
+  #########################  
+  
+  temp_g_vf <- eventReactive(input$go, {
+    
+    if (input$dt_select == 'Person'){
+      m <- x_full %>%
+        mutate(s = str_replace(Subject,"RE: ","")) 
+      
+      
+      temp_g <- m %>% 
+        filter(To == input$person | From == input$person)
+      
+      temp_g <- temp_g %>% 
+        select(From, From_title, To, To_title, Date.Date, Date.Time, Subject) 
+      
+    }else if (input$dt_select == 'Keywords'){
+      m <- x_full %>%
+        mutate(s = str_replace(Subject,"RE: ","")) 
+      
+      
+      temp_g <- m %>% 
+        filter(str_detect(s, str_replace_all(input$search,',','|')))
+      
+      temp_g <- temp_g %>% 
+        select(From, From_title, To, To_title, Date.Date, Date.Time, Subject) 
+      
+    }else{
+      m <- x_full %>%
+        mutate(s = str_replace(Subject,"RE: ","")) 
+      
+      
+      temp_g <- m %>% 
+        filter(To == input$person | From == input$person) %>%
+        filter(str_detect(s, str_replace_all(input$search,',','|')))
+      
+      temp_g <-temp_g %>% 
+        select(From, From_title, To, To_title, Date.Date, Date.Time, Subject) 
+    }
+  })#close brackets for temp_g_vf
+  
+  #########################
+  ###For output$table   ###
+  ######################### 
+  
+  output$table <- DT::renderDT({
+    DT::datatable(data = temp_g_vf(), fillContainer = F, 
+                  options = list(pageLength = 10),
+                  rownames = F)
+  })#close brackets for output$table
+  
+  #########################
+  ###For output$vis_email##
+  ######################### 
+  
+  output$vis_email <- renderVisNetwork({
+    
+    temp_g_links <- temp_g_vf() %>% 
+      select(From, To, Subject) %>% 
+      rename(group = Subject)
+    
+    temp_g_nodes <- data.frame(id = unique(c(temp_g_vf()$From, temp_g_vf()$To)))
+    #temp_g_nodes$title <- temp_g_nodes$id
+    
+    temp_g_nodes <- temp_g_nodes %>% 
+      left_join(select(df.emp, FullName, CurrentEmploymentType), by = c('id' = 'FullName')) %>%
+      rename(group = CurrentEmploymentType) %>%
+      replace_na(list(group = "Executive"))
+    
+    temp_g_nodes$color.highlight.background <- "brown"
+    
+    
+    temp_graph <- graph_from_data_frame(d = temp_g_links,
+                                        vertices = temp_g_nodes,
+                                        directed = T)
+    
+    lnodes <- data.frame(shape = rep('square',6),
+                         label = c("Executive",
+                                   "Facilities",
+                                   "Engineering",
+                                   "Administration",
+                                   "Security",
+                                   "Information Technology"),
+                         color.background = c("#FB7E81",
+                                              "#7BE141",
+                                              "#FFFF00",
+                                              "#97C2FC",
+                                              "#AD85E4",
+                                              "#EB7DF4"),
+                         color.border = rep('black',6),
+                         font.align =  rep("center",6),
+                         font.size = rep(20,6)
+    )
+    
+    data <- toVisNetworkData(temp_graph)
+    
+    visNetwork(data$nodes, data$edges) %>%
+      visEdges(arrows = "middle",width = 0.01,length = 5, scaling = list(min=0.1,max=3)) %>%
+      visIgraphLayout() %>%
+      visNodes(size=20) %>%
+      visOptions(nodesIdSelection = T, highlightNearest = T) %>%
+      visLegend(zoom = T, addNodes = lnodes, useGroups = F)  %>%
+      visGroups(groupname = "Executive", 
+                # Red
+                color = list(border = "#FA0A10", 
+                             background = "#FB7E81", 
+                             highlight = list(border = "#FA0A10", background = "#FB7E81"),
+                             hover = list(background = "#FA0A10", border = "#FB7E81")
+                )) %>%
+      visGroups(groupname = "Facilities", 
+                # Green
+                color = list(border = "#41A906", 
+                             background = "#7BE141", 
+                             highlight = list(border = "#41A906", background = "#7BE141"),
+                             hover = list(background = "#41A906", border = "#7BE141")
+                )) %>%
+      visGroups(groupname = "Engineering", 
+                # Yellow
+                color = list(border = "#FFA500", 
+                             background = "#FFFF00", 
+                             highlight = list(border = "#FFA500", background = "#FFFF00"),
+                             hover = list(background = "#FFA500", border = "#FFFF00")
+                )) %>%
+      visGroups(groupname = "Administration", 
+                # Blue
+                color = list(border = "#2B7CE9", 
+                             background = "#97C2FC", 
+                             highlight = list(border = "#2B7CE9", background = "#97C2FC"),
+                             hover = list(background = "#2B7CE9", border = "#97C2FC")
+                )) %>%
+      visGroups(groupname = "Security", 
+                # Purple
+                color = list(border = "#7C29F0", 
+                             background = "#AD85E4", 
+                             highlight = list(border = "#7C29F0", background = "#AD85E4"),
+                             hover = list(background = "#7C29F0", border = "#AD85E4")
+                )) %>%
+      visGroups(groupname = "Information Technology", 
+                # Magenta
+                color = list(border = "#E129F0", 
+                             background = "#EB7DF4", 
+                             highlight = list(border = "#E129F0", background = "#EB7DF4"),
+                             hover = list(background = "#E129F0", border = "#EB7DF4")
+                )) %>%
+      visLegend(zoom = T, addNodes = lnodes, useGroups = F) %>%
+      visInteraction(multiselect = TRUE)
+    
+    
+  })#close brackets for output$vis_email
+  
+  
+  #########################
+  ###For output$vis_dept ##
+  #########################
+  
+  output$vis_dept <- renderVisNetwork({
+    
+    links <- df.emails %>% 
+      mutate(To = str_split(To,pattern=',')) %>% 
+      unnest_longer(To) %>% 
+      mutate(To = str_trim(To),
+             From = str_trim(From)) %>%
+      filter(!(From==To)) %>%
+      group_by(From, To) %>%
+      summarise(count=n()) %>%
+      rename(weight = count)
+    
+    
+    nodes_df <- data.frame(id = unique(c(links$From, links$To))) %>%
+      left_join(df.emp, by = c("id"="FullName")) %>% 
+      select(c(id, 
+               CurrentEmploymentTitle, 
+               CurrentEmploymentType)) %>%
+      rename(title = CurrentEmploymentTitle, 
+             department = CurrentEmploymentType) %>%
+      replace_na(list(department = "Executive", 
+                      title = "CEO"))
+    
+    email_network <- graph_from_data_frame(d = links, 
+                                           vertices = nodes_df)
+    
+    email_network <- simplify(email_network)
+    
+    
+    
+    if (input$node_sizings=='None'){
+      
+      nodes <- data.frame(id = V(email_network)$name, 
+                          title = V(email_network)$name, 
+                          group = V(email_network)$department)
+      
+    }else if (input$node_sizings=='Betweenness'){
+      sizing <- data.frame(size = round(betweenness(email_network)/5))
+      
+      nodes <- data.frame(id = V(email_network)$name, 
+                          title = V(email_network)$name, 
+                          group = V(email_network)$department,
+                          size = sizing)
+    }else if (input$node_sizings=='Degree'){
+      sizing <- data.frame(size = round(degree(email_network)*1.5))
+      
+      nodes <- data.frame(id = V(email_network)$name, 
+                          title = V(email_network)$name, 
+                          group = V(email_network)$department,
+                          size = sizing)
+      
+    }else if (input$node_sizings=='Closeness'){
+      sizing <- data.frame(size = round(closeness(email_network)*5000))
+      
+      nodes <- data.frame(id = V(email_network)$name, 
+                          title = V(email_network)$name, 
+                          group = V(email_network)$department,
+                          size = sizing)
+    }
+    
+    
+    
+    edges <- get.data.frame(email_network, what="edges")[1:2]
+    edges$value <- links$weight
+    #edges$color.opacity <- 0.8
+    #edges$color.highlight <- "red"
+    
+    nodes$color.highlight.background <- "brown"
+    
+    nodes <- nodes %>% mutate(font.size = 25, 
+                              font.weight= 1000)
+    
+    
+    lnodes <- data.frame(shape = rep('square',6),
+                         label = c("Executive",
+                                   "Facilities",
+                                   "Engineering",
+                                   "Administration",
+                                   "Security",
+                                   "Information Technology"),
+                         color.background = c("#FB7E81",
+                                              "#7BE141",
+                                              "#FFFF00",
+                                              "#97C2FC",
+                                              "#AD85E4",
+                                              "#EB7DF4"),
+                         color.border = rep('black',6),
+                         font.align =  rep("center",6),
+                         font.size = rep(20,6)
+    )
+    
+    
+    
+    
+    p <- visNetwork(nodes = nodes, 
+                    edges = edges,  width = "100%", height = 700) %>%
+      visOptions(highlightNearest = list(enabled = T, degree = 1), 
+                 nodesIdSelection = T,
+                 selectedBy = "group"
+                 
+      ) %>% 
+      visEdges(width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
+      visLayout(randomSeed = 123) %>%
+      visNodes(labelHighlightBold = T) %>%
+      #visPhysics(stabilization = 5,
+      #           barnesHut = list(springLength =230, avoidOverlap=0.2), 
+      #           forceAtlas2Based = list(gravitaionalConstant = -100,
+      #                                   centralGravity = 0.5)) %>%
+      visIgraphLayout(layout = "layout_nicely") %>%
+      visInteraction(multiselect = TRUE) %>%
+      visLegend(enabled = T) %>%
+      visGroups(groupname = "Executive", 
+                # Red
+                color = list(border = "#FA0A10", 
+                             background = "#FB7E81", 
+                             highlight = list(border = "#FA0A10", background = "#FB7E81"),
+                             hover = list(background = "#FA0A10", border = "#FB7E81")
+                )) %>%
+      visGroups(groupname = "Facilities", 
+                # Green
+                color = list(border = "#41A906", 
+                             background = "#7BE141", 
+                             highlight = list(border = "#41A906", background = "#7BE141"),
+                             hover = list(background = "#41A906", border = "#7BE141")
+                )) %>%
+      visGroups(groupname = "Engineering", 
+                # Yellow
+                color = list(border = "#FFA500", 
+                             background = "#FFFF00", 
+                             highlight = list(border = "#FFA500", background = "#FFFF00"),
+                             hover = list(background = "#FFA500", border = "#FFFF00")
+                )) %>%
+      visGroups(groupname = "Administration", 
+                # Blue
+                color = list(border = "#2B7CE9", 
+                             background = "#97C2FC", 
+                             highlight = list(border = "#2B7CE9", background = "#97C2FC"),
+                             hover = list(background = "#2B7CE9", border = "#97C2FC")
+                )) %>%
+      visGroups(groupname = "Security", 
+                # Purple
+                color = list(border = "#7C29F0", 
+                             background = "#AD85E4", 
+                             highlight = list(border = "#7C29F0", background = "#AD85E4"),
+                             hover = list(background = "#7C29F0", border = "#AD85E4")
+                )) %>%
+      visGroups(groupname = "Information Technology", 
+                # Magenta
+                color = list(border = "#E129F0", 
+                             background = "#EB7DF4", 
+                             highlight = list(border = "#E129F0", background = "#EB7DF4"),
+                             hover = list(background = "#E129F0", border = "#EB7DF4")
+                )) %>%
+      visLegend(zoom = T, addNodes = lnodes, useGroups = F) %>%
+      visEvents(selectNode = "function(nodes) {
+            Shiny.onInputChange('current_node_id', nodes);
+            ;}")
+    p
+    
+    
+  })#close brackets for output$vis_dept
+  
+  
+  #########################
+  ##### observeEvent ######
+  #########################
+  
+  
+  observeEvent(
+    input$current_node_id, {
+      
+      output$vis_dept_sub <- renderVisNetwork({
+        
+        
+        
+        links <- df.emails %>% 
+          mutate(To = str_split(To,pattern=',')) %>% 
+          unnest_longer(To) %>% 
+          mutate(To = str_trim(To),
+                 From = str_trim(From)) %>%
+          filter(!(From==To)) %>%
+          group_by(From, To) %>%
+          summarise(count=n()) %>%
+          rename(weight = count) %>%
+          filter(From == input$current_node_id$nodes | To == input$current_node_id$nodes)
+        
+        nodes_df <- data.frame(id = unique(c(links$From, links$To))) %>%
+          left_join(df.emp, by = c("id"="FullName")) %>% 
+          select(c(id, 
+                   CurrentEmploymentTitle, 
+                   CurrentEmploymentType)) %>%
+          rename(title = CurrentEmploymentTitle, 
+                 department = CurrentEmploymentType) %>%
+          replace_na(list(department = "Executive", 
+                          title = "CEO"))
+        
+        email_network <- graph_from_data_frame(d = links, 
+                                               vertices = nodes_df
+        )
+        
+        email_network <- simplify(email_network)
+        
+        nodes <- data.frame(id = V(email_network)$name, 
+                            title = V(email_network)$name, 
+                            group = V(email_network)$department)
+        
+        
+        edges <- get.data.frame(email_network, what="edges")[1:2]
+        edges$value <- links$weight
+        #edges$color.opacity <- 0.8
+        #edges$color.highlight <- "red"
+        
+        nodes$color.highlight.background <- "brown"
+        
+        nodes <- nodes %>% mutate(font.size = 25, 
+                                  font.weight= 1000)
+        
+        
+        lnodes <- data.frame(shape = rep('square',6),
+                             label = c("Executive",
+                                       "Facilities",
+                                       "Engineering",
+                                       "Administration",
+                                       "Security",
+                                       "Information Technology"),
+                             color.background = c("#FB7E81",
+                                                  "#7BE141",
+                                                  "#FFFF00",
+                                                  "#97C2FC",
+                                                  "#AD85E4",
+                                                  "#EB7DF4"),
+                             color.border = rep('black',6),
+                             font.align =  rep("center",6),
+                             font.size = rep(20,6)
+        )
+        
+        
+        p <- visNetwork(nodes = nodes, 
+                        edges = edges,  width = "100%", height = 700) %>%
+          visOptions(highlightNearest = list(enabled = T, degree = 1), 
+                     nodesIdSelection = T,
+                     selectedBy = "group"
+                     
+          ) %>% 
+          visEdges(width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
+          visLayout(randomSeed = 123) %>%
+          visNodes(labelHighlightBold = T) %>%
+          #visPhysics(stabilization = 5,
+          #           barnesHut = list(springLength =230, avoidOverlap=0.2), 
+          #           forceAtlas2Based = list(gravitaionalConstant = -100,
+          #                                   centralGravity = 0.5)) %>%
+          visIgraphLayout(layout = "layout_nicely") %>%
+          visInteraction(multiselect = TRUE) %>%
+          visLegend(enabled = T) %>%
+          visGroups(groupname = "Executive", 
+                    # Red
+                    color = list(border = "#FA0A10", 
+                                 background = "#FB7E81", 
+                                 highlight = list(border = "#FA0A10", background = "#FB7E81"),
+                                 hover = list(background = "#FA0A10", border = "#FB7E81")
+                    )) %>%
+          visGroups(groupname = "Facilities", 
+                    # Green
+                    color = list(border = "#41A906", 
+                                 background = "#7BE141", 
+                                 highlight = list(border = "#41A906", background = "#7BE141"),
+                                 hover = list(background = "#41A906", border = "#7BE141")
+                    )) %>%
+          visGroups(groupname = "Engineering", 
+                    # Yellow
+                    color = list(border = "#FFA500", 
+                                 background = "#FFFF00", 
+                                 highlight = list(border = "#FFA500", background = "#FFFF00"),
+                                 hover = list(background = "#FFA500", border = "#FFFF00")
+                    )) %>%
+          visGroups(groupname = "Administration", 
+                    # Blue
+                    color = list(border = "#2B7CE9", 
+                                 background = "#97C2FC", 
+                                 highlight = list(border = "#2B7CE9", background = "#97C2FC"),
+                                 hover = list(background = "#2B7CE9", border = "#97C2FC")
+                    )) %>%
+          visGroups(groupname = "Security", 
+                    # Purple
+                    color = list(border = "#7C29F0", 
+                                 background = "#AD85E4", 
+                                 highlight = list(border = "#7C29F0", background = "#AD85E4"),
+                                 hover = list(background = "#7C29F0", border = "#AD85E4")
+                    )) %>%
+          visGroups(groupname = "Information Technology", 
+                    # Magenta
+                    color = list(border = "#E129F0", 
+                                 background = "#EB7DF4", 
+                                 highlight = list(border = "#E129F0", background = "#EB7DF4"),
+                                 hover = list(background = "#E129F0", border = "#EB7DF4")
+                    )) %>%
+          visLegend(zoom = T, addNodes = lnodes, useGroups = F) 
+        
+        
+        
+      })#close brackets for output$vis_dept_sub, no comma
+      
+    }#close curly bracket for observeEvent, no comma
+    
+  )#close bracket for observeEvent, no comma
+  
+  #########################
+  ##### Plot observe ######
+  #########################
   
   observe({
     
@@ -426,44 +908,14 @@ server <- function(input, output, session) {
       
       #print(selectedID)
       
-    })
+    })#close curly and brackers for output$mapPlot, without comma
     
-  })
+  })#close curly and brackers for observe, without comma
   
+  #########################
+  ##### Txn Box Plot ######
+  #########################
   
-#########################TRANSACTION ANALYSIS###################################
-  
-   ###For Parallel Coord ###
-  
-  output$rtparacoord <- renderParcoords({
-    
-    #Matching credit card and loyalty card transactions
-    
-    ccloyalty <- full_join(cc_data, loyalty_data, by = c("date" = "timestamp", "price" = "price", "location" = "location")) %>% 
-      left_join(distinctloc, by = "location") %>% 
-      dplyr::select(-c("category.x","category.y")) %>%
-      mutate(hour = hms::as_hms(round_date(timestamp,"60 mins"))) %>% 
-      mutate(lcnum = str_sub(loyaltynum,start = -4))
-    
-    #Filtering to user selection and plotting
-    
-    selectedccloyalty <- ccloyalty %>%
-          filter(between(last4ccnum,input$rtslider[1],input$rtslider[2])) %>%
-          mutate(last4ccnum = as.character(last4ccnum)) %>%
-          mutate(ccnum = str_c("C",last4ccnum)) %>% 
-          dplyr::select(input$rtlevelone,input$rtleveltwo,input$rtlevelthree,
-                       input$rtlevelfour,input$rtlevelfive)
-    
-    parcoords(
-      selectedccloyalty,
-      rownames = FALSE,
-      reorderable = T,
-      brushMode = '1D-axes-multi'
-          )
-    
-  })
-  
-  ###For Transaction Boxplot A###
   output$TxnBoxPlotA <- renderPlotly({
     
     #Combining the cc_data and loyalty_data
@@ -489,9 +941,11 @@ server <- function(input, output, session) {
     
     plotp2c
     
-  })
-    
-  ###For Transaction Card-Specific Plots###
+  })#close curly and brackers for Txn Box plot, without comma
+  
+  #########################
+  #####  CC Box Plot ######
+  #########################
   
   #For Credit Card Plot
   output$TxnScatterCredit <- renderPlotly({
@@ -516,7 +970,12 @@ server <- function(input, output, session) {
     
     plotp2e
     
-  })
+  })#close curly and brackers for output$TxnScatterCredit, without comma
+  
+  
+  #########################
+  #####  LC Box Plot ######
+  #########################
   
   #For Loyalty Card Plot
   output$TxnScatterLoyalty <- renderPlotly({
@@ -541,10 +1000,10 @@ server <- function(input, output, session) {
     
     plotp2f
     
-  })
-################################################################################  
+  })#close curly and brackers for output$TxnScatterLoyalty, without comma
   
-}
+  
+}#close curly bracket for server
 
 # Run the application 
 shinyApp(ui = ui, server = server)

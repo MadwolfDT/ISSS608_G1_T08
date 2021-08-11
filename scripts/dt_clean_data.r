@@ -14,14 +14,14 @@ gps_date <- gps %>%
   distinct(datestamp)
 
 #convert timestamp from character into date/time format
-#cc_data$timestamp <- date_time_parse(cc_data$timestamp,
-                                     #zone = "",
-                                     #format = "%m/%d/%Y %H:%M")
+cc_data$timestamp <- date_time_parse(cc_data$timestamp,
+                                     zone = "",
+                                     format = "%m/%d/%Y %H:%M")
 
 #convert timestamp from character into date/time format
-#loyalty_data$timestamp <- date_time_parse(loyalty_data$timestamp,
-                                          #zone = "",
-                                          #format = "%m/%d/%Y")
+loyalty_data$timestamp <- date_time_parse(loyalty_data$timestamp,
+                                          zone = "",
+                                          format = "%m/%d/%Y")
 
 
 location_gps <- gps %>%

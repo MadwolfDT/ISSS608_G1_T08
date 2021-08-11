@@ -1,5 +1,5 @@
 df.news <- read_csv('data/df_news.csv')
-df.news <- df.news %>% select(-c(X1,caseno))
+#df.news <- df.news %>% select(-c(X1,caseno))
 df.emails <- read_csv('data/email headers.csv')
 df.emails <- df.emails %>% 
   mutate(To = str_remove_all(To,"@gastech.com.kronos|@gastech.com.tethys")) %>%

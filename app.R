@@ -674,14 +674,14 @@ server <- function(input, output, session) {
   output$vis_dept <- renderVisNetwork({
     
     links <- df.emails %>% 
-      mutate(To = str_split(To,pattern=',')) %>% 
-      unnest_longer(To) %>% 
-      mutate(To = str_trim(To),
-             From = str_trim(From)) %>%
-      filter(!(From==To)) %>%
-      group_by(From, To) %>%
-      summarise(count=n()) %>%
-      rename(weight = count)
+                mutate(To = str_split(To,pattern=',')) %>% 
+                unnest_longer(To) %>% 
+                mutate(To = str_trim(To),
+                       From = str_trim(From)) %>%
+                filter(!(From==To)) %>%
+                group_by(From, To) %>%
+                summarise(count=n()) %>%
+                rename(weight = count)
     
     
     nodes_df <- data.frame(id = unique(c(links$From, links$To))) %>%
@@ -695,7 +695,8 @@ server <- function(input, output, session) {
                       title = "CEO"))
     
     email_network <- graph_from_data_frame(d = links, 
-                                           vertices = nodes_df, directed = T)
+                                           vertices = nodes_df, 
+                                           directed = T)
     
     email_network <- simplify(email_network)
     
@@ -754,8 +755,9 @@ server <- function(input, output, session) {
     
     nodes$color.highlight.background <- "brown"
     
-    nodes <- nodes %>% mutate(font.size = 25, 
-                              font.weight= 1000)
+    nodes <- nodes %>% 
+              mutate(font.size = 25,
+                     font.weight= 1000)
     
     
     lnodes <- data.frame(shape = rep('square',6),

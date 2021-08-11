@@ -1,7 +1,7 @@
 library(shiny)
 library(rsconnect)
 library(shinythemes)
-library(clock)
+#library(clock)
 library(tidyverse)
 library(plotly)
 library(lubridate)
@@ -49,7 +49,7 @@ ui <- navbarPage(
   tabPanel("Background Situation", "To be Updated"),
   
   tabPanel("Exploratory Data Analysis", 
-           
+           titlePanel("Transactions - For Exploration!"),
            fluidRow(
              column(2, 
                     
@@ -138,7 +138,7 @@ ui <- navbarPage(
                                 min = 0, max = 9736, value = c(1000,2000)
                     ),#close bracket for sliderInput
                     
-                    submitButton("Apply Selected")
+                    #submitButton("Apply Selected")
                     
                     
                     ), #close brackets for column(2), need comma
@@ -253,7 +253,7 @@ ui <- navbarPage(
                                  
                                ),#close bracket with comma for selectInput
                                
-                               submitButton("Apply changes")
+                               #submitButton("Apply changes")
                                
                               ),#close bracket with comma for column(4)
                         
@@ -269,6 +269,67 @@ ui <- navbarPage(
                       
                       ),#close bracket with comma for Plot
              
+             tabPanel("Analysis for Specific Cards",
+                      titlePanel("Transactions for Specific Cards"),
+                      
+                      fluidRow(
+                        column(2,
+                               radioButtons(
+                                 inputId = "rtradiospeccardA",
+                                 label = "Select Card Type",
+                                 choices = c("Credit Card", "Loyalty Card"),
+                                 selected = "Credit Card"
+                               ),#close bracket w comma for radiobutton
+                               
+                               conditionalPanel(
+                                 condition = "input.rtradiospeccardA == 'Credit Card'",
+                                 selectInput(
+                                   inputId = "rtspeccreditA",
+                                   label = "Last 4 Digits of Card",
+                                   choices = unique(cc_data$last4ccnum)
+                                 )
+                               ), #close bracket w comma for conPanel
+                               
+                               conditionalPanel(
+                                 condition = "input.rtradiospeccardA == 'Credit Card'",
+                                 radioButtons(
+                                   inputId = "rtradiospeccardfillA",
+                                   label = "Select Fill Type",
+                                   choices = list(
+                                     "Transaction Price" = "price",
+                                     "Time Period" = "TimeCat"
+                                   ),
+                                   selected = "price"
+                                 ) #close bracket wo comma for radioButton
+                               ), #close bracket w comma for conPanel
+                               
+                               conditionalPanel(
+                                 condition = "input.rtradiospeccardA == 'Loyalty Card'",
+                                 selectInput(
+                                   inputId = "rtspecloyaltyA",
+                                   label = "Loyalty Card No.",
+                                   choices = unique(loyalty_data$loyaltynum)
+                                 )
+                               ), #close bracket w comma for conPanel
+                                
+                        ), #close bracket with comma for column
+                        
+                        column(10,
+                               
+                               conditionalPanel(
+                                 condition = "input.rtradiospeccardA == 'Loyalty Card'",
+                                 plotlyOutput(outputId = "rtspeclcA"),
+                                 DT::dataTableOutput("rtspeclctableA"),
+                                 "To be UpdatedC"
+                                 
+                               )
+                        ), #close bracket with comma for column
+                        
+                      ), #close bracket with comma for fluidRow
+                      
+               
+             ), #close bracket with comma for Specific Card Analysis Tab
+             
              
              tabPanel("Transaction Amount Analysis",
                       
@@ -280,8 +341,8 @@ ui <- navbarPage(
                                  inputId = "rtlocationcat",
                                  label = "Location Category",
                                  choices = unique(distinctloc$category),
-                                 selected = distinctloc$category[1]),
-                               submitButton("Apply Selected")
+                                 selected = distinctloc$category[1])
+                               #submitButton("Apply Selected")
                         ),#close bracket with comma for column(2)
                         
                         column(10,
@@ -313,9 +374,9 @@ ui <- navbarPage(
                                    label = "Loyalty Card No.",
                                    choices = unique(loyalty_data$loyaltynum)
                                  )
-                               ),#close bracket with comma for conditionalPanel
+                               )#close bracket wo comma for conditionalPanel
                                
-                               submitButton("Apply Selected")
+                               #submitButton("Apply Selected")
                         ),#close bracket with comma for column(2)
                         
                         column(10,

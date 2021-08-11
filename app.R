@@ -164,9 +164,35 @@ ui <- navbarPage(
     tabPanel(title = 'Employees of GasTech',
              
              column(width=3,
-                    radioButtons(inputId = 'view_select', label='Overview or Person Look-up', choices = c('Person','Overview'))
-        
+                    radioButtons(inputId = 'view_select', 
+                                 label='Overview or Person Look-up', 
+                                 choices = c('Person','Overview')
+                                 ),
+                    conditionalPanel(
+                      condition = "input$view_select == 'Person'",
+                      selectInput(inputId = 'biodata_select', 
+                                  label = 'Employee', 
+                                  choices = unique(df.emp$FullName)
+                                  )
+                    
+                      
+                          ),
+                    conditionalPanel(
+                      
+                      condition = "input$view_select == 'Overview'",
+                      selectInput(inputId = 'biodata_select', 
+                                  label = 'Employee', 
+                                  choices = c('Year Joined','Timings of Emails')
+                      )
+                      
+                      
                     )
+
+                    ), # close bracket for column 1
+             column(width=9,
+                    
+                    
+                    ) # close bracket for column 2
              
              
              )  #close brackets for tabPanel for Emp of GasTech
@@ -178,8 +204,7 @@ ui <- navbarPage(
   navbarMenu("Inferential Statistics", 
              tabPanel("Email Network Analysis",
                       
-                      sidebarLayout(
-                        sidebarPanel('Inputs',
+                      column(width=3, 
                                      dateRangeInput(inputId = 'date', 
                                                     label = 'Date Filter', 
                                                     start = min(df.emails$Date.Date), 
@@ -191,7 +216,7 @@ ui <- navbarPage(
                                                  max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
                                                  value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
                                                            as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')),
-                                                 step = 1,
+                                                 step = 2*60*60,
                                                  timeFormat = "%H:%M",
                                                  timezone = "GMT"
                                      ),
@@ -206,9 +231,9 @@ ui <- navbarPage(
                                      textInput(inputId = 'search', label = 'Email Text Search'),
                                      
                                      actionButton(inputId = 'go', label = "Display")
-                        ),
+                        ), #close bracket without comma for column1
                         
-                        mainPanel(
+                        column(width=9,
                           tabsetPanel(
                             tabPanel('Email Overview',
                                      plotlyOutput(outputId = 'email_convo')),
@@ -216,32 +241,34 @@ ui <- navbarPage(
                                      DT::dataTableOutput(outputId = 'table')),
                             tabPanel('Network Overview',
                                      visNetworkOutput(outputId = 'vis_email')
-                                    )#close bracket for tabpanel
-                            
-                                  )#close bracket without comma for tabsetPanel
+                                    ) #close bracket for tabpanel
+                                  ) #close bracket without comma for tabsetPanel
                           
-                               )#close bracket without comma for mainPanel
+                               ) #close bracket without comma for column2
                         
-                          )#close bracket without comma for sidebarLayout
-                      
-                      ),#close bracket with comma for Email
+                      ), #close bracket with comma for tab Panel Email
              
              tabPanel("Networks",
                       
-                      sidebarLayout(
-                        sidebarPanel('Inputs',
-                                     radioButtons(inputId = 'node_sizings',
-                                                  label="Size by",
-                                                  choices = c('None','Betweenness', 'Degree', 'Closeness'),
-                                                  selected = 'None')),
-                        mainPanel(column(width=5, 
-                                         visNetworkOutput(outputId = 'vis_dept',width = "100%", height = 700)),
-                                  column(width = 5, 
-                                         visNetworkOutput(outputId = 'vis_dept_sub',width = "100%", height = 700))
-                                  )#close without comma bracket for mainPanel
-                        
-                              )#close bracket without comma for sidebarLayout
+                        column(width = 3,
+                               radioButtons(inputId = 'node_sizings',
+                                            label="Size by",
+                                            choices = c('None','Betweenness', 'Degree', 'Out-Degree', 'In-Degree', 'Closeness'),
+                                            selected = 'None'),
+                               checkboxInput(inputId = 'arrow',label = "Show Arrow", value = T)
+                               
+                               ), # close bracket for column
                       
+                        column(width=6, 
+                               visNetworkOutput(outputId = 'vis_dept',width = "100%", height = 700)
+                               ),
+                      
+                        column(width=3, 
+                               visNetworkOutput(outputId = 'vis_dept_sub',width = "100%", height = 700)
+                               ),
+                        
+
+
                       ),#close bracket with comma for Networks
              
              tabPanel("Employee Movement Plot",
@@ -668,7 +695,7 @@ server <- function(input, output, session) {
                       title = "CEO"))
     
     email_network <- graph_from_data_frame(d = links, 
-                                           vertices = nodes_df)
+                                           vertices = nodes_df, directed = T)
     
     email_network <- simplify(email_network)
     
@@ -695,6 +722,20 @@ server <- function(input, output, session) {
                           group = V(email_network)$department,
                           size = sizing)
       
+    }else if (input$node_sizings=='Out-Degree'){
+      sizing <- data.frame(size = round(degree(email_network, mode = 'out')*1.5))
+      
+      nodes <- data.frame(id = V(email_network)$name, 
+                          title = V(email_network)$name, 
+                          group = V(email_network)$department,
+                          size = sizing)
+    }else if (input$node_sizings=='In-Degree'){
+      sizing <- data.frame(size = round(degree(email_network, mode='in')*1.5))
+      
+      nodes <- data.frame(id = V(email_network)$name, 
+                          title = V(email_network)$name, 
+                          group = V(email_network)$department,
+                          size = sizing)
     }else if (input$node_sizings=='Closeness'){
       sizing <- data.frame(size = round(closeness(email_network)*5000))
       
@@ -736,16 +777,23 @@ server <- function(input, output, session) {
     )
     
     
+    if (input$arrow){
+      show <- 'middle'
+      
+    }else{
+      show<- NULL
+    }
     
+    set.seed(399)
     
     p <- visNetwork(nodes = nodes, 
                     edges = edges,  width = "100%", height = 700) %>%
-      visOptions(highlightNearest = list(enabled = T, degree = 1), 
-                 nodesIdSelection = T,
-                 selectedBy = "group"
+      visOptions(highlightNearest = list(enabled = T, degree = 1)#, 
+                 #nodesIdSelection = T,
+                 #selectedBy = "group"
                  
       ) %>% 
-      visEdges(width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
+      visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
       visLayout(randomSeed = 123) %>%
       visNodes(labelHighlightBold = T) %>%
       #visPhysics(stabilization = 5,
@@ -797,7 +845,7 @@ server <- function(input, output, session) {
                              highlight = list(border = "#E129F0", background = "#EB7DF4"),
                              hover = list(background = "#E129F0", border = "#EB7DF4")
                 )) %>%
-      visLegend(zoom = T, addNodes = lnodes, useGroups = F) %>%
+      visLegend(zoom = T, addNodes = lnodes, useGroups = F, width = 0.15) %>%
       visEvents(selectNode = "function(nodes) {
             Shiny.onInputChange('current_node_id', nodes);
             ;}")
@@ -880,15 +928,23 @@ server <- function(input, output, session) {
                              font.size = rep(20,6)
         )
         
+        if (input$arrow){
+          show <- 'middle'
+          
+        }else{
+          show<- NULL
+        }
+        
+        set.seed(399)
         
         p <- visNetwork(nodes = nodes, 
                         edges = edges,  width = "100%", height = 700) %>%
-          visOptions(highlightNearest = list(enabled = T, degree = 1), 
-                     nodesIdSelection = T,
-                     selectedBy = "group"
+          visOptions(highlightNearest = list(enabled = T, degree = 1)#, 
+                     #nodesIdSelection = T,
+                     #selectedBy = "group"
                      
           ) %>% 
-          visEdges(width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
+          visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
           visLayout(randomSeed = 123) %>%
           visNodes(labelHighlightBold = T) %>%
           #visPhysics(stabilization = 5,
@@ -897,7 +953,7 @@ server <- function(input, output, session) {
           #                                   centralGravity = 0.5)) %>%
           visIgraphLayout(layout = "layout_nicely") %>%
           visInteraction(multiselect = TRUE) %>%
-          visLegend(enabled = T) %>%
+          visLegend(enabled = F) %>%
           visGroups(groupname = "Executive", 
                     # Red
                     color = list(border = "#FA0A10", 
@@ -939,8 +995,8 @@ server <- function(input, output, session) {
                                  background = "#EB7DF4", 
                                  highlight = list(border = "#E129F0", background = "#EB7DF4"),
                                  hover = list(background = "#E129F0", border = "#EB7DF4")
-                    )) %>%
-          visLegend(zoom = T, addNodes = lnodes, useGroups = F) 
+                    )) #%>%
+          #visLegend(zoom = T, addNodes = lnodes, useGroups = F) 
         
         
         

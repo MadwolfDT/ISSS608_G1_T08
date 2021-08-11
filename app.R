@@ -38,7 +38,7 @@ loyalty_data <- read_csv("data/loyalty_data.csv")
 gps <- read_csv("data/gps.csv")
 
 ###############################################################################
-browser()
+
 ##########################cleaning MC 2 data###################################
 
 source('scripts/dt_clean_data.r')

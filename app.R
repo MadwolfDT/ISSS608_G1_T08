@@ -30,6 +30,8 @@ library(textdata)
 library(corporaexplorer) 
 library(topicmodels)
 library(widyr)
+library(shinyWidgets)
+library(shinyjs)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
@@ -51,6 +53,9 @@ ui <- navbarPage(
   navbarMenu(
     "Exploratory Data Analysis",
     tabPanel(title = "Transactions - For Exploration!",
+             
+             titlePanel("Transactions - An Overview"),
+             
            fluidRow(
              column(2, 
                     
@@ -379,64 +384,77 @@ ui <- navbarPage(
              ),#close bracket with comma for Plot
              
              tabPanel("Analysis for Specific Cards",
+                      useShinyjs(),
                       titlePanel("Transactions for Specific Cards"),
                       
                       fluidRow(
                         column(2,
-                               radioButtons(
-                                 inputId = "rtradiospeccardA",
-                                 label = "Select Card Type",
-                                 choices = c("Credit Card", "Loyalty Card"),
-                                 selected = "Credit Card"
-                               ),#close bracket w comma for radiobutton
                                
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Credit Card'",
-                                 selectInput(
-                                   inputId = "rtspeccreditA",
-                                   label = "Last 4 Digits of Card",
-                                   choices = unique(cc_data$last4ccnum)
-                                 )
-                               ), #close bracket w comma for conPanel
+                               prettyRadioButtons(
+                                 inputId = "rtjellytop",
+                                 label = "Fill by:",
+                                 choices = c("Credit Card", "Loyalty Card"
+                                             ), #close bracket w comma for c
+                                 selected = "Credit Card",
+                                 icon = icon("check"),
+                                 inline = FALSE,
+                                 bigger = TRUE,
+                                 status = "info",
+                                 animation = "jelly"
+                               ), #close bracket w comma for prettyradiobutt
                                
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Credit Card'",
-                                 radioButtons(
-                                   inputId = "rtradiospeccardfillA",
-                                   label = "Select Fill Type",
-                                   choices = list(
-                                     "Transaction Price" = "price",
-                                     "Time Period" = "TimeCat"
-                                   ),
-                                   selected = "price"
-                                 ) #close bracket wo comma for radioButton
-                               ), #close bracket w comma for conPanel
+                               selectInput(
+                                 inputId = "rtspeccreditA",
+                                 label = "Credit Card (Top)",
+                                 choices = unique(cc_data$last4ccnum)
+                               ),#close bracket w comma for selectinput
                                
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Loyalty Card'",
-                                 selectInput(
-                                   inputId = "rtspecloyaltyA",
-                                   label = "Loyalty Card No.",
-                                   choices = unique(loyalty_data$loyaltynum)
-                                 )
-                               ), #close bracket w comma for conPanel
-                                
-                        ), #close bracket with comma for column
+                               prettyRadioButtons(
+                                 inputId = "rtjellyA",
+                                 label = "Fill by:",
+                                 choices = list(
+                                   "Transaction Price" = "price",
+                                   "Time Period" = "TimeCat"
+                                 ), #close bracket w comma for list
+                                 selected = "price",
+                                 icon = icon("check"),
+                                 inline = TRUE,
+                                 bigger = TRUE,
+                                 status = "info",
+                                 animation = "jelly"
+                               ), #close bracket w comma for radiobutt
+                               
+                               selectInput(
+                                 inputId = "rtspecloyaltyA",
+                                 label = "Loyalty Card No.",
+                                 choices = unique(loyalty_data$loyaltynum)
+                               ), #close bracket w comma for selectinput
+                               
+                               selectInput(
+                                 inputId = "rtspeccreditB",
+                                 label = "Credit Card (Bottom)",
+                                 choices = unique(cc_data$last4ccnum)
+                                 
+                               ), #close bracket w comma for selectinput
+                               ), #close bracket w comma for column
                         
                         column(10,
-                               
-                               conditionalPanel(
-                                 condition = "input.rtradiospeccardA == 'Loyalty Card'",
-                                 plotlyOutput(outputId = "rtspeclcA"),
-                                 DT::dataTableOutput("rtspeclctableA"),
-                                 "To be UpdatedC"
-                                 
-                               )
-                        ), #close bracket with comma for column
+                               #price plots credit
+                               plotlyOutput(outputId = "rtccpricetop"),
+                               DT::dataTableOutput("rtccpricetabletop"),
+                               #time plots credit
+                               plotlyOutput(outputId = "rtcctimetop"),
+                               DT::dataTableOutput("rtcctimetabletop"),
+                               #plots loyalty
+                               plotlyOutput(outputId = "rtlctop"),
+                               DT::dataTableOutput("rtlctabletop")
+                              
+                               ), #close bracket w comma for column
                         
-                      ), #close bracket with comma for fluidRow
+                        ), #close bracket w comma for fluidRow
                       
-               
+                      
+                      
              ), #close bracket with comma for Specific Card Analysis Tab
              
              
@@ -1291,11 +1309,39 @@ server <- function(input, output, session) {
     
   })#close curly and brackers for observe, without comma
   
+  ################################
+  ####SPECIFIC CARD TILE PLOTS####
+  ################################
+  
+    output$rtccpricetop <- renderPlotly({
+      
+      #user selection
+      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>% 
+        mutate(date = as.POSIXct.Date(date))
+      
+      #cc txn tile (fill by price)
+      indivccplotA <- ggplot(indivcc, aes(date, location)) +
+        geom_tile(aes(fill = price)) +
+        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+        labs(title = "All Transactions (for Specified Credit Card)") +
+        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+        theme(axis.text.x = element_text(angle = 0),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank()) +
+        theme(legend.key.height = unit(1, "cm"))
+      
+      ggplotly(indivccplotA)
+      
+    }) #close curly and brackers for pricetiletop, without comma
+  
+  
+  
+  
   #########################
   ##### Txn Box Plot ######
   #########################
   
-  output$TxnBoxPlotA <- renderPlotly({
+    output$TxnBoxPlotA <- renderPlotly({
     
     #Combining the cc_data and loyalty_data
     ccloyal <- dplyr::bind_rows(list(cc_data = cc_data, loyalty_data = loyalty_data), .id='Source')
@@ -1381,6 +1427,43 @@ server <- function(input, output, session) {
     
   })#close curly and brackers for output$TxnScatterLoyalty, without comma
   
+  
+  #########ALL SHINYJS OBSERVEEVENTS#########
+  
+  observeEvent(input$rtradiospeccardA, {
+    
+    if(input$rtradiospeccardA == "Credit Card"){
+      shinyjs::hide(id = "rtspecloyaltyA")
+      shinyjs::hide(id = "rtspeclcA")
+      shinyjs::show(id = "rtspeccreditA")
+      shinyjs::show(id = "rtradiospeccardfillA")
+    }else if(input$rtradiospeccardA == "Loyalty Card"){
+      shinyjs::hide(id = "rtspeccreditA")
+      shinyjs::hide(id = "rtradiospeccardfillA")
+      shinyjs::show(id = "rtspecloyaltyA")
+      shinyjs::show(id = "rtspeclcA")
+        }
+    })
+
+  observeEvent(input$rtradio, {
+    
+    if(input$rtradio == "Credit Card"){
+      shinyjs::hide(id = "rtloyalcard")
+      shinyjs::hide(id = "TxnScatterLoyalty")
+      shinyjs::show(id = "rtcreditcard")
+      shinyjs::show(id = "TxnScatterCredit")
+    } else if(input$rtradio == "Loyalty Card"){
+      shinyjs::hide(id = "rtcreditcard")
+      shinyjs::hide(id = "TxnScatterCredit")
+      shinyjs::show(id = "rtloyalcard")
+      shinyjs::show(id = "TxnScatterLoyalty")
+    }
+    
+  })
+  
+  
+  
+  ####################################
   
 }#close curly bracket for server
 

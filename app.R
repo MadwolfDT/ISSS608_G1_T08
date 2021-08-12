@@ -195,7 +195,35 @@ ui <- navbarPage(
                     ) # close bracket for column 2
              
              
-             )  #close brackets for tabPanel for Emp of GasTech
+             ),  #close brackets for tabPanel for Emp of GasTech
+    tabPanel(
+      title = "Email Correspondence",
+      column(width=3,
+      dateRangeInput(inputId = 'date', 
+                     label = 'Date Filter', 
+                     start = min(df.emails$Date.Date), 
+                     end = max(df.emails$Date.Date)
+      ),
+      sliderInput(inputId = 'time',
+                  label = 'Time Filter', 
+                  min = as.POSIXct("1990-01-01 00:00:00", tz = 'GMT'), 
+                  max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
+                  value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
+                            as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')
+                            ),
+                  step = 2*60*60,
+                  timeFormat = "%H:%M",
+                  timezone = "GMT"
+      ),
+      selectInput(inputId = 'person', 
+                  label= 'Employee', 
+                  choices = unique(df.emp$FullName))
+      ),
+      
+      column(width = 9, 
+             plotlyOutput(outputId = 'email_convo')
+             )
+      )
     
     
     
@@ -205,24 +233,24 @@ ui <- navbarPage(
              tabPanel("Email Network Analysis",
                       
                       column(width=3, 
-                                     dateRangeInput(inputId = 'date', 
-                                                    label = 'Date Filter', 
-                                                    start = min(df.emails$Date.Date), 
-                                                    end=max(df.emails$Date.Date)
-                                     ),
-                                     sliderInput(inputId = 'time',
-                                                 label = 'Time Filter', 
-                                                 min = as.POSIXct("1990-01-01 00:00:10", tz = 'GMT'), 
-                                                 max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
-                                                 value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
-                                                           as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')),
-                                                 step = 2*60*60,
-                                                 timeFormat = "%H:%M",
-                                                 timezone = "GMT"
-                                     ),
-                                     selectInput(inputId = 'person', 
-                                                 label= 'Employee', 
-                                                 choices = unique(df.emp$FullName)
+                                     # dateRangeInput(inputId = 'date', 
+                                     #                label = 'Date Filter', 
+                                     #                start = min(df.emails$Date.Date), 
+                                     #                end=max(df.emails$Date.Date)
+                                     # ),
+                                     # sliderInput(inputId = 'time',
+                                     #             label = 'Time Filter', 
+                                     #             min = as.POSIXct("1990-01-01 00:00:10", tz = 'GMT'), 
+                                     #             max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
+                                     #             value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
+                                     #                       as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')),
+                                     #             step = 2*60*60,
+                                     #             timeFormat = "%H:%M",
+                                     #             timezone = "GMT"
+                                     # ),
+                                      selectInput(inputId = 'person2', 
+                                                  label= 'Employee', 
+                                                  choices = unique(df.emp$FullName)
                                      ),
                                      radioButtons(inputId = 'dt_select', 
                                                   label='DataTable Displayed by:', 
@@ -234,15 +262,22 @@ ui <- navbarPage(
                         ), #close bracket without comma for column1
                         
                         column(width=9,
-                          tabsetPanel(
-                            tabPanel('Email Overview',
-                                     plotlyOutput(outputId = 'email_convo')),
-                            tabPanel('Tabular Overview',
-                                     DT::dataTableOutput(outputId = 'table')),
-                            tabPanel('Network Overview',
-                                     visNetworkOutput(outputId = 'vis_email')
+                          
+                            #tabPanel('Email Overview',
+                             #        plotlyOutput(outputId = 'email_convo')),
+                            
+                            span(textOutput(outputId = 'info_message'), style='font-size: 20px;font-family:"News Cycle", "Arial Narrow Bold", sans-serif;'),
+                            h2(' '),
+                            tabsetPanel(
+                            tabPanel("Network",
+                                    visNetworkOutput(outputId = 'vis_email',
+                                                     width = "100%", 
+                                                     height = 700)
+                                     ),
+                            tabPanel("Table",
+                                     DT::dataTableOutput(outputId = 'table')
                                     ) #close bracket for tabpanel
-                                  ) #close bracket without comma for tabsetPanel
+                                   )#close bracket without comma for tabsetPanel
                           
                                ) #close bracket without comma for column2
                         
@@ -250,22 +285,29 @@ ui <- navbarPage(
              
              tabPanel(title = "Networks",
                       
-                        column(width = 3,
+                        column(width = 2,
                                h3("Node Sizing"),
                                radioButtons(inputId = 'node_sizings',
                                             label=NULL,
-                                            choices = c('None','Betweenness', 'Degree', 'Out-Degree', 'In-Degree', 'Closeness'),
+                                            choices = c('None',
+                                                        'Betweenness', 
+                                                        'Degree', 
+                                                        'Out-Degree', 
+                                                        'In-Degree', 
+                                                        'Closeness'),
                                             selected = 'None'),
                                h3("Modifying Aesthetics"),
-                               checkboxInput(inputId = 'arrow',label = "Show", value = T),
-                               actionButton(inputId = 'about', label=NULL, icon = icon(name='info')),
+                               checkboxInput(inputId = 'arrow',label = "Show Direction of Edges", value = T),
+                               actionButton(inputId = 'about', 
+                                            label=NULL, 
+                                            icon = icon(name='info')),
                                numericInput(inputId = 'min_width', label='Minimum Width', min =0.1, max=5, value = 0.5),
                                numericInput(inputId = 'max_width', label='Maximum Width', min =5, max=15,value = 7)
                               
                                ), # close bracket for column
                         
                       
-                        column(width=6, 
+                        column(width=7, 
                                visNetworkOutput(outputId = 'vis_dept',
                                                 width = "100%", 
                                                 height = 700)
@@ -500,6 +542,7 @@ server <- function(input, output, session) {
   #########################
   ###For Email Convo    ###
   #########################  
+  output$info_message<- renderText({if(input$go == 0){paste("Click on the Display Button to render the output")} else{return()}})
   
   observeEvent(input$about,
                {showModal(modalDialog(title = "Help Box",
@@ -556,7 +599,7 @@ server <- function(input, output, session) {
       
       
       temp_g <- m %>% 
-        filter(To == input$person | From == input$person)
+        filter(To == input$person2 | From == input$person2)
       
       temp_g <- temp_g %>% 
         select(From, From_title, To, To_title, Date.Date, Date.Time, Subject) 
@@ -578,21 +621,25 @@ server <- function(input, output, session) {
       
       
       temp_g <- m %>% 
-        filter(To == input$person | From == input$person) %>%
+        filter(To == input$person2 | From == input$person2) %>%
         filter(str_detect(s, str_replace_all(input$search,',','|')))
       
       temp_g <-temp_g %>% 
         select(From, From_title, To, To_title, Date.Date, Date.Time, Subject) 
     }
+
   })#close brackets for temp_g_vf
+  
+  
   
   #########################
   ###For output$table   ###
   ######################### 
   
   output$table <- DT::renderDT({
-    DT::datatable(data = temp_g_vf(), fillContainer = F, 
-                  options = list(pageLength = 10),
+    DT::datatable(data = temp_g_vf(), 
+                  fillContainer = F, 
+                  options = list(pageLength = 7),
                   rownames = F)
   })#close brackets for output$table
   
@@ -602,6 +649,7 @@ server <- function(input, output, session) {
   
   output$vis_email <- renderVisNetwork({
     
+
     temp_g_links <- temp_g_vf() %>% 
       select(From, To, Subject) %>% 
       rename(group = Subject)
@@ -640,6 +688,7 @@ server <- function(input, output, session) {
     )
     
     data <- toVisNetworkData(temp_graph)
+    
     
     visNetwork(data$nodes, data$edges) %>%
       visEdges(arrows = "middle",width = 0.01,length = 5, scaling = list(min=0.1,max=3)) %>%

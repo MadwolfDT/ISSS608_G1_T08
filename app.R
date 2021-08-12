@@ -395,7 +395,7 @@ ui <- navbarPage(
              
              tabPanel("Analysis for Specific Cards",
                       useShinyjs(),
-                      titlePanel("Transactions for Specific Cards"),
+                      titlePanel("Compare Transactions for Specific Cards"),
                       
                       fluidRow(
                         column(2,
@@ -1402,7 +1402,33 @@ server <- function(input, output, session) {
       
     }) #close bracket and curly wo comma for credit time tile
   
-  
+    #For specific loyaltycard tile plot
+    
+    output$rtlctop <- renderPlotly({
+      
+      #User Selection
+      indivlc <- loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyA) %>% 
+        mutate(date = as.POSIXct.Date(timestamp))
+      
+      #lc txn tile (fill by price)
+      indivlcplot <- ggplot(indivlc, aes(date, location)) +
+        geom_tile(aes(fill = price)) +
+        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+        labs(title = "All Transactions (for Specified Loyalty Card)") +
+        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+        theme(axis.text.x = element_text(angle = 0),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank()) +
+        theme(legend.key.height = unit(1, "cm"))
+      
+      ggplotly(indivlcplot) 
+      
+      
+    }) #close bracket and curly wo comma for loyalty tile
+    
+    #For DataTables (Specific Card)
+    
+    
   #########################
   ##### Txn Box Plot ######
   #########################

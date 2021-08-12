@@ -202,6 +202,13 @@ refinedPOI_gps <- x %>%
   dplyr::select(-c(lat_interval, long_interval, numberoflocations)) %>%
   mutate(lat = lat11, long = long11)
 
+#detailed distinct POIs
+detailedPOI_gps <- x %>%
+  dplyr::select(-c(lat_interval, long_interval, numberoflocations)) %>%
+  mutate(lat = as.numeric(lat11), long = as.numeric(long11)) %>%
+  mutate(category = ifelse((lat == 36.0480 & long == 24.8796) | 
+                             (lat == 36.0481 & long == 24.8796) , "GASTech", ""))
+
 ###############################map plotting codes##############################
 
 m_simplified_home_list_sf <- st_as_sf(m_simplified_home_list, 

@@ -306,19 +306,33 @@ ui <- navbarPage(
                                
                                #submitButton("Apply changes")
                                
-                              ),#close bracket with comma for column(4)
+                        ),#close bracket with comma for column(4)
                         
-                        column(8,tmapOutput("mapPlot")
-                               ),#close bracket with comma for column(8)
-                              
-                              ),#close bracket with comma for fluidRow()
+                        column(8,
+                               
+                               tmapOutput("mapPlot"),
+                               
+                        ),#close bracket with comma for column(8)
+                        
+                      ),#close bracket with comma for fluidRow()
                       
                       fluidRow(
-                        column(6,"Selected Personnel Details"),#close bracket with comma for column(6)
-                        column(6,"Population Parking Details"),#close bracket with comma for column(6)
-                              ),#close bracket with comma for fluidRow()
+                        column(6,
+                               
+                               titlePanel("Locations Visited"),
+                               
+                               DT::dataTableOutput(outputId = 'dtemply_table')
+                               
+                        ),#close bracket with comma for column(6)
+                        
+                        column(6, titlePanel("Visitation Data"),
+                               
+                               
+                        ),#close bracket with comma for column(6)
+                        
+                      ),#close bracket with comma for fluidRow()
                       
-                      ),#close bracket with comma for Plot
+             ),#close bracket with comma for Plot
              
              tabPanel("Analysis for Specific Cards",
                       titlePanel("Transactions for Specific Cards"),
@@ -1039,24 +1053,160 @@ server <- function(input, output, session) {
     selected_gps <- gps %>%
       filter(id == selectedID$CarID & datestamp == input$dtdate)
     
-    gps_sf <- st_as_sf(selected_gps,
-                       coords = c("long", "lat"),
-                       crs = 4326)
+    dtemply_id <- selectedID$CarID
+    dtemply_date <- input$dtdate
+    dtemply_stop_time <- 60*3
     
-    #create GPS path
-    gps_path <- gps_sf %>%
-      summarize(m = mean(Timestamp),
-                do_union = FALSE) %>%
-      st_cast("LINESTRING")
+    dtemply_gps <- gps %>%
+      filter(id == dtemply_id, datestamp == dtemply_date) %>%
+      mutate(duration = seconds_to_period(Timestamp - lag(Timestamp)))
     
-    output$mapPlot <- renderTmap({
-      tmap_Base + tmap_home + tmap_refinedPOI +
-        tm_shape(gps_path) + 
+    dtemply_gps[order(dtemply_gps$Timestamp),]
+    
+    #check if the row is 1 or less
+    n <- nrow(dtemply_gps)
+    
+    no_data <- ifelse(n <= 1, TRUE, FALSE)
+    
+    if(!no_data){
+      
+      #trying to check if there are any duration more than dtemply_stop_time
+      j <- 0
+      for(i in 2:n){
+        
+        if(as.numeric(dtemply_gps$duration[i]) >= dtemply_stop_time) {
+          j <- j + 1
+        }
+        
+        no_duration <- ifelse(j < 1, TRUE, FALSE)
+        
+      }
+      
+    }
+    
+    if(!no_data & !no_duration){
+      
+      dtemply_locations <- dtemply_gps %>%
+        filter(duration >= dtemply_stop_time) %>%
+        mutate(lat11 = round(lat, digits = 4)) %>%
+        mutate(long11 = round(long, digits = 4)) %>%
+        dplyr::select(-c(id, datestamp)) %>%
+        mutate(arrival = Timestamp - duration) %>%
+        mutate(sequence = 1:n())
+      
+      x <- m_detailed_home_list %>%
+        dplyr::select("lat11", "long11", "category")
+      
+      z <- detailedPOI_gps %>%
+        dplyr::select("lat11", "long11", "category") %>%
+        filter(category != "")
+      
+      x <- rbind(x,z)
+      
+      y <- left_join(dtemply_locations, x, by = c("lat11" = "lat11", "long11" = "long11"))
+      
+      dtemply_locations <-  y
+      
+      col_order <- c("sequence", "arrival", "Timestamp", "duration", "lat", "long", "lat11", "long11", "category")
+      dtemply_locations <- dtemply_locations[, col_order]
+      
+      dtemply_home <- m_simplified_home_list %>%
+        filter(id == dtemply_id) %>%
+        distinct(lat11, long11)
+      
+      dtemply_path <- gps %>%
+        filter(id == dtemply_id) %>%
+        filter(datestamp == dtemply_date)
+      
+    }
+    
+    ##################################################
+    
+    if(!no_data & !no_duration){
+      
+      dtemply_locations_sf <- st_as_sf(dtemply_locations, 
+                                       coords = c("long11", "lat11"), 
+                                       crs = 4326) %>%
+        st_cast("POINT")
+      
+      dtemply_home_sf <- st_as_sf(dtemply_home, 
+                                  coords = c("long11", "lat11"), 
+                                  crs = 4326) %>%
+        st_cast("POINT")
+      
+      #convert to coordinates
+      dtemply_path_sf <- st_as_sf(dtemply_path,
+                                  coords = c("long", "lat"),
+                                  crs = 4326)
+      
+      #string to gps path
+      dtemply_gps_path_sf <- dtemply_path_sf %>%
+        summarize(m = mean(Timestamp),
+                  do_union = FALSE) %>%
+        st_cast("LINESTRING")
+      
+    }
+    
+    ##################################################
+    
+    if(!no_data & !no_duration){
+      
+      tmap_dtemply_home <- tm_shape(dtemply_home_sf) + 
+        tm_dots(size = 0.1,
+                alpha = 1,
+                col = "yellow")
+      
+      tmap_dtemply_locations <- tm_shape(dtemply_locations_sf) + 
+        tm_dots(size = 0.05,
+                alpha = 1,
+                col = "red")
+      
+      tmap_gps_path <- tm_shape(dtemply_gps_path_sf) + 
         tm_lines()
       
-      #print(selectedID)
+      output$mapPlot <- renderTmap({
+        tmap_Base + 
+          tmap_gps_path + 
+          tmap_home + 
+          tmap_refinedPOI +
+          tmap_dtemply_home + 
+          tmap_dtemply_locations
+        
+      })#close curly and brackers for output$mapPlot, without comma
       
-    })#close curly and brackers for output$mapPlot, without comma
+    }
+    
+    #########################
+    #For output$dtemply_table
+    ######################### 
+    
+    if(!no_data & !no_duration){
+      
+      output$dtemply_table <- DT::renderDT({
+        
+        data_dtemply_locations <- dtemply_locations %>%
+          rename("Order" = "sequence",
+                 "Depart" = "Timestamp",
+                 "Arrive" = "arrival",
+                 "Duration" = "duration",
+                 "Location" = "category",
+                 "Lat" = "lat11",
+                 "Long" = "long11") %>%
+          dplyr::select(-c("lat", "long"))
+        
+        data_dtemply_locations$Duration <- as.character(data_dtemply_locations$Duration)
+        
+        DT::datatable(data = data_dtemply_locations, fillContainer = F, 
+                      options = list(pageLength = 10),
+                      rownames = F)
+      })#close brackets for output$dtemply_table
+      
+    }#close bracket for the if() statement
+    else {
+      
+      #need to figure out how to printf "No Data Available"
+      
+    }
     
   })#close curly and brackers for observe, without comma
   

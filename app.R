@@ -259,7 +259,7 @@ ui <- navbarPage(
                                                   label='DataTable Displayed by:', 
                                                   choices = c('Person','Keywords', 'Both')
                                      ),
-                                     textInput(inputId = 'search', label = 'Email Text Search',value = ''),
+                                     textInput(inputId = 'search', label = 'Email Text Search',value = 'meeting'),
                                      
                                      actionButton(inputId = 'go', label = "Display")
                         ), #close bracket without comma for column1
@@ -782,7 +782,7 @@ server <- function(input, output, session) {
   
   output$vis_email <- renderVisNetwork({
     
-
+    tryCatch({
     temp_g_links <- temp_g_vf() %>% 
       select(From, To, Subject) %>% 
       rename(group = Subject)
@@ -873,7 +873,8 @@ server <- function(input, output, session) {
                 )) %>%
       visLegend(zoom = T, addNodes = lnodes, useGroups = F) %>%
       visInteraction(multiselect = TRUE)
-    
+    },
+    error = function(e){visNetwork(nodes = as.data.frame(unique(x_full$From)), edges = x_full[1:2])})
     
   })#close brackets for output$vis_email
   

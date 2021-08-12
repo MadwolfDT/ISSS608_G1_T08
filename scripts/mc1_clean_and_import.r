@@ -9,6 +9,7 @@ df.emails <- df.emails %>%
   mutate(Date = parse_date_time(x = Date, orders =c("%m%d%y %H%M","%m%d%y")))
 
 df.emails <- df.emails %>% 
+  mutate(Date = Date + seconds(x=10)) %>%
   mutate(Date.Date =  date(Date)) %>% 
   mutate(Date.Time =  hms::as_hms(Date))
 

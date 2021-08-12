@@ -206,9 +206,9 @@ ui <- navbarPage(
       ),
       sliderInput(inputId = 'time',
                   label = 'Time Filter', 
-                  min = as.POSIXct("1990-01-01 00:00:00", tz = 'GMT'), 
+                  min = as.POSIXct("1990-01-01 00:00:05", tz = 'GMT'), 
                   max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
-                  value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
+                  value = c(as.POSIXct("1990-01-01 00:00:05",tz = 'GMT'), 
                             as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')
                             ),
                   step = 2*60*60,
@@ -256,7 +256,7 @@ ui <- navbarPage(
                                                   label='DataTable Displayed by:', 
                                                   choices = c('Person','Keywords', 'Both')
                                      ),
-                                     textInput(inputId = 'search', label = 'Email Text Search'),
+                                     textInput(inputId = 'search', label = 'Email Text Search',value = ''),
                                      
                                      actionButton(inputId = 'go', label = "Display")
                         ), #close bracket without comma for column1
@@ -275,7 +275,9 @@ ui <- navbarPage(
                                                      height = 700)
                                      ),
                             tabPanel("Table",
-                                     DT::dataTableOutput(outputId = 'table')
+                                     h2(''),
+                                     column(width=1),
+                                     column(width=10, DT::dataTableOutput(outputId = 'table'))
                                     ) #close bracket for tabpanel
                                    )#close bracket without comma for tabsetPanel
                           
@@ -553,9 +555,12 @@ server <- function(input, output, session) {
     
     dat <- x_full %>%
       filter(From == input$person) %>%
-      filter(Date.Time >= as_hms(str_extract(input$time[1], pattern = '\\d\\d:\\d\\d:\\d\\d')), 
-             Date.Time <= as_hms(str_extract(input$time[2], pattern = '\\d\\d:\\d\\d:\\d\\d')) 
-      ) %>%
+      filter(Date.Time >= as_hms(str_extract(input$time[1], 
+                                             pattern = '\\d\\d:\\d\\d:\\d\\d')), 
+             
+             Date.Time <= as_hms(str_extract(input$time[2], 
+                                             pattern = '\\d\\d:\\d\\d:\\d\\d')) 
+            ) %>%
       filter(Date.Date >= input$date[1], 
              Date.Date <= input$date[2])
     
@@ -563,16 +568,25 @@ server <- function(input, output, session) {
       filter(From == input$person) %>% 
       select(From_dep, From_title)
     
+    tryCatch({
+    
     g <- ggplot(dat, aes(y=To, x=Date.Time))+ 
-      geom_point(#position=position_dodge(width=1),
-        size=2, alpha = 0.6, stroke=0.5, shape=21,
-        aes(text = sprintf("Sub: %s<br>Date: %s<br>To: %s<br>To_Title: %s<br>To_Dep: %s<br>Time Sent: %s<br>", 
-                           Subject2, 
-                           Date.Date, 
-                           To,
-                           To_title, 
-                           To_dep,
-                           Date.Time))) +
+        geom_point(#position=position_dodge(width=1),
+              size=2, alpha = 0.6, stroke=0.5, shape=21,
+              aes(text = sprintf("Sub: %s<br>Date: %s<br>To: %s<br>To_Title: %s<br>To_Dep: %s<br>Time Sent: %s<br>", 
+                                 Subject2, 
+                                 Date.Date, 
+                                 To,
+                                 To_title, 
+                                 To_dep,
+                                 strftime(Date.Time, format = '%H:%M')
+                                 )
+                  )
+              ) +
+      #scale_x_continuous(labels = strftime(Date.Time,format = '%H:%M')) + 
+      #scale_x_continuous( limits = c( 25000, 115000),
+      #                    breaks= c(28800,43200,57600,72000,86400,100800,115200),
+      #                    labels=c("08:00","12:00","16:00","20:00","24:00","04:00","08:00")) +
       geom_line(aes(group = Subject2, color= Subject2), size=0.2) +
       labs(y="",x="Time",title = paste(input$person,paste(unique(details), collapse = ',')), 
            group="", 
@@ -584,6 +598,22 @@ server <- function(input, output, session) {
     
     gg <- ggplotly(g, tooltip = c("text")) 
     gg
+     gg }, error = function(e){
+      
+      text = paste("There was no email correspondence in this time bracket",
+                    '<br>',
+                    "Please try a different time bracket on the slider")
+      ggplot() + 
+        annotate("text", x = 0, y = 20, size=8, label = text) + 
+         theme(element_blank(), 
+               axis.ticks = element_blank(),
+               axis.text = element_blank(),
+               axis.title = element_blank(),
+               panel.background = element_rect(fill='white')
+               )
+     
+       }
+     )
     
   })#close brackets for output$email_convo
   
@@ -606,7 +636,8 @@ server <- function(input, output, session) {
       
     }else if (input$dt_select == 'Keywords'){
       m <- x_full %>%
-        mutate(s = str_replace(Subject,"RE: ","")) 
+        mutate(s = str_replace(Subject,"RE: ","")) %>%
+        mutate(s = str_to_lower(s))
       
       
       temp_g <- m %>% 
@@ -617,7 +648,8 @@ server <- function(input, output, session) {
       
     }else{
       m <- x_full %>%
-        mutate(s = str_replace(Subject,"RE: ","")) 
+        mutate(s = str_replace(Subject,"RE: ","")) %>%
+        mutate(s = str_to_lower(s))
       
       
       temp_g <- m %>% 

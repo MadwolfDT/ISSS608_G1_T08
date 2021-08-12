@@ -348,6 +348,15 @@ ui <- navbarPage(
                                  
                                ),#close bracket with comma for selectInput
                                
+                               sliderInput(
+                                 inputId = "dtduration",
+                                 label = "Parking Duration",
+                                 min = 3,
+                                 max = 15,
+                                 value = c(5)
+                                 
+                               ),#close bracket for sliderInput
+                               
                                #submitButton("Apply changes")
                                
                         ),#close bracket with comma for column(4)
@@ -371,6 +380,7 @@ ui <- navbarPage(
                         
                         column(6, titlePanel("Visitation Data"),
                                
+                               girafeOutput(outputId = "dtemply_loc")
                                
                         ),#close bracket with comma for column(6)
                         
@@ -1136,7 +1146,7 @@ server <- function(input, output, session) {
     
     dtemply_id <- selectedID$CarID
     dtemply_date <- input$dtdate
-    dtemply_stop_time <- 60*3
+    dtemply_stop_time <- duration(input$dtduration, units = "minutes")
     
     dtemply_gps <- gps %>%
       filter(id == dtemply_id, datestamp == dtemply_date) %>%
@@ -1280,7 +1290,44 @@ server <- function(input, output, session) {
         DT::datatable(data = data_dtemply_locations, fillContainer = F, 
                       options = list(pageLength = 10),
                       rownames = F)
+        
       })#close brackets for output$dtemply_table
+      
+      output$dtemply_loc <- renderGirafe({
+        
+        distinct_dtemply_locations <- dtemply_locations %>%
+          distinct(lat11, long11, category, sequence) %>%
+          mutate("location" = ifelse(is.na(category), sequence, category)) %>%
+          filter(as.character(location) != "Home") %>%
+          dplyr::select(-c(sequence, category))
+        
+        dtemply_loc_plot_data <- semi_join(location_gps, distinct_dtemply_locations, by = c("lat11" = "lat11", "long11" = "long11")) %>%
+          filter(id <= 35) %>%
+          dplyr::select(lat11, long11, stop, id) %>%
+          left_join(distinct_dtemply_locations, by = c("lat11" = "lat11", "long11" = "long11")) %>%
+          left_join(car_data, by = c("id" = "CarID")) %>%
+          mutate(name = paste(FirstName, LastName, sep = " ")) %>%
+          select("lat11", "long11", "stop", "name", "location") %>%
+          rename("Duration" = "stop",
+                 "Name" = "name") %>%
+          dplyr::select(-c(lat11, long11))
+        
+        dtemploy_boxplot <- ggplot(data = dtemply_loc_plot_data,
+                                   aes(group = location,
+                                       tooltip = as.character(seconds_to_period(Duration)))) +
+          labs(y = "Location (Order/ Name)", x = "Duration in Seconds", title = "Time Spent at Location") +
+          geom_boxplot_interactive(aes(as_hms(Duration), location)) +
+          #scale_x_time(name = "Duration") +
+          theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),
+                axis.text.y = element_text(size = 7),
+                plot.title = element_text(hjust = 0.5))
+        
+        girafe(
+          ggobj = dtemploy_boxplot,
+          width_svg = 6,
+          height_svg = 6*0.618)
+        
+      })#close brackets for output$dtemply_loc
       
     }#close bracket for the if() statement
     else {

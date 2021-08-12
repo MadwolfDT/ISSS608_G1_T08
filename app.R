@@ -402,7 +402,7 @@ ui <- navbarPage(
                                
                                prettyRadioButtons(
                                  inputId = "rtjellytop",
-                                 label = "Fill by:",
+                                 label = "Select Card Type:",
                                  choices = c("Credit Card", "Loyalty Card"
                                              ), #close bracket w comma for c
                                  selected = "Credit Card",
@@ -1381,7 +1381,26 @@ server <- function(input, output, session) {
       
     }) #close curly and brackers for pricetiletop, without comma
   
-  
+    output$rtcctimetop <- renderPlotly({
+      
+      #user selection
+      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>% 
+        mutate(date = as.POSIXct.Date(date))
+      
+      indivccplotB <- ggplot(indivcc, aes(date, location)) +
+        geom_tile(aes(fill = TimeCat)) +
+        scale_color_brewer(palette = "Set2")+
+        labs(title = "All Transactions (for Specified Credit Card)") +
+        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+        theme(axis.text.x = element_text(angle = 0),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank()) +
+        theme(legend.key.height = unit(1, "cm"))
+      
+      ggplotly(indivccplotB)
+      
+      
+    }) #close bracket and curly wo comma for credit time tile
   
   
   #########################

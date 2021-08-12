@@ -167,35 +167,33 @@ ui <- navbarPage(
            
            ), #close brackets for tabPanel for EDA, need comma
     tabPanel(title = 'Employees of GasTech',
-             
+             titlePanel("Employee Bio-data Lookup"), 
              column(width=3,
+                    
                     radioButtons(inputId = 'view_select', 
                                  label='Overview or Person Look-up', 
                                  choices = c('Person','Overview')
                                  ),
-                    conditionalPanel(
-                      condition = "input$view_select == 'Person'",
+                    
                       selectInput(inputId = 'biodata_select', 
                                   label = 'Employee', 
                                   choices = unique(df.emp$FullName)
-                                  )
+                                  ),
                     
-                      
-                          ),
-                    conditionalPanel(
-                      
-                      condition = "input$view_select == 'Overview'",
-                      selectInput(inputId = 'biodata_select', 
-                                  label = 'Employee', 
-                                  choices = c('Year Joined','Timings of Emails')
-                      )
-                      
-                      
-                    )
+                      selectInput(inputId = 'biodata_select2', 
+                                  label = 'Charts', 
+                                  choices = c('Year Joined',
+                                              'Timings of Emails')
+                                  )
 
                     ), # close bracket for column 1
+             
              column(width=9,
-                    
+                    div(tableOutput(outputId = 'biodata_output'), 
+                        style='color:black;font-weight: bold;font-size: 20px;font-family:"News Cycle", "Arial Narrow Bold", sans-serif;'
+                        ),
+                    plotlyOutput(width = '100%', height='100%',outputId = 'overview_output')
+                  
                     
                     ) # close bracket for column 2
              
@@ -572,6 +570,81 @@ server <- function(input, output, session) {
   #########################
   ###For Email Convo    ###
   #########################  
+  
+  observeEvent(input$view_select,{
+    
+    if (input$view_select=="Person"){
+        shinyjs::hide(id = "biodata_select2")
+        shinyjs::show(id = "biodata_select")
+        shinyjs::show(id = 'biodata_output')
+        shinyjs::hide(id = 'overview_output')
+        
+    }else if(input$view_select=="Overview"){
+        shinyjs::show(id = "biodata_select")
+        shinyjs::show(id = "biodata_select2")
+        shinyjs::hide(id = 'biodata_output')
+        shinyjs::show(id = 'overview_output')
+    }
+    
+    
+  })
+  
+  output$overview_output <- renderPlotly({
+    
+    if (input$biodata_select2=='Year Joined'){
+      
+      df.emp <-df.emp %>% 
+        mutate(Approx_age = 2014 - year(BirthDate))
+      
+      age_df <- df.emp %>% 
+        select(FullName, Approx_age, CurrentEmploymentType) %>% 
+        mutate(FullName2 = fct_reorder(FullName,CurrentEmploymentType)) %>%
+        mutate(hjust = ifelse(Approx_age >60, 1.1, -0.1)) %>%
+        mutate(vjust =  ifelse(FullName2 == "Varja Lagos",0.5,10))
+      
+      g<- age_df %>% 
+        ggplot(aes(x = Approx_age, y= FullName2)) +
+        geom_point(aes(fill = CurrentEmploymentType), size=5, shape=21,stroke=0.1, color='black',alpha=0.7)  +
+        scale_fill_manual(values=c("#97C2FC","#FFFF00", "#FB7E81", "#7BE141","#EB7DF4","#7C29F0"))+
+        geom_text(aes(label=FullName2), vjust = 3, size=3,fontface = "bold")+
+        scale_x_continuous(breaks = c(10, 20, 25,30,35,40,45,50,55,60))+
+        expand_limits( y = c(-3, length(levels(age_df$FullName)) + 3)) +
+        labs(y="",x="Time",title = "Approximate Ages of GasTech Employees in 2014", color="Department") +
+        theme(legend.text = element_text(size = 8),
+              panel.background = element_rect(fill="white"),
+              panel.grid.major.x = element_line(color="#c9c9c9", linetype = 3),
+              panel.border = element_rect(color="grey", fill=NA),
+              plot.title = element_text(size=14),
+              axis.text.y = element_blank(),
+              axis.ticks.x  = element_blank(),
+              axis.ticks.y  = element_blank()
+              )
+      
+      gg <- ggplotly(g) %>% layout(height = 700)
+      gg
+      
+      
+    }
+    
+    
+  })
+  
+  output$biodata_output <- renderTable(rownames = F,bordered = F,striped = T,align = 'c', {
+    
+
+    df_tmp <- as.data.frame(t(subset(df.emp, FullName==input$biodata_select)))
+    df_tmp <- cbind(newColName = rownames(df_tmp), df_tmp)
+    rownames(df_tmp) <- 1:nrow(df_tmp)
+    
+    colnames(df_tmp) <- c('Bio-data','Details')
+    
+    df_tmp
+    
+    
+  }) 
+  
+  
+    
   output$info_message<- renderText({if(input$go == 0){paste("Click on the Display Button to render the output")} else{return()}})
   
   observeEvent(input$about,

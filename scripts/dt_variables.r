@@ -195,19 +195,94 @@ POI_gps <- location_gps %>%
   mutate(long_interval = long11 - lag(long11)) %>%
   mutate(lat = lat11, long = long11)
 
-x <- anti_join(POI_gps, m_detailed_home_list, by = c("lat11" = "lat11", "long11" = "long11"))
+x.refinedPOI_gps <- anti_join(POI_gps, m_detailed_home_list, by = c("lat11" = "lat11", "long11" = "long11"))
 
-refinedPOI_gps <- x %>%
+#distinct POIs
+refinedPOI_gps <- x.refinedPOI_gps %>%
   filter(!between(lat_interval, -0.0001, 0.0001) & !between(long_interval, -0.0001,0.0001) | is.na(lat_interval)) %>%
   dplyr::select(-c(lat_interval, long_interval, numberoflocations)) %>%
   mutate(lat = lat11, long = long11)
 
 #detailed distinct POIs
-detailedPOI_gps <- x %>%
+detailedPOI_gps <- x.refinedPOI_gps %>%
   dplyr::select(-c(lat_interval, long_interval, numberoflocations)) %>%
-  mutate(lat = as.numeric(lat11), long = as.numeric(long11)) %>%
-  mutate(category = ifelse((lat == 36.0480 & long == 24.8796) | 
-                             (lat == 36.0481 & long == 24.8796) , "GASTech", ""))
+  mutate(lat = as.numeric(lat11), long = as.numeric(long11))
+
+dtlat <- c(36.0480,
+           36.0481,
+           36.0743,
+           36.0658,
+           36.0671,
+           36.0640,
+           36.0529,
+           36.0572,
+           36.0509,
+           36.0546,
+           36.0544,
+           36.0557,
+           36.0696,
+           36.0675,
+           36.0817,
+           36.0895,
+           36.0604,
+           36.0603,
+           36.0597,
+           36.0634,
+           36.0632,
+           36.0598)
+
+dtlong <- c(24.8796,
+            24.8796,
+            24.8460,
+            24.8498,
+            24.8467,
+            24.8414,
+            24.8494,
+            24.8449,
+            24.8259,
+            24.8898,
+            24.8999,
+            24.9025,
+            24.8691,
+            24.8733,
+            24.8509,
+            24.8607,
+            24.8565,
+            24.8565,
+            24.8580,
+            24.8510,
+            24.8523,
+            24.8580)
+
+category <- c("GASTech",
+              "GASTech",
+              "Abila Scrap",
+              "Kronos Mart",
+              "Kronos Mart",
+              "Maximum Iron and Steel",
+              "Kronos Capital",
+              "Pilau Park",
+              "Abila Airport",
+              "Coffee Chameleon",
+              "Katrina's Cafe",
+              "Brew've Been Served",
+              "U-Pump",
+              "Jack's Magic Beans",
+              "Bean There, Done That",
+              "Desafio Golf Course",
+              "General Grocer",
+              "General Grocer",
+              "General Grocer",
+              "Robert and Sons",
+              "Roberts and Sons",
+              "General Grocer")
+
+detailednewPOIs <- data.frame(dtlat, dtlong, category)
+
+x.detailedPOI_gps <- left_join(detailedPOI_gps, detailednewPOIs, by = c("lat" = "dtlat", "long" = "dtlong"))
+
+detailedPOI_gps <- x.detailedPOI_gps
+
 
 ###############################map plotting codes##############################
 

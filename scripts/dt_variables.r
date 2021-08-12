@@ -12,7 +12,8 @@ revised_home_POI <- location_gps %>%
 #First set of detailed home list derived (for csv printing)
 detailed_home_list <- revised_home_POI %>%
   dplyr::select(-c(lat_interval,long_interval)) %>%
-  left_join(car_data, by = c("id" = "CarID"))
+  left_join(car_data, by = c("id" = "CarID")) %>%
+  mutate(category = "Home")
 
 #First set of home list derived
 simplified_home_list <- revised_home_POI %>%
@@ -43,7 +44,8 @@ detailed_home_list_9 <- x %>%
            between(lat_interval, -0.0001, 0.0001) | 
            between(long_interval, -0.0001, 0.0001)) %>%
   dplyr::select(-c(lat_interval, long_interval)) %>%
-  left_join(car_data, by = c("id" = "CarID"))
+  left_join(car_data, by = c("id" = "CarID")) %>%
+  mutate(category = "Home")
 
 simplified_home_list_9 <- left_join(x, emplyr_in_q, by = c("lat11" = "lat11", "long11" = "long11", "id" = "id")) %>%
   filter(count > 1) %>%
@@ -75,7 +77,8 @@ detailed_home_list_21 <- x %>%
            between(long_interval, -0.0001, 0.0001)) %>%
   dplyr::select(-c(lat_interval, long_interval)) %>%
   filter(!between(lat11, 36.0633, 36.0635) & !between(long11, 24.8961, 24.8963)) %>%
-  left_join(car_data, by = c("id" = "CarID"))
+  left_join(car_data, by = c("id" = "CarID")) %>%
+  mutate(category = "Home")
 
 simplified_home_list_21 <- left_join(x, emplyr_in_q, by = c("lat11" = "lat11", "long11" = "long11", "id" = "id")) %>%
   filter(count > 1) %>%
@@ -112,7 +115,8 @@ detailed_home_list_25 <- x %>%
            between(lat_interval, -0.0001, 0.0001) | 
            between(long_interval, -0.0001, 0.0001)) %>%
   dplyr::select(-c(lat_interval, long_interval)) %>%
-  left_join(car_data, by = c("id" = "CarID"))
+  left_join(car_data, by = c("id" = "CarID")) %>%
+  mutate(category = "Home")
 
 simplified_home_list_25 <- left_join(x, emplyr_in_q, by = c("lat11" = "lat11", "long11" = "long11", "id" = "id")) %>%
   filter(count > 1) %>%
@@ -144,7 +148,8 @@ detailed_home_list_28 <- x %>%
            between(lat_interval, -0.0001, 0.0001) | 
            between(long_interval, -0.0001, 0.0001)) %>%
   dplyr::select(-c(lat_interval, long_interval)) %>%
-  left_join(car_data, by = c("id" = "CarID"))
+  left_join(car_data, by = c("id" = "CarID")) %>%
+  mutate(category = "Home")
 
 simplified_home_list_28 <- left_join(x, emplyr_in_q, by = c("lat11" = "lat11", "long11" = "long11", "id" = "id")) %>%
   filter(count > 1) %>%
@@ -158,19 +163,19 @@ simplified_home_list_28 <- left_join(x, emplyr_in_q, by = c("lat11" = "lat11", "
 #############################################################################
 #reorder
 
-detailed_home_list <- detailed_home_list[c(4,5,6,7,1,2,3)]
+detailed_home_list <- detailed_home_list[c(4,5,6,7,1,2,3,8)]
 simplified_home_list <- simplified_home_list[c(4,5,6,7,1,2,3)]
 
-detailed_home_list_9 <- detailed_home_list_9[c(4,5,6,7,1,2,3)]
+detailed_home_list_9 <- detailed_home_list_9[c(4,5,6,7,1,2,3,8)]
 simplified_home_list_9 <- simplified_home_list_9[c(4,5,6,7,1,2,3)]
 
-detailed_home_list_21 <- detailed_home_list_21[c(4,5,6,7,1,2,3)]
+detailed_home_list_21 <- detailed_home_list_21[c(4,5,6,7,1,2,3,8)]
 simplified_home_list_21 <- simplified_home_list_21[c(4,5,6,7,1,2,3)]
 
-detailed_home_list_25 <- detailed_home_list_25[c(4,5,6,7,1,2,3)]
+detailed_home_list_25 <- detailed_home_list_25[c(4,5,6,7,1,2,3,8)]
 simplified_home_list_25 <- simplified_home_list_25[c(4,5,6,7,1,2,3)]
 
-detailed_home_list_28 <- detailed_home_list_28[c(4,5,6,7,1,2,3)]
+detailed_home_list_28 <- detailed_home_list_28[c(4,5,6,7,1,2,3,8)]
 simplified_home_list_28 <- simplified_home_list_28[c(4,5,6,7,1,2,3)]
 ##############################################################################
 
@@ -226,9 +231,9 @@ tmap_Base <- tm_shape(bgmap) +
 tmap_home <- tm_shape(m_simplified_home_list_sf) + 
   tm_dots(size = 0.05,
           alpha = 1,
-          col = "red")
+          col = "blue")
 
 tmap_refinedPOI <- tm_shape(refinedPOI_gps_sf) + 
   tm_dots(size = 0.02,
           alpha = 1,
-          col = "blue")
+          col = "cyan")

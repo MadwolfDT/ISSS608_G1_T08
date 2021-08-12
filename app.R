@@ -355,7 +355,7 @@ ui <- navbarPage(
                                
                                sliderInput(
                                  inputId = "dtduration",
-                                 label = "Parking Duration",
+                                 label = "Parking Duration (in minutes)",
                                  min = 3,
                                  max = 15,
                                  value = c(5)

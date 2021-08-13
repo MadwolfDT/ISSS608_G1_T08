@@ -1321,7 +1321,98 @@ server <- function(input, output, session) {
       return({{textdata}})
     }
     
-    showModal(modalDialog("Doing a function", footer=NULL))
+    CreateTextnet <- function(tidytextobject){
+      
+      # determine network type
+      node_type <- ifelse(names(tidytextobject)[1]=="lemma",
+                          "words",
+                          "groups")
+      
+      # determine if regular or signed nets
+      nets_type <- ifelse(ncol(tidytextobject)>3,
+                          "signed",
+                          "regular")
+      
+      # remove grouping allow arranging after adding tfidf
+      tidytextobject <- ungroup(tidytextobject)
+      
+      # create adjacency matrix for node_type groups
+      if(node_type=="groups"){
+        
+        # rename grouping variable for easier referencing
+        names(tidytextobject)[1] <- "group"
+        
+        # add tfidf for adjacency matrix
+        for_adjacency <- tidytextobject %>%
+          # calculate tfidf
+          bind_tf_idf(lemma, group, count) %>%
+          # sort on lemma
+          arrange(lemma)
+        
+        # remove lemmas used by only one author
+        for_adjacency <- for_adjacency %>% 
+          group_by(lemma) %>%
+          filter(n() > 1) %>% 
+          ungroup()
+        
+        # create sparse matrix of tfidfs
+        # this appears to work and provides a convenient wrapper around sparseMatrix
+        # the error appears to be related to some deprecated functions
+        suppressWarnings(for_crossprod <- cast_sparse(for_adjacency, row = group, col = lemma, value = tf_idf))
+        for_crossprod <- for_crossprod[sort(rownames(for_crossprod)),]
+        
+        # create sparse matrix of sentiment scores and multiply with tfidf matrix
+        if(nets_type=="signed"){
+          suppressWarnings(sent_matrix <- cast_sparse(for_adjacency, row = group, col = lemma, value = sentiment))
+          sent_matrix <- sent_matrix[sort(rownames(sent_matrix)),]
+          for_crossprod <- sent_matrix * for_crossprod
+        }
+        
+        # the line above is not working with the noun phrase function
+        # create weighted adjacency matrix
+        weighted_adjacency <- Matrix::tcrossprod(for_crossprod)
+        # create igraph object
+        text_network <- graph.adjacency(weighted_adjacency, mode="undirected", weighted = TRUE, diag = FALSE)
+      }
+      
+      # create adjacency matrix for node_type words
+      if(node_type=="words"){
+        
+        # rename grouping variable for easier referencing
+        names(tidytextobject)[2] <- "group"
+        
+        # add tfidf for adjacency matrix
+        for_adjacency <- tidytextobject %>%
+          # calculate tfidf
+          bind_tf_idf(group, lemma, count) %>%
+          # sort on lemma
+          arrange(group)
+        
+        # create sparse matrix
+        # this appears to work and provides a convenient wrapper around sparseMatrix
+        # the error appears to be related to some deprecated functions
+        suppressWarnings(for_crossprod <- cast_sparse(for_adjacency, row = lemma, col = group, value = tf_idf))
+        for_crossprod <- for_crossprod[sort(rownames(for_crossprod)),]
+        
+        # create sparse matrix of sentiment scores and multiply with tfidf matrix
+        if(nets_type=="signed"){
+          suppressWarnings(sent_matrix <- cast_sparse(for_adjacency, row = group, col = lemma, value = sentiment))
+          sent_matrix <- sent_matrix[sort(rownames(sent_matrix)),]
+          for_crossprod <- sent_matrix * for_crossprod
+        }
+        
+        # create weighted adjacency matrix
+        weighted_adjacency <- Matrix::tcrossprod(for_crossprod)
+        # create igraph object
+        text_network <- graph.adjacency(weighted_adjacency, mode="undirected", weighted = TRUE, diag = FALSE)
+      }
+      
+      return(text_network)
+      
+    }
+    
+    
+    showModal(modalDialog("Network under Construction!", footer="Please wait.."))
     
     emails_grouped<- df.emails %>% 
       mutate(To = str_split(To,pattern=',')) %>% 
@@ -1431,6 +1522,7 @@ server <- function(input, output, session) {
                                      "Administration",
                                      "Security",
                                      "Information Technology"),
+                           
                            color.background = c("#FB7E81",
                                                 "#7BE141",
                                                 "#FFFF00",
@@ -1683,7 +1775,8 @@ server <- function(input, output, session) {
                                background = "#EB7DF4", 
                                highlight = list(border = "#E129F0", background = "#EB7DF4"),
                                hover = list(background = "#E129F0", border = "#EB7DF4")
-                  )) %>%
+                  )
+                  ) %>%
         visLegend(zoom = T, addNodes = lnodes, useGroups = F, width = 0.15) %>%
         visEvents(selectNode = "function(nodes) {
             Shiny.onInputChange('current_node_id', nodes);
@@ -1792,9 +1885,9 @@ server <- function(input, output, session) {
     },
     error = function(e){visNetwork(nodes = as.data.frame(unique(x_full$From)), edges = x_full[1:2])})
     
-  })#close brackets for output$vis_email
+  }) # close brackets for output$vis_email
   
-  ####NK output$vis_dept Server Codes####
+  #### NK output$vis_dept Server Codes ####
 
   output$vis_dept <- renderVisNetwork({
     

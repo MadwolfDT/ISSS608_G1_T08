@@ -328,7 +328,7 @@ ui <- navbarPage(
                                 label = 'Charts', 
                                 choices = c('Age Comparison',
                                             'Year Joined',
-                                            'Timings of Emails',
+                                            #'Timings of Emails',
                                             'Military Service')
                     )
                     
@@ -374,7 +374,8 @@ ui <- navbarPage(
       ),
       
       column(width = 9, 
-             plotlyOutput(outputId = 'email_convo')
+             plotlyOutput(outputId = 'email_convo'),
+             plotlyOutput(outputId = 'timings_email')
       )
     )
     
@@ -844,55 +845,6 @@ server <- function(input, output, session) {
       gg
       
       
-    }else if(input$biodata_select2=='Timings of Emails'){
-      
-      tmp_person_email_From <- x_full %>% 
-        filter(From==input$biodata_select) 
-      
-      tmp_person_email_From_word <- tmp_person_email_From %>% 
-        unnest_tokens(word, Subject2) %>%
-        anti_join(stop_words) %>%
-        group_by(To) %>%
-        count(word) %>%
-        summarise(word = paste(word, collapse = ","))
-      
-      tmp_person_email_From <- tmp_person_email_From %>% inner_join(tmp_person_email_From_word, by = "To")            
-      
-      tmp_person_email_To <- x_full %>% 
-        filter(To==input$biodata_select) 
-      
-      tmp_person_email_To_word <- tmp_person_email_To %>% 
-        unnest_tokens(word, Subject2) %>%
-        anti_join(stop_words) %>%
-        group_by(From) %>%
-        count(word) %>%
-        summarise(word = paste(word, collapse = ","))
-      
-      tmp_person_email_To <- tmp_person_email_To %>% inner_join(tmp_person_email_To_word, by = "From")    
-      
-      fig_1 <- ggplotly(ggplot(tmp_person_email_From, aes(x=Date.Time, y=To)) + 
-                          geom_point(shape=21,
-                                     aes(color = factor(word), 
-                                         text = sprintf("Words : \n %s", str_replace_all(word,',','\n')))
-                          )
-                        ,tooltip = c("text")) %>% layout(hoverlabel=list(bgcolor="white"))
-      
-      fig_2 <- ggplotly(ggplot(tmp_person_email_To, aes(x=Date.Time, y=From)) + 
-                          geom_point(shape=21,
-                                     
-                                     aes(color = factor(word),
-                                         text = sprintf("Words : \n %s", str_replace_all(word,',','\n')))
-                          ) 
-                        ,tooltip = c("text")) %>% layout(hoverlabel=list(bgcolor="white"))
-      
-      
-      fig_1 <- style(fig_1, showlegend = FALSE)
-      fig_2 <- style(fig_2, showlegend = FALSE) 
-      
-      fig <- subplot(fig_1, fig_2, nrows = 2,margin = 0.02)
-      
-      fig
-      
     }else if(input$biodata_select2=='Year Joined'){
       year_labels <- unique(substr(sort(year(df.emp$CurrentEmploymentStartDate)),3,4))
       year_labels[1] <- "1990"
@@ -943,7 +895,7 @@ server <- function(input, output, session) {
                        scale_x_continuous(breaks = seq(min(mil_data$MilitaryStartYear), max(mil_data$MilitaryDischargeYear), by=2))+
                        #scale_color_manual(values = c("#97C2FC","#7BE141","#AD85E4"))+
                        #facet_wrap(~ArmyLoc, scales = "free") +
-                       labs(x = "Year",y ="", title="Time Served in the Military in Kronos")+
+                       labs(x = "Year",y ="", title="Time Served in the Military in Kronos", legend='Location')+
                        theme(panel.background = element_rect(fill ="white"),
                              panel.grid.major.y = element_line(colour = "grey",linetype = 3),
                              panel.grid.major.x = element_line(colour = "grey",linetype = 3),
@@ -980,6 +932,96 @@ server <- function(input, output, session) {
                {showModal(modalDialog(title = "Help Box",
                                       "Adjust the minimum and maximum width of the edges"))
                })
+  
+  output$timings_email <- renderPlotly({
+    
+      
+      tmp_person_email_From <- x_full %>% 
+        filter(From==input$person) 
+      
+      tmp_person_email_From_word <- tmp_person_email_From %>% 
+                                    unnest_tokens(word, Subject2) %>%
+                                    anti_join(stop_words) %>%
+                                    group_by(To) %>%
+                                    count(word) %>%
+                                    summarise(word = paste(word, collapse = ","))
+      
+      tmp_person_email_From <- tmp_person_email_From %>% 
+                               inner_join(tmp_person_email_From_word, by = "To")            
+      
+      tmp_person_email_To <- x_full %>% 
+        filter(To==input$biodata_select) 
+      
+      tmp_person_email_To_word <- tmp_person_email_To %>% 
+        unnest_tokens(word, Subject2) %>%
+        anti_join(stop_words) %>%
+        group_by(From) %>%
+        count(word) %>%
+        summarise(word = paste(word, collapse = ","))
+      
+      tmp_person_email_To <- tmp_person_email_To %>% inner_join(tmp_person_email_To_word, by = "From")
+      
+      a <- list(
+        text = "SUBPLOT TITLE A",
+        #font = f,
+        xref = "paper",
+        yref = "paper",
+        yanchor = "bottom",
+        xanchor = "center",
+        align = "center",
+        x = 0.5,
+        y = 1,
+        showarrow = FALSE
+      )
+      
+      b <- list(
+        text = "SUBPLOT TITLE B",
+        #font = f,
+        xref = "paper",
+        yref = "paper",
+        yanchor = "bottom",
+        xanchor = "center",
+        align = "center",
+        x = 0.5,
+        y = 1,
+        showarrow = FALSE
+      )
+      
+      fig_1 <- ggplotly(ggplot(tmp_person_email_From, aes(x=Date.Time, y=To)) + 
+                          geom_point(shape=21,
+                                     aes(color = factor(word), 
+                                         text = sprintf("Words : \n %s", str_replace_all(word,',','\n'))))+
+                          labs(title=paste('From',
+                                           input$biodata_select))+
+                          theme(legend.text = element_text(size = 8),
+                                panel.background = element_rect(fill="white"),
+                                panel.grid.major.y = element_line(color="#f0f0f0"),
+                                plot.title = element_text(size=14)),tooltip = c("text")) %>% 
+                layout(hoverlabel=list(bgcolor="white"), annotations=a)
+      
+      fig_2 <- ggplotly(ggplot(tmp_person_email_To, aes(x=Date.Time, y=From)) + 
+                          geom_point(shape=21,
+                                     
+                                     aes(color = factor(word),
+                                         text = sprintf("Words : \n %s", str_replace_all(word,',','\n'))))+
+                          labs(title=paste('To',
+                                           input$biodata_select))+ 
+                          theme(legend.text = element_text(size = 8),
+                                panel.background = element_rect(fill="white"),
+                                panel.grid.major.y = element_line(color="#f0f0f0"),
+                                plot.title = element_text(size=14)),tooltip = c("text")) %>% 
+                layout(hoverlabel=list(bgcolor="white"), annotations=b)
+      
+      
+      
+      fig_1 <- style(fig_1, showlegend = FALSE)
+      fig_2 <- style(fig_2, showlegend = FALSE)
+      
+      fig <- subplot(fig_1, fig_2, nrows = 1,shareX=F,shareY=F,titleX = T, titleY = T)%>% layout(showlegend=F)
+      
+      fig
+    
+  })
   
   output$email_convo <- renderPlotly({
     
@@ -1048,10 +1090,7 @@ server <- function(input, output, session) {
   })#close brackets for output$email_convo
   
   ####NK temp_g_vf Server Codes####
-  #########################
-  ###For temp_g_vf      ###
-  #########################  
-  
+ 
   temp_g_vf <- eventReactive(input$go, {
     
     if (input$dt_select == 'Person'){
@@ -1094,9 +1133,6 @@ server <- function(input, output, session) {
   })#close brackets for temp_g_vf
   
   ####NK output$table Server Codes####
-  #########################
-  ###For output$table   ###
-  ######################### 
   
   output$table <- DT::renderDT({
     DT::datatable(data = temp_g_vf(), 
@@ -1106,9 +1142,6 @@ server <- function(input, output, session) {
   })#close brackets for output$table
   
   ####NK output$vis_email Server Codes####
-  #########################
-  ###For output$vis_email##
-  ######################### 
   
   output$vis_email <- renderVisNetwork({
     
@@ -1209,10 +1242,7 @@ server <- function(input, output, session) {
   })#close brackets for output$vis_email
   
   ####NK output$vis_dept Server Codes####
-  #########################
-  ###For output$vis_dept ##
-  #########################
-  
+
   output$vis_dept <- renderVisNetwork({
     
     links <- df.emails %>% 
@@ -1398,10 +1428,9 @@ server <- function(input, output, session) {
     
   })#close brackets for output$vis_dept
   
+  
   ####NK observeEvent Server Codes####
-  #########################
-  ##### observeEvent ######
-  #########################
+
   
   
   observeEvent(

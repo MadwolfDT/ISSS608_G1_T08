@@ -826,7 +826,7 @@ server <- function(input, output, session) {
         ggplot(aes(x = Approx_age, y= FullName2)) +
         geom_point(aes(fill = CurrentEmploymentType), size=5, shape=21,stroke=0.1, color='black',alpha=0.7)  +
         scale_fill_manual(values=c("#97C2FC","#FFFF00", "#FB7E81", "#7BE141","#EB7DF4","#7C29F0"))+
-        geom_text(aes(label=FullName2), vjust = 3, size=3,fontface = "bold")+
+        geom_text(aes(label=FullName2), vjust = 3, size=3, fontface = "bold")+
         scale_x_continuous(breaks = c(10, 20, 25,30,35,40,45,50,55,60))+
         expand_limits( y = c(-3, length(levels(age_df$FullName)) + 3)) +
         labs(y="",x="Time",title = "Approximate Ages of GasTech Employees in 2014", color="Department") +

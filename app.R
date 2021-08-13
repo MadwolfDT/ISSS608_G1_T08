@@ -73,13 +73,16 @@ ui <- navbarPage(
               
               	<ul>
               		<li>
-              		<b>Locations </b>- For Explorations: This function would allow the user to identify the popular locations within Abila, Kronos. In addition, the user would be able to determine the peak periods of the specified locations.
+              		<b>Locations </b>- For Exploration: This function would allow the user to identify the popular locations within Abila, Kronos. In addition, the user would be able to determine the peak periods of the specified locations.
               		</li>
               		<li>
-              		<b>Transactions </b>- For Explorations: This function would allow the user to link possible credit card transactions, loyalty card transactions, locations, date and time, to allow inference between the holders of credit cards, loyalty card holders with possible GASTech Employees.
+              		<b>Transactions </b>- For Exploration: This function would allow the user to link possible credit card transactions, loyalty card transactions, locations, date and time, to allow inference between the holders of credit cards, loyalty card holders with possible GASTech Employees.
               		</li>
               		<li>
-              		<b>Employees </b>of GASTech: This function would allow the user to retrive the bio-data of GASTech employees
+              		<b>Transactions </b>- Individual Cards: This function would allow the user to select two individual cards (credit card or loyalty card) and compare where and when their transactions took place, and their transaction amounts, all within the same space for easy comparison.
+              		</li>
+              		<li>
+              		<b>Employees </b>of GASTech: This function would allow the user to retrieve the bio-data of GASTech employees
               		</li>
               		<li>
               		<b>Email </b>Correspondence: This function would allow the user to determine the email correspondences between the selected GASTech employee and his/her recipients.
@@ -100,10 +103,7 @@ ui <- navbarPage(
               		<b>Employment Movement Plot</b>: This function would allow the user to map the GPS routes and identify the specific locations which the employee had been to. The GPS route would be plotted on the map, against identified homes of GASTech employees and prominant locations. A data table would be generated to suggest the locations where the employee would had been to, with a box plot suggesting the average time spent at the said location.
               		</li>
               		<li>
-              		<b>Analysis for Specific Cards</b>: This function would allow the user to <b><i>(rhoda to elaborate)</i></b>
-              		</li>
-              		<li>
-              		<b>Transaction Amount Analysis</b>: This function would allow the user to <b><i>(rhoda to elaborate)</i></b>
+              		<b>Transaction Amount Analysis</b>: This function would allow the user to view summary statistics of transaction amounts that took place in each location, for both credit card and loyalty card. Outliers would be highlighted. In addition, users can also select to view transactions of specific cards, and how each transaction amount compares against the full distribution for each location. 
               		</li>
               	</ul>
               	</li>
@@ -308,6 +308,132 @@ ui <- navbarPage(
              
              
     ), #close brackets for tabPanel for EDA, need comma
+    
+    ####RT Analysis for Specific Cards UI####
+    tabPanel("Individual Card Transactions",
+             useShinyjs(),
+             titlePanel("Compare Transactions for Individual Cards"),
+             
+             fluidRow(
+               column(2,
+                      
+                      prettyRadioButtons(
+                        inputId = "rtjellytop",
+                        label = "Select Card Type:",
+                        choices = c("Credit Card", "Loyalty Card"
+                        ), #close bracket w comma for c
+                        selected = "Credit Card",
+                        icon = icon("check"),
+                        inline = FALSE,
+                        bigger = TRUE,
+                        status = "info",
+                        animation = "jelly"
+                      ), #close bracket w comma for prettyradiobutt
+                      
+                      selectInput(
+                        inputId = "rtspeccreditA",
+                        label = "Credit Card (Top)",
+                        choices = unique(cc_data$last4ccnum)
+                      ),#close bracket w comma for selectinput
+                      
+                      prettyRadioButtons(
+                        inputId = "rtjellyA",
+                        label = "Fill by:",
+                        choices = list(
+                          "Transaction Price" = "price",
+                          "Time Period" = "TimeCat"
+                        ), #close bracket w comma for list
+                        selected = "price",
+                        icon = icon("check"),
+                        inline = TRUE,
+                        bigger = TRUE,
+                        status = "info",
+                        animation = "jelly"
+                      ), #close bracket w comma for radiobutt
+                      
+                      selectInput(
+                        inputId = "rtspecloyaltyA",
+                        label = "Loyalty Card No.",
+                        choices = unique(loyalty_data$loyaltynum)
+                      ), #close bracket w comma for selectinput
+                      
+               ), #close bracket w comma for column
+               
+               column(10,
+                      #price plots credit
+                      plotlyOutput(outputId = "rtccpricetop"),
+                      #time plots credit
+                      plotlyOutput(outputId = "rtcctimetop"),
+                      DT::dataTableOutput("rtcctabletop"),
+                      #plots loyalty
+                      plotlyOutput(outputId = "rtlctop"),
+                      DT::dataTableOutput("rtlctabletop")
+                      
+               ), #close bracket w comma for column
+               
+             ), #close bracket w comma for fluidRow
+             
+             fluidRow(
+               column(2,
+                      
+                      prettyRadioButtons(
+                        inputId = "rtjellybottom",
+                        label = "Select Card Type:",
+                        choices = c("Credit Card", "Loyalty Card"
+                        ), #close bracket w comma for c
+                        selected = "Credit Card",
+                        icon = icon("check"),
+                        inline = FALSE,
+                        bigger = TRUE,
+                        status = "info",
+                        animation = "jelly"
+                      ), #close bracket w comma for prettyradiobutt
+                      
+                      selectInput(
+                        inputId = "rtspeccreditB",
+                        label = "Credit Card (Bottom)",
+                        choices = unique(cc_data$last4ccnum)
+                      ),#close bracket w comma for selectinput
+                      
+                      prettyRadioButtons(
+                        inputId = "rtjellyB",
+                        label = "Fill by:",
+                        choices = list(
+                          "Transaction Price" = "price",
+                          "Time Period" = "TimeCat"
+                        ), #close bracket w comma for list
+                        selected = "price",
+                        icon = icon("check"),
+                        inline = TRUE,
+                        bigger = TRUE,
+                        status = "info",
+                        animation = "jelly"
+                      ), #close bracket w comma for radiobutt
+                      
+                      selectInput(
+                        inputId = "rtspecloyaltyB",
+                        label = "Loyalty Card No.(Bottom)",
+                        choices = unique(loyalty_data$loyaltynum)
+                      ), #close bracket w comma for selectinput
+                      
+               ), #close bracket w comma for column
+               
+               column(10,
+                      #price plots credit
+                      plotlyOutput(outputId = "rtccpricebottom"),
+                      #time plots credit
+                      plotlyOutput(outputId = "rtcctimebottom"),
+                      DT::dataTableOutput("rtcctablebottom"),
+                      #plots loyalty
+                      plotlyOutput(outputId = "rtlcbottom"),
+                      DT::dataTableOutput("rtlctablebottom")
+                      
+               ), #close bracket w comma for column
+               
+             ), #close bracket w comma for fluidRow  
+             
+    ), #close bracket with comma for Specific Card Analysis Tab
+    
     
     ####NK Employee Bio-data Lookup UI####
     tabPanel(title = 'Employees of GasTech',
@@ -552,130 +678,6 @@ ui <- navbarPage(
                       
              ),#close bracket with comma for Plot
              
-             ####RT Analysis for Specific Cards UI####
-             tabPanel("Analysis for Specific Cards",
-                      useShinyjs(),
-                      titlePanel("Compare Transactions for Specific Cards"),
-                      
-                      fluidRow(
-                        column(2,
-                               
-                               prettyRadioButtons(
-                                 inputId = "rtjellytop",
-                                 label = "Select Card Type:",
-                                 choices = c("Credit Card", "Loyalty Card"
-                                 ), #close bracket w comma for c
-                                 selected = "Credit Card",
-                                 icon = icon("check"),
-                                 inline = FALSE,
-                                 bigger = TRUE,
-                                 status = "info",
-                                 animation = "jelly"
-                               ), #close bracket w comma for prettyradiobutt
-                               
-                               selectInput(
-                                 inputId = "rtspeccreditA",
-                                 label = "Credit Card (Top)",
-                                 choices = unique(cc_data$last4ccnum)
-                               ),#close bracket w comma for selectinput
-                               
-                               prettyRadioButtons(
-                                 inputId = "rtjellyA",
-                                 label = "Fill by:",
-                                 choices = list(
-                                   "Transaction Price" = "price",
-                                   "Time Period" = "TimeCat"
-                                 ), #close bracket w comma for list
-                                 selected = "price",
-                                 icon = icon("check"),
-                                 inline = TRUE,
-                                 bigger = TRUE,
-                                 status = "info",
-                                 animation = "jelly"
-                               ), #close bracket w comma for radiobutt
-                               
-                               selectInput(
-                                 inputId = "rtspecloyaltyA",
-                                 label = "Loyalty Card No.",
-                                 choices = unique(loyalty_data$loyaltynum)
-                               ), #close bracket w comma for selectinput
-                               
-                        ), #close bracket w comma for column
-                        
-                        column(10,
-                               #price plots credit
-                               plotlyOutput(outputId = "rtccpricetop"),
-                               #time plots credit
-                               plotlyOutput(outputId = "rtcctimetop"),
-                               DT::dataTableOutput("rtcctabletop"),
-                               #plots loyalty
-                               plotlyOutput(outputId = "rtlctop"),
-                               DT::dataTableOutput("rtlctabletop")
-                               
-                        ), #close bracket w comma for column
-                        
-                      ), #close bracket w comma for fluidRow
-                      
-                      fluidRow(
-                        column(2,
-                               
-                               prettyRadioButtons(
-                                 inputId = "rtjellybottom",
-                                 label = "Select Card Type:",
-                                 choices = c("Credit Card", "Loyalty Card"
-                                 ), #close bracket w comma for c
-                                 selected = "Credit Card",
-                                 icon = icon("check"),
-                                 inline = FALSE,
-                                 bigger = TRUE,
-                                 status = "info",
-                                 animation = "jelly"
-                               ), #close bracket w comma for prettyradiobutt
-                               
-                               selectInput(
-                                 inputId = "rtspeccreditB",
-                                 label = "Credit Card (Bottom)",
-                                 choices = unique(cc_data$last4ccnum)
-                               ),#close bracket w comma for selectinput
-                               
-                               prettyRadioButtons(
-                                 inputId = "rtjellyB",
-                                 label = "Fill by:",
-                                 choices = list(
-                                   "Transaction Price" = "price",
-                                   "Time Period" = "TimeCat"
-                                 ), #close bracket w comma for list
-                                 selected = "price",
-                                 icon = icon("check"),
-                                 inline = TRUE,
-                                 bigger = TRUE,
-                                 status = "info",
-                                 animation = "jelly"
-                               ), #close bracket w comma for radiobutt
-                               
-                               selectInput(
-                                 inputId = "rtspecloyaltyB",
-                                 label = "Loyalty Card No.(Bottom)",
-                                 choices = unique(loyalty_data$loyaltynum)
-                               ), #close bracket w comma for selectinput
-                               
-                        ), #close bracket w comma for column
-                        
-                        column(10,
-                               #price plots credit
-                               plotlyOutput(outputId = "rtccpricebottom"),
-                               #time plots credit
-                               plotlyOutput(outputId = "rtcctimebottom"),
-                               DT::dataTableOutput("rtcctablebottom"),
-                               #plots loyalty
-                               plotlyOutput(outputId = "rtlcbottom"),
-                               DT::dataTableOutput("rtlctablebottom")
-                               
-                        ), #close bracket w comma for column
-                        
-                      ), #close bracket w comma for fluidRow  
-                      
-             ), #close bracket with comma for Specific Card Analysis Tab
              
              ####RT Transaction Amount Analysis UI####
              tabPanel("Transaction Amount Analysis",

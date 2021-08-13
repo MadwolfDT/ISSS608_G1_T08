@@ -374,8 +374,12 @@ ui <- navbarPage(
       ),
       
       column(width = 9, 
-             plotlyOutput(outputId = 'email_convo'),
-             plotlyOutput(outputId = 'timings_email')
+             fluidRow(plotlyOutput(outputId = 'email_convo')),
+             fluidRow(
+               column(width = 6, plotlyOutput(outputId = 'timings_email_1')),
+               column(width = 6, plotlyOutput(outputId = 'timings_email_2'))
+               )
+             
       )
     )
     
@@ -933,7 +937,7 @@ server <- function(input, output, session) {
                                       "Adjust the minimum and maximum width of the edges"))
                })
   
-  output$timings_email <- renderPlotly({
+  output$timings_email_1 <- renderPlotly({
     
       
       tmp_person_email_From <- x_full %>% 
@@ -949,20 +953,9 @@ server <- function(input, output, session) {
       tmp_person_email_From <- tmp_person_email_From %>% 
                                inner_join(tmp_person_email_From_word, by = "To")            
       
-      tmp_person_email_To <- x_full %>% 
-        filter(To==input$biodata_select) 
-      
-      tmp_person_email_To_word <- tmp_person_email_To %>% 
-        unnest_tokens(word, Subject2) %>%
-        anti_join(stop_words) %>%
-        group_by(From) %>%
-        count(word) %>%
-        summarise(word = paste(word, collapse = ","))
-      
-      tmp_person_email_To <- tmp_person_email_To %>% inner_join(tmp_person_email_To_word, by = "From")
       
       a <- list(
-        text = "SUBPLOT TITLE A",
+        text = paste("From", input$person),
         #font = f,
         xref = "paper",
         yref = "paper",
@@ -974,52 +967,86 @@ server <- function(input, output, session) {
         showarrow = FALSE
       )
       
-      b <- list(
-        text = "SUBPLOT TITLE B",
-        #font = f,
-        xref = "paper",
-        yref = "paper",
-        yanchor = "bottom",
-        xanchor = "center",
-        align = "center",
-        x = 0.5,
-        y = 1,
-        showarrow = FALSE
-      )
       
       fig_1 <- ggplotly(ggplot(tmp_person_email_From, aes(x=Date.Time, y=To)) + 
                           geom_point(shape=21,
                                      aes(color = factor(word), 
                                          text = sprintf("Words : \n %s", str_replace_all(word,',','\n'))))+
-                          labs(title=paste('From',
-                                           input$biodata_select))+
-                          theme(legend.text = element_text(size = 8),
+                          
+                          theme(legend.title = element_blank(),
                                 panel.background = element_rect(fill="white"),
                                 panel.grid.major.y = element_line(color="#f0f0f0"),
-                                plot.title = element_text(size=14)),tooltip = c("text")) %>% 
+                                plot.title = element_text(size=14),
+                                axis.title = element_blank()),tooltip = c("text")) %>% 
                 layout(hoverlabel=list(bgcolor="white"), annotations=a)
       
-      fig_2 <- ggplotly(ggplot(tmp_person_email_To, aes(x=Date.Time, y=From)) + 
-                          geom_point(shape=21,
-                                     
-                                     aes(color = factor(word),
-                                         text = sprintf("Words : \n %s", str_replace_all(word,',','\n'))))+
-                          labs(title=paste('To',
-                                           input$biodata_select))+ 
-                          theme(legend.text = element_text(size = 8),
-                                panel.background = element_rect(fill="white"),
-                                panel.grid.major.y = element_line(color="#f0f0f0"),
-                                plot.title = element_text(size=14)),tooltip = c("text")) %>% 
-                layout(hoverlabel=list(bgcolor="white"), annotations=b)
+      
       
       
       
       fig_1 <- style(fig_1, showlegend = FALSE)
-      fig_2 <- style(fig_2, showlegend = FALSE)
+
       
-      fig <- subplot(fig_1, fig_2, nrows = 1,shareX=F,shareY=F,titleX = T, titleY = T)%>% layout(showlegend=F)
-      
-      fig
+      fig_1
+    
+  })
+  
+  
+  output$timings_email_2 <- renderPlotly({
+    
+    
+    
+    tmp_person_email_To <- x_full %>% 
+      filter(To==input$biodata_select) 
+    
+    tmp_person_email_To_word <- tmp_person_email_To %>% 
+      unnest_tokens(word, Subject2) %>%
+      anti_join(stop_words) %>%
+      group_by(From) %>%
+      count(word) %>%
+      summarise(word = paste(word, collapse = ","))
+    
+    tmp_person_email_To <- tmp_person_email_To %>% inner_join(tmp_person_email_To_word, by = "From")
+    
+  
+    
+    b <- list(
+      text = paste("To", input$person),
+      #font = f,
+      xref = "paper",
+      yref = "paper",
+      yanchor = "bottom",
+      xanchor = "center",
+      align = "center",
+      x = 0.5,
+      y = 1,
+      showarrow = FALSE
+    )
+    
+ 
+    
+    fig_2 <- ggplotly(ggplot(tmp_person_email_To, aes(x=Date.Time, y=From)) + 
+                        geom_point(shape=21,
+                                   aes(color = factor(word),
+                                       text = sprintf("Words : \n %s", str_replace_all(word,',','\n'))))+
+                        
+                        theme(legend.title  = element_blank(),
+                              panel.background = element_rect(fill="white"),
+                              panel.grid.major.y = element_line(color="#f0f0f0"),
+                              plot.title = element_text(size=14),
+                              axis.title = element_blank()), tooltip = c("text")) %>% 
+      layout(hoverlabel=list(bgcolor="white"), annotations=b)
+    
+    
+    
+    #fig_1 <- style(fig_1, showlegend = FALSE)
+    fig_2 <- style(fig_2, showlegend = FALSE)
+    
+    #fig <- subplot(fig_1, fig_2, 
+    #               nrows = 2, shareX=F, shareY=F, 
+    #               titleX = T, titleY = T) #%>% layout(xaxis = list(domain=list(x=c(0,0.5),y=c(0,0.5))))
+    
+    fig_2
     
   })
   
@@ -1055,15 +1082,11 @@ server <- function(input, output, session) {
           )
           )
         ) +
-        #scale_x_continuous(labels = strftime(Date.Time,format = '%H:%M')) + 
-        #scale_x_continuous( limits = c( 25000, 115000),
-        #                    breaks= c(28800,43200,57600,72000,86400,100800,115200),
-        #                    labels=c("08:00","12:00","16:00","20:00","24:00","04:00","08:00")) +
         geom_line(aes(group = Subject2, color= Subject2), size=0.2) +
         labs(y="",x="Time",title = paste(input$person,paste(unique(details), collapse = ',')), 
              group="", 
              color="") +
-        theme(legend.text = element_text(size = 8),
+        theme(legend.text = element_text(size = 5),
               panel.background = element_rect(fill="white"),
               panel.grid.major.y = element_line(color="#f0f0f0"),
               plot.title = element_text(size=14))

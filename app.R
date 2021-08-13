@@ -1182,9 +1182,10 @@ server <- function(input, output, session) {
                   fillContainer = F, 
                   options = list(pageLength = 7),
                   rownames = F)
-  })#close brackets for output$table
-  
+  }) #close brackets for output$table
+  ## 
   ####NK output$vis_email Server Codes####
+  
   observeEvent(input$ntwk_select, {
   if (input$ntwk_select =='Email (Text)') {
     

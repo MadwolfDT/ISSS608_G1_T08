@@ -35,13 +35,14 @@ library(shinyjs)
 
 rsconnect::setAccountInfo(name='dtcs', token='25A37523AE52220A0DE445A9D8B696DE', secret='OMMf3zDxI4jOhIpxHvsZJOf3MDPfIdMhPmpRSrLV')
 
+####Loading Source Scripts####
 source('scripts/read_data.r')
 source('scripts/dt_clean_data.r')
 source('scripts/dt_variables.r')
 source('scripts/mc1_clean_and_import.r')
 source('scripts/rt_clean_data.r')
 
-# Define UI
+# Define UI ####
 ui <- navbarPage(
   
   title =  "Investigation Tool into Personnel Disappearance",
@@ -52,6 +53,8 @@ ui <- navbarPage(
   
   navbarMenu(
     "Exploratory Data Analysis",
+    
+    ####RT Transactions Exploration UI####
     tabPanel(title = "Transactions - For Exploration!",
              
              titlePanel("Transactions - An Overview"),
@@ -166,6 +169,8 @@ ui <- navbarPage(
            
            
            ), #close brackets for tabPanel for EDA, need comma
+    
+    ####NK Employee Bio-data Lookup UI####
     tabPanel(title = 'Employees of GasTech',
              titlePanel("Employee Bio-data Lookup"), 
              column(width=3,
@@ -200,6 +205,8 @@ ui <- navbarPage(
              
              ),  #close brackets for tabPanel for Emp of GasTech
     tabPanel(
+      
+      ####NK Email Correspondence UI####
       title = "Email Correspondence",
       column(width=3,
       dateRangeInput(inputId = 'date', 
@@ -233,6 +240,8 @@ ui <- navbarPage(
     ), #close brackets for NavbarMenu
 
   navbarMenu("Inferential Statistics", 
+             
+             ####NK Email Network Analysis UI####
              tabPanel("Email Network Analysis",
                       
                       column(width=3, 
@@ -288,6 +297,7 @@ ui <- navbarPage(
                         
                       ), #close bracket with comma for tab Panel Email
              
+             ####NK Networks UI####
              tabPanel(title = "Networks",
                       
                         column(width = 2,
@@ -328,6 +338,7 @@ ui <- navbarPage(
 
                       ),#close bracket with comma for Networks
              
+             ####DT Employee Movement Plot UI####
              tabPanel("Employee Movement Plot",
                       
                       titlePanel("Personnel Movement Plot"),
@@ -391,6 +402,7 @@ ui <- navbarPage(
                       
              ),#close bracket with comma for Plot
              
+             ####RT Analysis for Specific Cards UI####
              tabPanel("Analysis for Specific Cards",
                       useShinyjs(),
                       titlePanel("Compare Transactions for Specific Cards"),
@@ -465,7 +477,7 @@ ui <- navbarPage(
                       
              ), #close bracket with comma for Specific Card Analysis Tab
              
-             
+             ####RT Transaction Amount Analysis UI####
              tabPanel("Transaction Amount Analysis",
                       
                       titlePanel("Transaction Amount Analysis"),
@@ -536,6 +548,8 @@ ui <- navbarPage(
 
 #server codes
 server <- function(input, output, session) {
+  
+  ####RT Parallel Coord Server Codes####
   #########################
   ###For Parallel Coord ###
   #########################
@@ -567,6 +581,7 @@ server <- function(input, output, session) {
     
   })#close brackets for output$paracoord
   
+  ####NK Email Convo Server Codes####
   #########################
   ###For Email Convo    ###
   #########################  
@@ -718,6 +733,7 @@ server <- function(input, output, session) {
     
   })#close brackets for output$email_convo
   
+  ####NK temp_g_vf Server Codes####
   #########################
   ###For temp_g_vf      ###
   #########################  
@@ -763,8 +779,7 @@ server <- function(input, output, session) {
 
   })#close brackets for temp_g_vf
   
-  
-  
+  ####NK output$table Server Codes####
   #########################
   ###For output$table   ###
   ######################### 
@@ -776,6 +791,7 @@ server <- function(input, output, session) {
                   rownames = F)
   })#close brackets for output$table
   
+  ####NK output$vis_email Server Codes####
   #########################
   ###For output$vis_email##
   ######################### 
@@ -878,7 +894,7 @@ server <- function(input, output, session) {
     
   })#close brackets for output$vis_email
   
-  
+  ####NK output$vis_dept Server Codes####
   #########################
   ###For output$vis_dept ##
   #########################
@@ -1068,7 +1084,7 @@ server <- function(input, output, session) {
     
   })#close brackets for output$vis_dept
   
-  
+  ####NK observeEvent Server Codes####
   #########################
   ##### observeEvent ######
   #########################
@@ -1220,6 +1236,7 @@ server <- function(input, output, session) {
     
   )#close bracket for observeEvent, no comma
   
+  ####DT Map Plotting Server Codes####
   #########################
   ##### Plot observe ######
   #########################
@@ -1430,6 +1447,7 @@ server <- function(input, output, session) {
     
   })#close curly and brackers for observe, without comma
   
+  ####RT Specific Card Tile Plots Server Codes####
   ################################
   ####SPECIFIC CARD TILE PLOTS####
   ################################
@@ -1502,7 +1520,7 @@ server <- function(input, output, session) {
     
     #For DataTables (Specific Card)
     
-    
+  ####RT Txn Box Plots Server Codes####  
   #########################
   ##### Txn Box Plot ######
   #########################
@@ -1534,6 +1552,7 @@ server <- function(input, output, session) {
     
   })#close curly and brackers for Txn Box plot, without comma
   
+  ####RT CC Box Plots Server Codes####
   #########################
   #####  CC Box Plot ######
   #########################
@@ -1563,7 +1582,7 @@ server <- function(input, output, session) {
     
   })#close curly and brackers for output$TxnScatterCredit, without comma
   
-  
+  ####RT LC Box Plots Server Codes####
   #########################
   #####  LC Box Plot ######
   #########################
@@ -1593,7 +1612,7 @@ server <- function(input, output, session) {
     
   })#close curly and brackers for output$TxnScatterLoyalty, without comma
   
-  
+  ####RT ShinyJS Server Codes####
   #########ALL SHINYJS OBSERVEEVENTS#########
   
   observeEvent(input$rtradiospeccardA, {

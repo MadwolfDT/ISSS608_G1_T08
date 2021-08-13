@@ -450,21 +450,14 @@ ui <- navbarPage(
                                  choices = unique(loyalty_data$loyaltynum)
                                ), #close bracket w comma for selectinput
                                
-                               selectInput(
-                                 inputId = "rtspeccreditB",
-                                 label = "Credit Card (Bottom)",
-                                 choices = unique(cc_data$last4ccnum)
-                                 
-                               ), #close bracket w comma for selectinput
                                ), #close bracket w comma for column
                         
                         column(10,
                                #price plots credit
                                plotlyOutput(outputId = "rtccpricetop"),
-                               DT::dataTableOutput("rtccpricetabletop"),
                                #time plots credit
                                plotlyOutput(outputId = "rtcctimetop"),
-                               DT::dataTableOutput("rtcctimetabletop"),
+                               DT::dataTableOutput("rtcctabletop"),
                                #plots loyalty
                                plotlyOutput(outputId = "rtlctop"),
                                DT::dataTableOutput("rtlctabletop")
@@ -473,7 +466,64 @@ ui <- navbarPage(
                         
                         ), #close bracket w comma for fluidRow
                       
-                      
+                      fluidRow(
+                        column(2,
+                               
+                               prettyRadioButtons(
+                                 inputId = "rtjellybottom",
+                                 label = "Select Card Type:",
+                                 choices = c("Credit Card", "Loyalty Card"
+                                 ), #close bracket w comma for c
+                                 selected = "Credit Card",
+                                 icon = icon("check"),
+                                 inline = FALSE,
+                                 bigger = TRUE,
+                                 status = "info",
+                                 animation = "jelly"
+                               ), #close bracket w comma for prettyradiobutt
+                               
+                               selectInput(
+                                 inputId = "rtspeccreditB",
+                                 label = "Credit Card (Bottom)",
+                                 choices = unique(cc_data$last4ccnum)
+                               ),#close bracket w comma for selectinput
+                               
+                               prettyRadioButtons(
+                                 inputId = "rtjellyB",
+                                 label = "Fill by:",
+                                 choices = list(
+                                   "Transaction Price" = "price",
+                                   "Time Period" = "TimeCat"
+                                 ), #close bracket w comma for list
+                                 selected = "price",
+                                 icon = icon("check"),
+                                 inline = TRUE,
+                                 bigger = TRUE,
+                                 status = "info",
+                                 animation = "jelly"
+                               ), #close bracket w comma for radiobutt
+                               
+                               selectInput(
+                                 inputId = "rtspecloyaltyB",
+                                 label = "Loyalty Card No.(Bottom)",
+                                 choices = unique(loyalty_data$loyaltynum)
+                               ), #close bracket w comma for selectinput
+                               
+                        ), #close bracket w comma for column
+                        
+                        column(10,
+                               #price plots credit
+                               plotlyOutput(outputId = "rtccpricebottom"),
+                               #time plots credit
+                               plotlyOutput(outputId = "rtcctimebottom"),
+                               DT::dataTableOutput("rtcctablebottom"),
+                               #plots loyalty
+                               plotlyOutput(outputId = "rtlcbottom"),
+                               DT::dataTableOutput("rtlctablebottom")
+                               
+                        ), #close bracket w comma for column
+                        
+                      ), #close bracket w comma for fluidRow  
                       
              ), #close bracket with comma for Specific Card Analysis Tab
              
@@ -1452,6 +1502,8 @@ server <- function(input, output, session) {
   ####SPECIFIC CARD TILE PLOTS####
   ################################
   
+  
+  ## TOP PLOTS AND DATATABLES
     output$rtccpricetop <- renderPlotly({
       
       #user selection
@@ -1491,7 +1543,6 @@ server <- function(input, output, session) {
       
       ggplotly(indivccplotB)
       
-      
     }) #close bracket and curly wo comma for credit time tile
   
     #For specific loyaltycard tile plot
@@ -1519,6 +1570,128 @@ server <- function(input, output, session) {
     }) #close bracket and curly wo comma for loyalty tile
     
     #For DataTables (Specific Card)
+    
+    output$rtcctabletop <- renderDT({
+      
+      DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>%
+                      dplyr::select(date, time, location, price, last4ccnum), options = list(
+                        initComplete = JS(
+                          "function(settings, json) {",
+                          "$('body').css({'font-family': 'Helvetica'});",
+                          "}"
+                        )
+                      ))
+    }) #close bracket and curly wo comma for renderDT
+    
+    output$rtlctabletop <- renderDT({
+      
+      DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyA) %>%
+                      dplyr::select(timestamp, location, price, loyaltynum), options = list(
+                        initComplete = JS(
+                          "function(settings, json) {",
+                          "$('body').css({'font-family': 'Helvetica'});",
+                          "}"
+                        )
+                      ))
+      
+    }) #close bracket and curly wo comma for renderDT
+    
+    
+    ## BOTTOM PLOTS AND DATATABLES
+    output$rtccpricebottom <- renderPlotly({
+      
+      #user selection
+      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>% 
+        mutate(date = as.POSIXct.Date(date))
+      
+      #cc txn tile (fill by price)
+      indivccplotA <- ggplot(indivcc, aes(date, location)) +
+        geom_tile(aes(fill = price)) +
+        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+        labs(title = "All Transactions (for Specified Credit Card)") +
+        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+        theme(axis.text.x = element_text(angle = 0),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank()) +
+        theme(legend.key.height = unit(1, "cm"))
+      
+      ggplotly(indivccplotA)
+      
+    }) #close curly and brackers for pricetiletop, without comma
+    
+    output$rtcctimebottom <- renderPlotly({
+      
+      #user selection
+      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>% 
+        mutate(date = as.POSIXct.Date(date))
+      
+      indivccplotB <- ggplot(indivcc, aes(date, location)) +
+        geom_tile(aes(fill = TimeCat)) +
+        scale_color_brewer(palette = "Set2")+
+        labs(title = "All Transactions (for Specified Credit Card)") +
+        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+        theme(axis.text.x = element_text(angle = 0),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank()) +
+        theme(legend.key.height = unit(1, "cm"))
+      
+      ggplotly(indivccplotB)
+      
+    }) #close bracket and curly wo comma for credit time tile
+    
+    #For specific loyaltycard tile plot
+    
+    output$rtlcbottom <- renderPlotly({
+      
+      #User Selection
+      indivlc <- loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyB) %>% 
+        mutate(date = as.POSIXct.Date(timestamp))
+      
+      #lc txn tile (fill by price)
+      indivlcplot <- ggplot(indivlc, aes(date, location)) +
+        geom_tile(aes(fill = price)) +
+        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+        labs(title = "All Transactions (for Specified Loyalty Card)") +
+        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+        theme(axis.text.x = element_text(angle = 0),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank()) +
+        theme(legend.key.height = unit(1, "cm"))
+      
+      ggplotly(indivlcplot) 
+      
+      
+    }) #close bracket and curly wo comma for loyalty tile
+    
+    #For DataTables (Specific Card)
+    
+    output$rtcctablebottom <- renderDT({
+      
+      DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>%
+                      dplyr::select(date, time, location, price, last4ccnum), options = list(
+                        initComplete = JS(
+                          "function(settings, json) {",
+                          "$('body').css({'font-family': 'Helvetica'});",
+                          "}"
+                        )
+                      ))
+    }) #close bracket and curly wo comma for renderDT
+    
+    output$rtlctablebottom <- renderDT({
+      
+      DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyB) %>%
+                      dplyr::select(timestamp, location, price, loyaltynum), options = list(
+                        initComplete = JS(
+                          "function(settings, json) {",
+                          "$('body').css({'font-family': 'Helvetica'});",
+                          "}"
+                        )
+                      ))
+      
+    }) #close bracket and curly wo comma for renderDT
+    
+    
+    
     
   ####RT Txn Box Plots Server Codes####  
   #########################
@@ -1615,21 +1788,87 @@ server <- function(input, output, session) {
   ####RT ShinyJS Server Codes####
   #########ALL SHINYJS OBSERVEEVENTS#########
   
-  observeEvent(input$rtradiospeccardA, {
+  #For Spec Card Page Top Plot
+  
+  observeEvent(input$rtjellytop, {
     
-    if(input$rtradiospeccardA == "Credit Card"){
+    if(input$rtjellytop == "Credit Card"){
       shinyjs::hide(id = "rtspecloyaltyA")
-      shinyjs::hide(id = "rtspeclcA")
+      shinyjs::hide(id = "rtlctop")
+      shinyjs::hide(id = "rtlctabletop")
       shinyjs::show(id = "rtspeccreditA")
-      shinyjs::show(id = "rtradiospeccardfillA")
-    }else if(input$rtradiospeccardA == "Loyalty Card"){
+      shinyjs::show(id = "rtjellyA")
+      shinyjs::show(id = "rtcctabletop")
+      
+    } else if(input$rtjellytop == "Loyalty Card"){
       shinyjs::hide(id = "rtspeccreditA")
-      shinyjs::hide(id = "rtradiospeccardfillA")
+      shinyjs::hide(id = "rtjellyA")
+      shinyjs::hide(id = "rtccpricetop")
+      shinyjs::hide(id = "rtcctimetop")
+      shinyjs::hide(id = "rtcctabletop")
       shinyjs::show(id = "rtspecloyaltyA")
-      shinyjs::show(id = "rtspeclcA")
-        }
-    })
-
+      shinyjs::show(id = "rtlctop")
+      shinyjs::show(id = "rtlctabletop")
+    }
+    
+  })
+  
+  observeEvent(input$rtjellyA, {
+    
+    if(input$rtjellyA == "price"){
+      
+      shinyjs::show(id = "rtccpricetop")
+      shinyjs::hide(id = "rtcctimetop")
+      
+    } else if (input$rtjellyA == "TimeCat"){
+      
+      shinyjs::show(id = "rtcctimetop")
+      shinyjs::hide(id = "rtccpricetop")
+    }
+  })
+    
+  #For spec card bottom plots
+  
+  observeEvent(input$rtjellybottom, {
+    
+    if(input$rtjellybottom == "Credit Card"){
+      shinyjs::hide(id = "rtspecloyaltyB")
+      shinyjs::hide(id = "rtlcbottom")
+      shinyjs::hide(id = "rtlctablebottom")
+      shinyjs::show(id = "rtspeccreditB")
+      shinyjs::show(id = "rtjellyB")
+      shinyjs::show(id = "rtcctablebottom")
+      
+    } else if(input$rtjellybottom == "Loyalty Card"){
+      shinyjs::hide(id = "rtspeccreditB")
+      shinyjs::hide(id = "rtjellyB")
+      shinyjs::hide(id = "rtccpricebottom")
+      shinyjs::hide(id = "rtcctimebottom")
+      shinyjs::hide(id = "rtcctablebottom")
+      shinyjs::show(id = "rtspecloyaltyB")
+      shinyjs::show(id = "rtlcbottom")
+      shinyjs::show(id = "rtlctablebottom")
+    }
+    
+  })
+  
+  observeEvent(input$rtjellyB, {
+    
+    if(input$rtjellyB == "price"){
+      
+      shinyjs::show(id = "rtccpricebottom")
+      shinyjs::hide(id = "rtcctimebottom")
+      
+    } else if (input$rtjellyB == "TimeCat"){
+      
+      shinyjs::show(id = "rtcctimebottom")
+      shinyjs::hide(id = "rtccpricebottom")
+    }
+  })
+  
+  
+  #For Txn Boxplots
+  
   observeEvent(input$rtradio, {
     
     if(input$rtradio == "Credit Card"){

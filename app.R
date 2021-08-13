@@ -50,7 +50,71 @@ ui <- navbarPage(
   
   theme = shinytheme("journal"),
   
-  tabPanel("Background Situation", "To be Updated"),
+  tabPanel("Background Situation",
+           
+           HTML(
+             
+             "
+             <h1>Investigation Tool into Personnel Disappearance</h1>
+              <hr>
+              <h2>Background Situtation</h2>
+              
+              <p>In the roughly twenty years that Tethys-based GAStech has been operating a natural gas production site in the island country of Kronos, it has produced remarkable profits and developed strong relationships with the government of Kronos. However, GAStech has not been as successful in demonstrating environmental stewardship.</p>
+              
+              <p>In<strong> January&nbsp;2014</strong>, the leaders of GAStech are celebrating their new-found fortune as a result of the initial public offering of their very successful company. In the midst of this celebration, several employees of GAStech go missing. An organization known as the Protectors of Kronos (POK) is suspected in the disappearance, but things may not be what they seem.</p>
+              
+              <p>By the invitation of Kronos and Tethys, an online tool has been developed to aid the law enforcement agencies.</span></p>
+              
+              <h2>Functions Available</h2>
+              
+              <ol>
+              	<li>
+              	<h3>Exploratory Data Analysis</h3>
+              
+              	<ul>
+              		<li>
+              		<b>Locations </b>- For Explorations: This function would allow the user to identify the popular locations within Abila, Kronos. In addition, the user would be able to determine the peak periods of the specified locations.
+              		</li>
+              		<li>
+              		<b>Transactions </b>- For Explorations: This function would allow the user to link possible credit card transactions, loyalty card transactions, locations, date and time, to allow inference between the holders of credit cards, loyalty card holders with possible GASTech Employees.
+              		</li>
+              		<li>
+              		<b>Employees </b>of GASTech: This function would allow the user to retrive the bio-data of GASTech employees
+              		</li>
+              		<li>
+              		<b>Email </b>Correspondence: This function would allow the user to determine the email correspondences between the selected GASTech employee and his/her recipients.
+              		</li>
+              	</ul>
+              	</li>
+              	<li>
+              	<h3>Inferential Statistics</h3>
+              
+              	<ul>
+              		<li>
+              		<b>Email Network Analysis</b>: This function would allow the user to <b><i>(nikki to elaborate)</i></b>
+              		</li>
+              		<li>
+              		<b>Networks</b>: This function would allow the user to <b><i>(nikki to elaborate)</i></b>
+              		</li>
+              		<li>
+              		<b>Employment Movement Plot</b>: This function would allow the user to map the GPS routes and identify the specific locations which the employee had been to. The GPS route would be plotted on the map, against identified homes of GASTech employees and prominant locations. A data table would be generated to suggest the locations where the employee would had been to, with a box plot suggesting the average time spent at the said location.
+              		</li>
+              		<li>
+              		<b>Analysis for Specific Cards</b>: This function would allow the user to <b><i>(rhoda to elaborate)</i></b>
+              		</li>
+              		<li>
+              		<b>Transaction Amount Analysis</b>: This function would allow the user to <b><i>(rhoda to elaborate)</i></b>
+              		</li>
+              	</ul>
+              	</li>
+              </ol>
+             
+             
+             "
+             
+           )#close bracket for HTML()
+           
+           ),
   
   navbarMenu(
     "Exploratory Data Analysis",

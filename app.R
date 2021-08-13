@@ -63,21 +63,32 @@ ui <- navbarPage(
                
                column(4,
                       
-                      selectInput(
+                      dateRangeInput(
                         
-                        inputId = "dtlocationdatefrom",
+                        inputId = "dtlocationdaterange",
                         label = "Date (From)",
-                        choices = c(gps_date$datestamp),
+                        min = gps_date$datestamp[1],
+                        max = tail(gps_date$datestamp, n = 1),
+                        start = gps_date$datestamp[1],
+                        end = tail(gps_date$datestamp, n = 1)
                         
-                      ),#close bracket with comma for selectInput
+                      ),#close bracket with comma for dateInput
                       
-                      selectInput(
+                      checkboxInput(
                         
-                        inputId = "dtlocationdateto",
-                        label = "Date (To)",
-                        choices = c(gps_date$datestamp),
+                        inputId = "dtweekday",
+                        label = "Weekdays",
+                        value = TRUE
                         
-                      ),#close bracket with comma for selectInput
+                      ),#close bracket with comma for checkbosInput
+                      
+                      checkboxInput(
+                        
+                        inputId = "dtweekend",
+                        label = "Weekends",
+                        value = TRUE
+                        
+                      ),#close bracket with comma for checkbosInput
                       
                       actionButton("plottxnheatmap", "Plot"),
                       
@@ -410,13 +421,15 @@ ui <- navbarPage(
                                  
                                ),#close bracket with comma for selectInput
                                
-                               selectInput(
+                               dateInput(
                                  
                                  inputId = "dtdate",
                                  label = "Date",
-                                 choices = c(gps_date$datestamp),
+                                 min = gps_date$datestamp[1],
+                                 max = tail(gps_date$datestamp, n = 1),
+                                 value = gps_date$datestamp[1]
                                  
-                               ),#close bracket with comma for selectInput
+                               ),#close bracket with comma for dateInput
                                
                                sliderInput(
                                  inputId = "dtduration",
@@ -1559,46 +1572,83 @@ server <- function(input, output, session) {
     
     # runif({
     
-    fromdate <- input$dtlocationdatefrom
-    todate <- input$dtlocationdateto
+    fromdate <- input$dtlocationdaterange[1]
+    todate <- input$dtlocationdaterange[2]
+    isWeekday <- input$dtweekday
+    isWeekend <- input$dtweekend
     
     # fromdate <- cc_data$date[1]
     # todate <- cc_data$date[840]
     
-    heatmap_cc <- cc_data %>%
-      filter(date >= fromdate & date <= todate) %>%
-      mutate(daydate = weekdays(timestamp)) %>%
-      group_by(location, daydate, time) %>%
-      add_count(location, daydate, time, name = "count") %>%
-      dplyr::select(-c(timestamp, TimeCat, category))
+    if(isWeekday == TRUE & isWeekend == TRUE){
+      heatmap_cc <- cc_data %>%
+        filter(date >= fromdate & date <= todate) %>%
+        mutate(daydate = weekdays(timestamp)) %>%
+        group_by(location, daydate, time) %>%
+        add_count(location, daydate, time, name = "count") %>%
+        dplyr::select(-c(timestamp, TimeCat, category))
+    }
     
-    x1 <- length(unique(heatmap_cc$count))
+    if(isWeekday == TRUE & isWeekend == FALSE){
+      heatmap_cc <- cc_data %>%
+        filter(date >= fromdate & date <= todate) %>%
+        mutate(daydate = weekdays(timestamp)) %>%
+        group_by(location, daydate, time) %>%
+        add_count(location, daydate, time, name = "count") %>%
+        dplyr::select(-c(timestamp, TimeCat, category)) %>%
+        mutate(isweekend = is.weekend(date)) %>%
+        filter(isweekend == FALSE)
+    }
     
-    cc_colours1 <- colorRampPalette(c('green', 'yellow', 'orange', 'red'))(x1)
+    if(isWeekday == FALSE & isWeekend == TRUE){
+      heatmap_cc <- cc_data %>%
+        filter(date >= fromdate & date <= todate) %>%
+        mutate(daydate = weekdays(timestamp)) %>%
+        group_by(location, daydate, time) %>%
+        add_count(location, daydate, time, name = "count") %>%
+        dplyr::select(-c(timestamp, TimeCat, category)) %>%
+        mutate(isweekend = is.weekend(date)) %>%
+        filter(isweekend == TRUE)
+    }
     
-    p1 <- ggplot(heatmap_cc,
-                 aes(time, location)) + 
-      geom_tile_interactive(aes(fill = factor(count))) + 
-      scale_fill_manual(values = cc_colours1,
-                        name = "Frequency") +
-      #breaks = levels(count)[seq(1, x, by = 5)]) +
-      labs(y = "Locations", x = "Time (Static)", title = "Transactions/ Locations Heat Map") +
-      theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),
-            axis.text.y = element_text(size = 7),
-            plot.title = element_text(hjust = 0.5))
-    
-    output$dtlocationheatmap <- renderGirafe({
+    if(isWeekday == FALSE & isWeekend == FALSE){
       
-      girafe(
-        ggobj = p1,
-        width_svg = 6,
-        height_svg = 6*0.618)
+      # p1 <- NULL
+      # 
+      # girafe(
+      #   ggobj = p1,
+      #   width_svg = 6,
+      #   height_svg = 6*0.618)
       
-    })#close curly and brackers for dtlocationheatmap, without comma
+    } else {
+      
+      x1 <- length(unique(heatmap_cc$count))
+      
+      cc_colours1 <- colorRampPalette(c('green', 'yellow', 'orange', 'red'))(x1)
+      
+      p1 <- ggplot(heatmap_cc,
+                   aes(time, location)) + 
+        geom_tile_interactive(aes(fill = factor(count))) + 
+        scale_fill_manual(values = cc_colours1,
+                          name = "Frequency") +
+        #breaks = levels(count)[seq(1, x, by = 5)]) +
+        labs(y = "Locations", x = "Time (Static)", title = "Transactions/ Locations Heat Map") +
+        theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),
+              axis.text.y = element_text(size = 7),
+              plot.title = element_text(hjust = 0.5))
+      
+      output$dtlocationheatmap <- renderGirafe({
+        
+        girafe(
+          ggobj = p1,
+          width_svg = 6,
+          height_svg = 6*0.618)
+        
+      })#close curly and brackers for dtlocationheatmap, without comma
+      
+    }#close curly for else()
     
-    # })#close bracket without comma for runif
-    
-  }) #close bracket without comma for eventReactive
+  }) #close bracket without comma for observeReactive
   
   
   ####RT Specific Card Tile Plots Server Codes####

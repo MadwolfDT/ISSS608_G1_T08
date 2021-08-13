@@ -262,7 +262,8 @@ ui <- navbarPage(
                     
                     selectInput(inputId = 'biodata_select2', 
                                 label = 'Charts', 
-                                choices = c('Year Joined',
+                                choices = c('Age Comparison',
+                                            'Year Joined',
                                             'Timings of Emails')
                     )
                     
@@ -272,7 +273,9 @@ ui <- navbarPage(
                     div(tableOutput(outputId = 'biodata_output'), 
                         style='color:black;font-weight: bold;font-size: 20px;font-family:"News Cycle", "Arial Narrow Bold", sans-serif;'
                     ),
-                    plotlyOutput(width = '100%', height='100%',outputId = 'overview_output')
+                    plotlyOutput(width = '100%', 
+                                 height=700,
+                                 outputId = 'overview_output')
                     
                     
              ) # close bracket for column 2
@@ -709,9 +712,7 @@ server <- function(input, output, session) {
   })#close brackets for output$paracoord
   
   ####NK Email Convo Server Codes####
-  #########################
-  ###For Email Convo    ###
-  #########################  
+
   
   observeEvent(input$view_select,{
     
@@ -722,18 +723,30 @@ server <- function(input, output, session) {
       shinyjs::hide(id = 'overview_output')
       
     }else if(input$view_select=="Overview"){
-      shinyjs::show(id = "biodata_select")
+      
+      shinyjs::hide(id = "biodata_select")
       shinyjs::show(id = "biodata_select2")
       shinyjs::hide(id = 'biodata_output')
       shinyjs::show(id = 'overview_output')
+      
     }
+  })
+  
+  observeEvent(input$biodata_select2, {
     
+    if (input$biodata_select2 =='Timings of Emails'){
+      shinyjs::show(id = 'biodata_select')
+      
+      
+    }else{
+      shinyjs::hide(id = "biodata_select")
+    }
     
   })
   
   output$overview_output <- renderPlotly({
     
-    if (input$biodata_select2=='Year Joined'){
+    if (input$biodata_select2=='Age Comparison'){
       
       df.emp <-df.emp %>% 
         mutate(Approx_age = 2014 - year(BirthDate))
@@ -754,7 +767,7 @@ server <- function(input, output, session) {
         labs(y="",x="Time",title = "Approximate Ages of GasTech Employees in 2014", color="Department") +
         theme(legend.text = element_text(size = 8),
               panel.background = element_rect(fill="white"),
-              panel.grid.major.x = element_line(color="#c9c9c9", linetype = 3),
+              panel.grid.major.x = element_line(color="#c9c9c9", linetype = 3, size=0.1),
               panel.border = element_rect(color="grey", fill=NA),
               plot.title = element_text(size=14),
               axis.text.y = element_blank(),
@@ -766,10 +779,92 @@ server <- function(input, output, session) {
       gg
       
       
+    }else if(input$biodata_select2=='Timings of Emails'){
+      
+      tmp_person_email_From <- x_full %>% 
+        filter(From==input$biodata_select) 
+      
+      tmp_person_email_From_word <- tmp_person_email_From %>% 
+        unnest_tokens(word, Subject2) %>%
+        anti_join(stop_words) %>%
+        group_by(To) %>%
+        count(word) %>%
+        summarise(word = paste(word, collapse = ","))
+      
+      tmp_person_email_From <- tmp_person_email_From %>% inner_join(tmp_person_email_From_word, by = "To")            
+      
+      tmp_person_email_To <- x_full %>% 
+        filter(To==input$biodata_select) 
+      
+      tmp_person_email_To_word <- tmp_person_email_To %>% 
+        unnest_tokens(word, Subject2) %>%
+        anti_join(stop_words) %>%
+        group_by(From) %>%
+        count(word) %>%
+        summarise(word = paste(word, collapse = ","))
+      
+      tmp_person_email_To <- tmp_person_email_To %>% inner_join(tmp_person_email_To_word, by = "From")    
+      
+      fig_1 <- ggplotly(ggplot(tmp_person_email_From, aes(x=Date.Time, y=To)) + 
+                          geom_point(shape=21,
+                                     aes(color = factor(word), 
+                                         text = sprintf("Words : \n %s", str_replace_all(word,',','\n')))
+                          )
+                        ,tooltip = c("text")) %>% layout(hoverlabel=list(bgcolor="white"))
+      
+      fig_2 <- ggplotly(ggplot(tmp_person_email_To, aes(x=Date.Time, y=From)) + 
+                          geom_point(shape=21,
+                                     
+                                     aes(color = factor(word),
+                                         text = sprintf("Words : \n %s", str_replace_all(word,',','\n')))
+                          ) 
+                        ,tooltip = c("text")) %>% layout(hoverlabel=list(bgcolor="white"))
+      
+      
+      fig_1 <- style(fig_1, showlegend = FALSE)
+      fig_2 <- style(fig_2, showlegend = FALSE) 
+      
+      fig <- subplot(fig_1, fig_2, nrows = 2,margin = 0.02)
+      
+      fig
+      
+    }else if(input$biodata_select2=='Year Joined'){
+      year_labels <- unique(substr(sort(year(df.emp$CurrentEmploymentStartDate)),3,4))
+      year_labels[1] <- "1990"
+      year_labels[20] <- "2013"
+      
+      g<- df.emp %>% 
+        select(FullName, CurrentEmploymentStartDate, CurrentEmploymentType) %>% 
+        mutate(FullName2 = fct_reorder(FullName,CurrentEmploymentType)) %>%
+        mutate(Year  = year(CurrentEmploymentStartDate )) %>% 
+        mutate(hjust = ifelse(FullName2 =="Sten Sanjorge Jr.", -0.1, 1.1)) %>%
+        ggplot(aes(x = Year, y= FullName2)) +
+        geom_point(aes(fill = CurrentEmploymentType), size=5, shape=21, color='black', stroke=0.1, alpha=0.7) +
+        geom_text(aes(label=FullName2, hjust =  hjust), size=3) +
+        scale_x_continuous(breaks = sort(unique(year(df.emp$CurrentEmploymentStartDate))), labels = year_labels) +
+        scale_fill_manual(values=c("#97C2FC","#FFFF00", "#FB7E81", "#7BE141","#EB7DF4","#7C29F0"))+
+        labs(y="",x="Year",title = "Year Employee of GasTech Joined", color="Department") +
+        theme(legend.text = element_text(size = 5),
+              panel.background = element_rect(fill="white"),
+              panel.grid.major.x = element_line(color="#c9c9c9", linetype = 3, size=0.1),
+              panel.border = element_rect(color="grey", fill=NA),
+              plot.title = element_text(size=14),
+              axis.text.y = element_blank(),
+              axis.ticks.x  = element_blank(),
+              axis.ticks.y  = element_blank()
+        )
+      gg <- ggplotly(g)
+      
+      gg
+      
+      
+      
+      
     }
     
     
   })
+  
   
   output$biodata_output <- renderTable(rownames = F,bordered = F,striped = T,align = 'c', {
     

@@ -49,7 +49,7 @@ ui <- navbarPage(
   title =  "Investigation Tool into Personnel Disappearance",
   
   theme = shinytheme("journal"),
-
+  
   tabPanel("Background Situation", "To be Updated"),
   
   navbarMenu(
@@ -105,15 +105,23 @@ ui <- navbarPage(
              
              fluidRow(
                
-               titlePanel("Specific Location Peak Periods"),
+               titlePanel("Location Visits by Day"),
                
-               column(4, "Inputs"
+               column(4,
                       
+                      selectInput(
+                        
+                        inputId = "dtlocationselection",
+                        label = "Location",
+                        choices = c(cc_locations$location)
+                        
+                      )
                       
                ),#close brackets for column(), need comma
                
-               column(8, "Outputs"
+               column(8,
                       
+                      plotlyOutput(outputId = "dtsellocationvisits"),
                       
                ),#close brackets for column(), need comma
                
@@ -126,116 +134,116 @@ ui <- navbarPage(
              
              titlePanel("Transactions - An Overview"),
              
-           fluidRow(
-             column(2, 
-                    
-                    selectInput(
-                      inputId = "rtlevelone",
-                      label = "Select Variable One",
-                      choices = list(
-                        "Location" = "location",
-                        "Price" = "price",
-                        "CC No." = "ccnum",
-                        "LC No." = "loyaltynum",
-                        "Date" = "date",
-                        "Time" = "hour",
-                        "Period of Day" = "TimeCat"
-                      ),
-                      selected = "location"
+             fluidRow(
+               column(2, 
                       
-                    ), #close bracket and comma for selectInput
-                    
-                    selectInput(
-                      inputId = "rtleveltwo",
-                      label = "Select Variable Two",
-                      choices = list(
-                        "Location" = "location",
-                        "Price" = "price",
-                        "CC No." = "ccnum",
-                        "LC No." = "loyaltynum",
-                        "Date" = "date",
-                        "Time" = "hour",
-                        "Period of Day" = "TimeCat"
-                      ),
-                      selected = "ccnum"
+                      selectInput(
+                        inputId = "rtlevelone",
+                        label = "Select Variable One",
+                        choices = list(
+                          "Location" = "location",
+                          "Price" = "price",
+                          "CC No." = "ccnum",
+                          "LC No." = "loyaltynum",
+                          "Date" = "date",
+                          "Time" = "hour",
+                          "Period of Day" = "TimeCat"
+                        ),
+                        selected = "location"
+                        
+                      ), #close bracket and comma for selectInput
                       
-                    ),#close bracket and comma for selectInput
-                    
-                    selectInput(
-                      inputId = "rtlevelthree",
-                      label = "Select Variable Three",
-                      choices = list(
-                        "Location" = "location",
-                        "Price" = "price",
-                        "CC No." = "ccnum",
-                        "LC No." = "loyaltynum",
-                        "Date" = "date",
-                        "Time" = "hour",
-                        "Period of Day" = "TimeCat"
-                      ),
-                      selected = "loyaltynum"
-                    
+                      selectInput(
+                        inputId = "rtleveltwo",
+                        label = "Select Variable Two",
+                        choices = list(
+                          "Location" = "location",
+                          "Price" = "price",
+                          "CC No." = "ccnum",
+                          "LC No." = "loyaltynum",
+                          "Date" = "date",
+                          "Time" = "hour",
+                          "Period of Day" = "TimeCat"
+                        ),
+                        selected = "ccnum"
+                        
                       ),#close bracket and comma for selectInput
-                    
-                    selectInput(
-                      inputId = "rtlevelfour",
-                      label = "Select Variable Four",
-                      choices = list(
-                        "Location" = "location",
-                        "Price" = "price",
-                        "CC No." = "ccnum",
-                        "LC No." = "loyaltynum",
-                        "Date" = "date",
-                        "Time" = "hour",
-                        "Period of Day" = "TimeCat"
-                      ),
-                      selected = "date"
                       
-                    ),#close bracket and comma for selectInput
-                    
-                    selectInput(
-                      inputId = "rtlevelfive",
-                      label = "Select Variable Five",
-                      choices = list(
-                        "Location" = "location",
-                        "Price" = "price",
-                        "CC No." = "ccnum",
-                        "LC No." = "loyaltynum",
-                        "Date" = "date",
-                        "Time" = "hour",
-                        "Period of Day" = "TimeCat"
-                      ),
-                      selected = "hour"
+                      selectInput(
+                        inputId = "rtlevelthree",
+                        label = "Select Variable Three",
+                        choices = list(
+                          "Location" = "location",
+                          "Price" = "price",
+                          "CC No." = "ccnum",
+                          "LC No." = "loyaltynum",
+                          "Date" = "date",
+                          "Time" = "hour",
+                          "Period of Day" = "TimeCat"
+                        ),
+                        selected = "loyaltynum"
+                        
+                      ),#close bracket and comma for selectInput
                       
-                    ),#close bracket and comma for selectInput
-                    
-                    
-                    sliderInput("rtslider", label = "Range of CC No.",
-                                min = 0, max = 9736, value = c(1000,2000)
-                    ),#close bracket for sliderInput
-                    
-                    #submitButton("Apply Selected")
-                    
-                    
-                    ), #close brackets for column(2), need comma
+                      selectInput(
+                        inputId = "rtlevelfour",
+                        label = "Select Variable Four",
+                        choices = list(
+                          "Location" = "location",
+                          "Price" = "price",
+                          "CC No." = "ccnum",
+                          "LC No." = "loyaltynum",
+                          "Date" = "date",
+                          "Time" = "hour",
+                          "Period of Day" = "TimeCat"
+                        ),
+                        selected = "date"
+                        
+                      ),#close bracket and comma for selectInput
+                      
+                      selectInput(
+                        inputId = "rtlevelfive",
+                        label = "Select Variable Five",
+                        choices = list(
+                          "Location" = "location",
+                          "Price" = "price",
+                          "CC No." = "ccnum",
+                          "LC No." = "loyaltynum",
+                          "Date" = "date",
+                          "Time" = "hour",
+                          "Period of Day" = "TimeCat"
+                        ),
+                        selected = "hour"
+                        
+                      ),#close bracket and comma for selectInput
+                      
+                      
+                      sliderInput("rtslider", label = "Range of CC No.",
+                                  min = 0, max = 9736, value = c(1000,2000)
+                      ),#close bracket for sliderInput
+                      
+                      #submitButton("Apply Selected")
+                      
+                      
+               ), #close brackets for column(2), need comma
+               
+               column(10,
+                      
+                      parcoordsOutput(
+                        outputId = "rtparacoord",
+                        width = "100%",
+                        height = "600px"
+                      ),#close brackets for parcoordsOutput
+                      
+                      screenshotButton("Take a Screenshot!")
+                      
+               ), #close brackets for column(10), need comma
+               
+               
+             ),#close brackets for fluidRow(), need comma
              
-             column(10,
-                    
-                    parcoordsOutput(
-                      outputId = "rtparacoord",
-                      width = "100%",
-                      height = "600px"
-                    ),#close brackets for parcoordsOutput
-                    
-                    screenshotButton("Take a Screenshot!")
-                    
-                    ), #close brackets for column(10), need comma
              
-             
-           ),#close brackets for fluidRow(), need comma
-           
-           
-           ), #close brackets for tabPanel for EDA, need comma
+    ), #close brackets for tabPanel for EDA, need comma
     
     ####NK Employee Bio-data Lookup UI####
     tabPanel(title = 'Employees of GasTech',
@@ -245,165 +253,165 @@ ui <- navbarPage(
                     radioButtons(inputId = 'view_select', 
                                  label='Overview or Person Look-up', 
                                  choices = c('Person','Overview')
-                                 ),
+                    ),
                     
-                      selectInput(inputId = 'biodata_select', 
-                                  label = 'Employee', 
-                                  choices = unique(df.emp$FullName)
-                                  ),
+                    selectInput(inputId = 'biodata_select', 
+                                label = 'Employee', 
+                                choices = unique(df.emp$FullName)
+                    ),
                     
-                      selectInput(inputId = 'biodata_select2', 
-                                  label = 'Charts', 
-                                  choices = c('Year Joined',
-                                              'Timings of Emails')
-                                  )
-
-                    ), # close bracket for column 1
+                    selectInput(inputId = 'biodata_select2', 
+                                label = 'Charts', 
+                                choices = c('Year Joined',
+                                            'Timings of Emails')
+                    )
+                    
+             ), # close bracket for column 1
              
              column(width=9,
                     div(tableOutput(outputId = 'biodata_output'), 
                         style='color:black;font-weight: bold;font-size: 20px;font-family:"News Cycle", "Arial Narrow Bold", sans-serif;'
-                        ),
+                    ),
                     plotlyOutput(width = '100%', height='100%',outputId = 'overview_output')
-                  
                     
-                    ) # close bracket for column 2
+                    
+             ) # close bracket for column 2
              
              
-             ),  #close brackets for tabPanel for Emp of GasTech
+    ),  #close brackets for tabPanel for Emp of GasTech
     tabPanel(
       
       ####NK Email Correspondence UI####
       title = "Email Correspondence",
       column(width=3,
-      dateRangeInput(inputId = 'date', 
-                     label = 'Date Filter', 
-                     start = min(df.emails$Date.Date), 
-                     end = max(df.emails$Date.Date)
-      ),
-      sliderInput(inputId = 'time',
-                  label = 'Time Filter', 
-                  min = as.POSIXct("1990-01-01 00:00:05", tz = 'GMT'), 
-                  max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
-                  value = c(as.POSIXct("1990-01-01 00:00:05",tz = 'GMT'), 
-                            as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')
-                            ),
-                  step = 2*60*60,
-                  timeFormat = "%H:%M",
-                  timezone = "GMT"
-      ),
-      selectInput(inputId = 'person', 
-                  label= 'Employee', 
-                  choices = unique(df.emp$FullName))
+             dateRangeInput(inputId = 'date', 
+                            label = 'Date Filter', 
+                            start = min(df.emails$Date.Date), 
+                            end = max(df.emails$Date.Date)
+             ),
+             sliderInput(inputId = 'time',
+                         label = 'Time Filter', 
+                         min = as.POSIXct("1990-01-01 00:00:05", tz = 'GMT'), 
+                         max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
+                         value = c(as.POSIXct("1990-01-01 00:00:05",tz = 'GMT'), 
+                                   as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')
+                         ),
+                         step = 2*60*60,
+                         timeFormat = "%H:%M",
+                         timezone = "GMT"
+             ),
+             selectInput(inputId = 'person', 
+                         label= 'Employee', 
+                         choices = unique(df.emp$FullName))
       ),
       
       column(width = 9, 
              plotlyOutput(outputId = 'email_convo')
-             )
       )
+    )
     
     
     
-    ), #close brackets for NavbarMenu
-
+  ), #close brackets for NavbarMenu
+  
   navbarMenu("Inferential Statistics", 
              
              ####NK Email Network Analysis UI####
              tabPanel("Email Network Analysis",
                       
                       column(width=3, 
-                                     # dateRangeInput(inputId = 'date', 
-                                     #                label = 'Date Filter', 
-                                     #                start = min(df.emails$Date.Date), 
-                                     #                end=max(df.emails$Date.Date)
-                                     # ),
-                                     # sliderInput(inputId = 'time',
-                                     #             label = 'Time Filter', 
-                                     #             min = as.POSIXct("1990-01-01 00:00:10", tz = 'GMT'), 
-                                     #             max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
-                                     #             value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
-                                     #                       as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')),
-                                     #             step = 2*60*60,
-                                     #             timeFormat = "%H:%M",
-                                     #             timezone = "GMT"
-                                     # ),
-                                      selectInput(inputId = 'person2', 
-                                                  label= 'Employee', 
-                                                  choices = unique(df.emp$FullName)
-                                     ),
-                                     radioButtons(inputId = 'dt_select', 
-                                                  label='DataTable Displayed by:', 
-                                                  choices = c('Person','Keywords', 'Both')
-                                     ),
-                                     textInput(inputId = 'search', label = 'Email Text Search',value = 'meeting'),
-                                     
-                                     actionButton(inputId = 'go', label = "Display")
-                        ), #close bracket without comma for column1
-                        
-                        column(width=9,
-                          
-                            #tabPanel('Email Overview',
+                             # dateRangeInput(inputId = 'date', 
+                             #                label = 'Date Filter', 
+                             #                start = min(df.emails$Date.Date), 
+                             #                end=max(df.emails$Date.Date)
+                             # ),
+                             # sliderInput(inputId = 'time',
+                             #             label = 'Time Filter', 
+                             #             min = as.POSIXct("1990-01-01 00:00:10", tz = 'GMT'), 
+                             #             max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
+                             #             value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
+                             #                       as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')),
+                             #             step = 2*60*60,
+                             #             timeFormat = "%H:%M",
+                             #             timezone = "GMT"
+                             # ),
+                             selectInput(inputId = 'person2', 
+                                         label= 'Employee', 
+                                         choices = unique(df.emp$FullName)
+                             ),
+                             radioButtons(inputId = 'dt_select', 
+                                          label='DataTable Displayed by:', 
+                                          choices = c('Person','Keywords', 'Both')
+                             ),
+                             textInput(inputId = 'search', label = 'Email Text Search',value = 'meeting'),
+                             
+                             actionButton(inputId = 'go', label = "Display")
+                      ), #close bracket without comma for column1
+                      
+                      column(width=9,
+                             
+                             #tabPanel('Email Overview',
                              #        plotlyOutput(outputId = 'email_convo')),
-                            
-                            span(textOutput(outputId = 'info_message'), style='font-size: 20px;font-family:"News Cycle", "Arial Narrow Bold", sans-serif;'),
-                            h2(' '),
-                            tabsetPanel(
-                            tabPanel("Network",
-                                    visNetworkOutput(outputId = 'vis_email',
-                                                     width = "100%", 
-                                                     height = 700)
-                                     ),
-                            tabPanel("Table",
-                                     h2(''),
-                                     column(width=1),
-                                     column(width=10, DT::dataTableOutput(outputId = 'table'))
-                                    ) #close bracket for tabpanel
-                                   )#close bracket without comma for tabsetPanel
-                          
-                               ) #close bracket without comma for column2
-                        
-                      ), #close bracket with comma for tab Panel Email
+                             
+                             span(textOutput(outputId = 'info_message'), style='font-size: 20px;font-family:"News Cycle", "Arial Narrow Bold", sans-serif;'),
+                             h2(' '),
+                             tabsetPanel(
+                               tabPanel("Network",
+                                        visNetworkOutput(outputId = 'vis_email',
+                                                         width = "100%", 
+                                                         height = 700)
+                               ),
+                               tabPanel("Table",
+                                        h2(''),
+                                        column(width=1),
+                                        column(width=10, DT::dataTableOutput(outputId = 'table'))
+                               ) #close bracket for tabpanel
+                             )#close bracket without comma for tabsetPanel
+                             
+                      ) #close bracket without comma for column2
+                      
+             ), #close bracket with comma for tab Panel Email
              
              ####NK Networks UI####
              tabPanel(title = "Networks",
                       
-                        column(width = 2,
-                               h3("Node Sizing"),
-                               radioButtons(inputId = 'node_sizings',
-                                            label=NULL,
-                                            choices = c('None',
-                                                        'Betweenness', 
-                                                        'Degree', 
-                                                        'Out-Degree', 
-                                                        'In-Degree', 
-                                                        'Closeness'),
-                                            selected = 'None'),
-                               h3("Modifying Aesthetics"),
-                               checkboxInput(inputId = 'arrow',label = "Show Direction of Edges", value = T),
-                               actionButton(inputId = 'about', 
-                                            label=NULL, 
-                                            icon = icon(name='info')),
-                               numericInput(inputId = 'min_width', label='Minimum Width', min =0.1, max=5, value = 0.5),
-                               numericInput(inputId = 'max_width', label='Maximum Width', min =5, max=15,value = 7)
-                              
-                               ), # close bracket for column
-                        
+                      column(width = 2,
+                             h3("Node Sizing"),
+                             radioButtons(inputId = 'node_sizings',
+                                          label=NULL,
+                                          choices = c('None',
+                                                      'Betweenness', 
+                                                      'Degree', 
+                                                      'Out-Degree', 
+                                                      'In-Degree', 
+                                                      'Closeness'),
+                                          selected = 'None'),
+                             h3("Modifying Aesthetics"),
+                             checkboxInput(inputId = 'arrow',label = "Show Direction of Edges", value = T),
+                             actionButton(inputId = 'about', 
+                                          label=NULL, 
+                                          icon = icon(name='info')),
+                             numericInput(inputId = 'min_width', label='Minimum Width', min =0.1, max=5, value = 0.5),
+                             numericInput(inputId = 'max_width', label='Maximum Width', min =5, max=15,value = 7)
+                             
+                      ), # close bracket for column
                       
-                        column(width=7, 
-                               visNetworkOutput(outputId = 'vis_dept',
-                                                width = "100%", 
-                                                height = 700)
-                               ),
                       
-                        column(width=3, 
-                               visNetworkOutput(outputId = 'vis_dept_sub',
-                                                width = "100%", 
-                                                height = 700)
-                               ),
-                        
-
-
-                      ),#close bracket with comma for Networks
+                      column(width=7, 
+                             visNetworkOutput(outputId = 'vis_dept',
+                                              width = "100%", 
+                                              height = 700)
+                      ),
+                      
+                      column(width=3, 
+                             visNetworkOutput(outputId = 'vis_dept_sub',
+                                              width = "100%", 
+                                              height = 700)
+                      ),
+                      
+                      
+                      
+             ),#close bracket with comma for Networks
              
              ####DT Employee Movement Plot UI####
              tabPanel("Employee Movement Plot",
@@ -483,7 +491,7 @@ ui <- navbarPage(
                                  inputId = "rtjellytop",
                                  label = "Select Card Type:",
                                  choices = c("Credit Card", "Loyalty Card"
-                                             ), #close bracket w comma for c
+                                 ), #close bracket w comma for c
                                  selected = "Credit Card",
                                  icon = icon("check"),
                                  inline = FALSE,
@@ -519,7 +527,7 @@ ui <- navbarPage(
                                  choices = unique(loyalty_data$loyaltynum)
                                ), #close bracket w comma for selectinput
                                
-                               ), #close bracket w comma for column
+                        ), #close bracket w comma for column
                         
                         column(10,
                                #price plots credit
@@ -530,10 +538,10 @@ ui <- navbarPage(
                                #plots loyalty
                                plotlyOutput(outputId = "rtlctop"),
                                DT::dataTableOutput("rtlctabletop")
-                              
-                               ), #close bracket w comma for column
+                               
+                        ), #close bracket w comma for column
                         
-                        ), #close bracket w comma for fluidRow
+                      ), #close bracket w comma for fluidRow
                       
                       fluidRow(
                         column(2,
@@ -655,11 +663,11 @@ ui <- navbarPage(
                                  plotlyOutput(outputId = "TxnScatterLoyalty")
                                ),#close bracket with comma for conditionalPanel
                                
-                          ),#close bracket with comma for column(10)
+                        ),#close bracket with comma for column(10)
                         
-                        ),#close bracket with comma for fluidRow()
+                      ),#close bracket with comma for fluidRow()
                       
-                      )#close bracket without comma, maybe because last TabPanel, for Txn Analysis
+             )#close bracket without comma, maybe because last TabPanel, for Txn Analysis
              
   ) #close brackets for navbarMenu, do not need comma
   
@@ -708,16 +716,16 @@ server <- function(input, output, session) {
   observeEvent(input$view_select,{
     
     if (input$view_select=="Person"){
-        shinyjs::hide(id = "biodata_select2")
-        shinyjs::show(id = "biodata_select")
-        shinyjs::show(id = 'biodata_output')
-        shinyjs::hide(id = 'overview_output')
-        
+      shinyjs::hide(id = "biodata_select2")
+      shinyjs::show(id = "biodata_select")
+      shinyjs::show(id = 'biodata_output')
+      shinyjs::hide(id = 'overview_output')
+      
     }else if(input$view_select=="Overview"){
-        shinyjs::show(id = "biodata_select")
-        shinyjs::show(id = "biodata_select2")
-        shinyjs::hide(id = 'biodata_output')
-        shinyjs::show(id = 'overview_output')
+      shinyjs::show(id = "biodata_select")
+      shinyjs::show(id = "biodata_select2")
+      shinyjs::hide(id = 'biodata_output')
+      shinyjs::show(id = 'overview_output')
     }
     
     
@@ -752,7 +760,7 @@ server <- function(input, output, session) {
               axis.text.y = element_blank(),
               axis.ticks.x  = element_blank(),
               axis.ticks.y  = element_blank()
-              )
+        )
       
       gg <- ggplotly(g) %>% layout(height = 700)
       gg
@@ -765,7 +773,7 @@ server <- function(input, output, session) {
   
   output$biodata_output <- renderTable(rownames = F,bordered = F,striped = T,align = 'c', {
     
-
+    
     df_tmp <- as.data.frame(t(subset(df.emp, FullName==input$biodata_select)))
     df_tmp <- cbind(newColName = rownames(df_tmp), df_tmp)
     rownames(df_tmp) <- 1:nrow(df_tmp)
@@ -778,13 +786,13 @@ server <- function(input, output, session) {
   }) 
   
   
-    
+  
   output$info_message<- renderText({if(input$go == 0){paste("Click on the Display Button to render the output")} else{return()}})
   
   observeEvent(input$about,
                {showModal(modalDialog(title = "Help Box",
                                       "Adjust the minimum and maximum width of the edges"))
-                 })
+               })
   
   output$email_convo <- renderPlotly({
     
@@ -795,7 +803,7 @@ server <- function(input, output, session) {
              
              Date.Time <= as_hms(str_extract(input$time[2], 
                                              pattern = '\\d\\d:\\d\\d:\\d\\d')) 
-            ) %>%
+      ) %>%
       filter(Date.Date >= input$date[1], 
              Date.Date <= input$date[2])
     
@@ -804,51 +812,51 @@ server <- function(input, output, session) {
       select(From_dep, From_title)
     
     tryCatch({
-    
-    g <- ggplot(dat, aes(y=To, x=Date.Time))+ 
-        geom_point(#position=position_dodge(width=1),
-              size=2, alpha = 0.6, stroke=0.5, shape=21,
-              aes(text = sprintf("Sub: %s<br>Date: %s<br>To: %s<br>To_Title: %s<br>To_Dep: %s<br>Time Sent: %s<br>", 
-                                 Subject2, 
-                                 Date.Date, 
-                                 To,
-                                 To_title, 
-                                 To_dep,
-                                 strftime(Date.Time, format = '%H:%M')
-                                 )
-                  )
-              ) +
-      #scale_x_continuous(labels = strftime(Date.Time,format = '%H:%M')) + 
-      #scale_x_continuous( limits = c( 25000, 115000),
-      #                    breaks= c(28800,43200,57600,72000,86400,100800,115200),
-      #                    labels=c("08:00","12:00","16:00","20:00","24:00","04:00","08:00")) +
-      geom_line(aes(group = Subject2, color= Subject2), size=0.2) +
-      labs(y="",x="Time",title = paste(input$person,paste(unique(details), collapse = ',')), 
-           group="", 
-           color="") +
-      theme(legend.text = element_text(size = 8),
-            panel.background = element_rect(fill="white"),
-            panel.grid.major.y = element_line(color="#f0f0f0"),
-            plot.title = element_text(size=14))
-    
-    gg <- ggplotly(g, tooltip = c("text")) 
-    gg
-     gg }, error = function(e){
       
-      text = paste("There was no email correspondence in this time bracket",
-                    '<br>',
-                    "Please try a different time bracket on the slider")
-      ggplot() + 
-        annotate("text", x = 0, y = 20, size=8, label = text) + 
-         theme(element_blank(), 
-               axis.ticks = element_blank(),
-               axis.text = element_blank(),
-               axis.title = element_blank(),
-               panel.background = element_rect(fill='white')
-               )
-     
-       }
-     )
+      g <- ggplot(dat, aes(y=To, x=Date.Time))+ 
+        geom_point(#position=position_dodge(width=1),
+          size=2, alpha = 0.6, stroke=0.5, shape=21,
+          aes(text = sprintf("Sub: %s<br>Date: %s<br>To: %s<br>To_Title: %s<br>To_Dep: %s<br>Time Sent: %s<br>", 
+                             Subject2, 
+                             Date.Date, 
+                             To,
+                             To_title, 
+                             To_dep,
+                             strftime(Date.Time, format = '%H:%M')
+          )
+          )
+        ) +
+        #scale_x_continuous(labels = strftime(Date.Time,format = '%H:%M')) + 
+        #scale_x_continuous( limits = c( 25000, 115000),
+        #                    breaks= c(28800,43200,57600,72000,86400,100800,115200),
+        #                    labels=c("08:00","12:00","16:00","20:00","24:00","04:00","08:00")) +
+        geom_line(aes(group = Subject2, color= Subject2), size=0.2) +
+        labs(y="",x="Time",title = paste(input$person,paste(unique(details), collapse = ',')), 
+             group="", 
+             color="") +
+        theme(legend.text = element_text(size = 8),
+              panel.background = element_rect(fill="white"),
+              panel.grid.major.y = element_line(color="#f0f0f0"),
+              plot.title = element_text(size=14))
+      
+      gg <- ggplotly(g, tooltip = c("text")) 
+      gg
+      gg }, error = function(e){
+        
+        text = paste("There was no email correspondence in this time bracket",
+                     '<br>',
+                     "Please try a different time bracket on the slider")
+        ggplot() + 
+          annotate("text", x = 0, y = 20, size=8, label = text) + 
+          theme(element_blank(), 
+                axis.ticks = element_blank(),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                panel.background = element_rect(fill='white')
+          )
+        
+      }
+    )
     
   })#close brackets for output$email_convo
   
@@ -895,7 +903,7 @@ server <- function(input, output, session) {
       temp_g <-temp_g %>% 
         select(From, From_title, To, To_title, Date.Date, Date.Time, Subject) 
     }
-
+    
   })#close brackets for temp_g_vf
   
   ####NK output$table Server Codes####
@@ -918,96 +926,96 @@ server <- function(input, output, session) {
   output$vis_email <- renderVisNetwork({
     
     tryCatch({
-    temp_g_links <- temp_g_vf() %>% 
-      select(From, To, Subject) %>% 
-      rename(group = Subject)
-    
-    temp_g_nodes <- data.frame(id = unique(c(temp_g_vf()$From, temp_g_vf()$To)))
-    #temp_g_nodes$title <- temp_g_nodes$id
-    
-    temp_g_nodes <- temp_g_nodes %>% 
-      left_join(select(df.emp, FullName, CurrentEmploymentType), by = c('id' = 'FullName')) %>%
-      rename(group = CurrentEmploymentType) %>%
-      replace_na(list(group = "Executive"))
-    
-    temp_g_nodes$color.highlight.background <- "brown"
-    
-    
-    temp_graph <- graph_from_data_frame(d = temp_g_links,
-                                        vertices = temp_g_nodes,
-                                        directed = T)
-    
-    lnodes <- data.frame(shape = rep('square',6),
-                         label = c("Executive",
-                                   "Facilities",
-                                   "Engineering",
-                                   "Administration",
-                                   "Security",
-                                   "Information Technology"),
-                         color.background = c("#FB7E81",
-                                              "#7BE141",
-                                              "#FFFF00",
-                                              "#97C2FC",
-                                              "#AD85E4",
-                                              "#EB7DF4"),
-                         color.border = rep('black',6),
-                         font.align =  rep("center",6),
-                         font.size = rep(20,6)
-    )
-    
-    data <- toVisNetworkData(temp_graph)
-    
-    
-    visNetwork(data$nodes, data$edges) %>%
-      visEdges(arrows = "middle",width = 0.01,length = 5, scaling = list(min=0.1,max=3)) %>%
-      visIgraphLayout() %>%
-      visNodes(size=20) %>%
-      visOptions(nodesIdSelection = T, highlightNearest = T) %>%
-      visLegend(zoom = T, addNodes = lnodes, useGroups = F)  %>%
-      visGroups(groupname = "Executive", 
-                # Red
-                color = list(border = "#FA0A10", 
-                             background = "#FB7E81", 
-                             highlight = list(border = "#FA0A10", background = "#FB7E81"),
-                             hover = list(background = "#FA0A10", border = "#FB7E81")
-                )) %>%
-      visGroups(groupname = "Facilities", 
-                # Green
-                color = list(border = "#41A906", 
-                             background = "#7BE141", 
-                             highlight = list(border = "#41A906", background = "#7BE141"),
-                             hover = list(background = "#41A906", border = "#7BE141")
-                )) %>%
-      visGroups(groupname = "Engineering", 
-                # Yellow
-                color = list(border = "#FFA500", 
-                             background = "#FFFF00", 
-                             highlight = list(border = "#FFA500", background = "#FFFF00"),
-                             hover = list(background = "#FFA500", border = "#FFFF00")
-                )) %>%
-      visGroups(groupname = "Administration", 
-                # Blue
-                color = list(border = "#2B7CE9", 
-                             background = "#97C2FC", 
-                             highlight = list(border = "#2B7CE9", background = "#97C2FC"),
-                             hover = list(background = "#2B7CE9", border = "#97C2FC")
-                )) %>%
-      visGroups(groupname = "Security", 
-                # Purple
-                color = list(border = "#7C29F0", 
-                             background = "#AD85E4", 
-                             highlight = list(border = "#7C29F0", background = "#AD85E4"),
-                             hover = list(background = "#7C29F0", border = "#AD85E4")
-                )) %>%
-      visGroups(groupname = "Information Technology", 
-                # Magenta
-                color = list(border = "#E129F0", 
-                             background = "#EB7DF4", 
-                             highlight = list(border = "#E129F0", background = "#EB7DF4"),
-                             hover = list(background = "#E129F0", border = "#EB7DF4")
-                )) %>%
-      visLegend(zoom = T, addNodes = lnodes, useGroups = F) %>%
-      visInteraction(multiselect = TRUE)
+      temp_g_links <- temp_g_vf() %>% 
+        select(From, To, Subject) %>% 
+        rename(group = Subject)
+      
+      temp_g_nodes <- data.frame(id = unique(c(temp_g_vf()$From, temp_g_vf()$To)))
+      #temp_g_nodes$title <- temp_g_nodes$id
+      
+      temp_g_nodes <- temp_g_nodes %>% 
+        left_join(select(df.emp, FullName, CurrentEmploymentType), by = c('id' = 'FullName')) %>%
+        rename(group = CurrentEmploymentType) %>%
+        replace_na(list(group = "Executive"))
+      
+      temp_g_nodes$color.highlight.background <- "brown"
+      
+      
+      temp_graph <- graph_from_data_frame(d = temp_g_links,
+                                          vertices = temp_g_nodes,
+                                          directed = T)
+      
+      lnodes <- data.frame(shape = rep('square',6),
+                           label = c("Executive",
+                                     "Facilities",
+                                     "Engineering",
+                                     "Administration",
+                                     "Security",
+                                     "Information Technology"),
+                           color.background = c("#FB7E81",
+                                                "#7BE141",
+                                                "#FFFF00",
+                                                "#97C2FC",
+                                                "#AD85E4",
+                                                "#EB7DF4"),
+                           color.border = rep('black',6),
+                           font.align =  rep("center",6),
+                           font.size = rep(20,6)
+      )
+      
+      data <- toVisNetworkData(temp_graph)
+      
+      
+      visNetwork(data$nodes, data$edges) %>%
+        visEdges(arrows = "middle",width = 0.01,length = 5, scaling = list(min=0.1,max=3)) %>%
+        visIgraphLayout() %>%
+        visNodes(size=20) %>%
+        visOptions(nodesIdSelection = T, highlightNearest = T) %>%
+        visLegend(zoom = T, addNodes = lnodes, useGroups = F)  %>%
+        visGroups(groupname = "Executive", 
+                  # Red
+                  color = list(border = "#FA0A10", 
+                               background = "#FB7E81", 
+                               highlight = list(border = "#FA0A10", background = "#FB7E81"),
+                               hover = list(background = "#FA0A10", border = "#FB7E81")
+                  )) %>%
+        visGroups(groupname = "Facilities", 
+                  # Green
+                  color = list(border = "#41A906", 
+                               background = "#7BE141", 
+                               highlight = list(border = "#41A906", background = "#7BE141"),
+                               hover = list(background = "#41A906", border = "#7BE141")
+                  )) %>%
+        visGroups(groupname = "Engineering", 
+                  # Yellow
+                  color = list(border = "#FFA500", 
+                               background = "#FFFF00", 
+                               highlight = list(border = "#FFA500", background = "#FFFF00"),
+                               hover = list(background = "#FFA500", border = "#FFFF00")
+                  )) %>%
+        visGroups(groupname = "Administration", 
+                  # Blue
+                  color = list(border = "#2B7CE9", 
+                               background = "#97C2FC", 
+                               highlight = list(border = "#2B7CE9", background = "#97C2FC"),
+                               hover = list(background = "#2B7CE9", border = "#97C2FC")
+                  )) %>%
+        visGroups(groupname = "Security", 
+                  # Purple
+                  color = list(border = "#7C29F0", 
+                               background = "#AD85E4", 
+                               highlight = list(border = "#7C29F0", background = "#AD85E4"),
+                               hover = list(background = "#7C29F0", border = "#AD85E4")
+                  )) %>%
+        visGroups(groupname = "Information Technology", 
+                  # Magenta
+                  color = list(border = "#E129F0", 
+                               background = "#EB7DF4", 
+                               highlight = list(border = "#E129F0", background = "#EB7DF4"),
+                               hover = list(background = "#E129F0", border = "#EB7DF4")
+                  )) %>%
+        visLegend(zoom = T, addNodes = lnodes, useGroups = F) %>%
+        visInteraction(multiselect = TRUE)
     },
     error = function(e){visNetwork(nodes = as.data.frame(unique(x_full$From)), edges = x_full[1:2])})
     
@@ -1021,14 +1029,14 @@ server <- function(input, output, session) {
   output$vis_dept <- renderVisNetwork({
     
     links <- df.emails %>% 
-                mutate(To = str_split(To,pattern=',')) %>% 
-                unnest_longer(To) %>% 
-                mutate(To = str_trim(To),
-                       From = str_trim(From)) %>%
-                filter(!(From==To)) %>%
-                group_by(From, To) %>%
-                summarise(count=n()) %>%
-                rename(weight = count)
+      mutate(To = str_split(To,pattern=',')) %>% 
+      unnest_longer(To) %>% 
+      mutate(To = str_trim(To),
+             From = str_trim(From)) %>%
+      filter(!(From==To)) %>%
+      group_by(From, To) %>%
+      summarise(count=n()) %>%
+      rename(weight = count)
     
     
     nodes_df <- data.frame(id = unique(c(links$From, links$To))) %>%
@@ -1103,8 +1111,8 @@ server <- function(input, output, session) {
     nodes$color.highlight.background <- "brown"
     
     nodes <- nodes %>% 
-              mutate(font.size = 25,
-                     font.weight= 1000)
+      mutate(font.size = 25,
+             font.weight= 1000)
     
     
     lnodes <- data.frame(shape = rep('square',6),
@@ -1345,7 +1353,7 @@ server <- function(input, output, session) {
                                  highlight = list(border = "#E129F0", background = "#EB7DF4"),
                                  hover = list(background = "#E129F0", border = "#EB7DF4")
                     )) #%>%
-          #visLegend(zoom = T, addNodes = lnodes, useGroups = F) 
+        #visLegend(zoom = T, addNodes = lnodes, useGroups = F) 
         
         
         
@@ -1650,6 +1658,33 @@ server <- function(input, output, session) {
     
   }) #close bracket without comma for observeReactive
   
+  ####DT Location Visits Plot####
+  
+  output$dtsellocationvisits <- renderPlotly({
+    
+    selectedlocation <- input$dtlocationselection
+    
+    sellocationvisits <- cc_data %>%
+      filter(location == selectedlocation) %>%
+      mutate(day = weekdays(date)) %>%
+      select(-c(timestamp, price, last4ccnum, time, TimeCat, category))
+    
+    p2 <- ggplot(sellocationvisits) + 
+      geom_bar(aes(factor(day, weekdays(min(date) + 0:6))),
+               width = 0.5,
+               fill = '#6FDDF8',
+               color = "black") + 
+      labs(x = "Day", y = "Number of Transactions", title = "Location Visits") +
+      ylim(0, ylim_locations) + 
+      scale_x_discrete(limits = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")) + 
+      theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),
+            axis.text.y = element_text(size = 7),
+            plot.title = element_text(hjust = 0.5),
+            panel.background = element_rect(fill = "#FDFCD8"),
+            panel.grid.major = element_line(size = 0.1, linetype = "solid", color = "#6D6D6D"),
+            panel.grid.minor = element_line(size = 0.05, linetype = "solid", color = "#A4A4A4"))
+    
+  })#close bracket without comma for output$dtsellocationvisits
   
   ####RT Specific Card Tile Plots Server Codes####
   ################################
@@ -1658,201 +1693,201 @@ server <- function(input, output, session) {
   
   
   ## TOP PLOTS AND DATATABLES
-    output$rtccpricetop <- renderPlotly({
-      
-      #user selection
-      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>% 
-        mutate(date = as.POSIXct.Date(date))
-      
-      #cc txn tile (fill by price)
-      indivccplotA <- ggplot(indivcc, aes(date, location)) +
-        geom_tile(aes(fill = price)) +
-        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-        labs(title = "All Transactions (for Specified Credit Card)") +
-        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-        theme(axis.text.x = element_text(angle = 0),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank()) +
-        theme(legend.key.height = unit(1, "cm"))
-      
-      ggplotly(indivccplotA)
-      
-    }) #close curly and brackers for pricetiletop, without comma
+  output$rtccpricetop <- renderPlotly({
+    
+    #user selection
+    indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>% 
+      mutate(date = as.POSIXct.Date(date))
+    
+    #cc txn tile (fill by price)
+    indivccplotA <- ggplot(indivcc, aes(date, location)) +
+      geom_tile(aes(fill = price)) +
+      scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+      labs(title = "All Transactions (for Specified Credit Card)") +
+      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      theme(axis.text.x = element_text(angle = 0),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) +
+      theme(legend.key.height = unit(1, "cm"))
+    
+    ggplotly(indivccplotA)
+    
+  }) #close curly and brackers for pricetiletop, without comma
   
-    output$rtcctimetop <- renderPlotly({
-      
-      #user selection
-      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>% 
-        mutate(date = as.POSIXct.Date(date))
-      
-      indivccplotB <- ggplot(indivcc, aes(date, location)) +
-        geom_tile(aes(fill = TimeCat)) +
-        scale_color_brewer(palette = "Set2")+
-        labs(title = "All Transactions (for Specified Credit Card)") +
-        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-        theme(axis.text.x = element_text(angle = 0),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank()) +
-        theme(legend.key.height = unit(1, "cm"))
-      
-      ggplotly(indivccplotB)
-      
-    }) #close bracket and curly wo comma for credit time tile
+  output$rtcctimetop <- renderPlotly({
+    
+    #user selection
+    indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>% 
+      mutate(date = as.POSIXct.Date(date))
+    
+    indivccplotB <- ggplot(indivcc, aes(date, location)) +
+      geom_tile(aes(fill = TimeCat)) +
+      scale_color_brewer(palette = "Set2")+
+      labs(title = "All Transactions (for Specified Credit Card)") +
+      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      theme(axis.text.x = element_text(angle = 0),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) +
+      theme(legend.key.height = unit(1, "cm"))
+    
+    ggplotly(indivccplotB)
+    
+  }) #close bracket and curly wo comma for credit time tile
   
-    #For specific loyaltycard tile plot
+  #For specific loyaltycard tile plot
+  
+  output$rtlctop <- renderPlotly({
     
-    output$rtlctop <- renderPlotly({
-      
-      #User Selection
-      indivlc <- loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyA) %>% 
-        mutate(date = as.POSIXct.Date(timestamp))
-      
-      #lc txn tile (fill by price)
-      indivlcplot <- ggplot(indivlc, aes(date, location)) +
-        geom_tile(aes(fill = price)) +
-        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-        labs(title = "All Transactions (for Specified Loyalty Card)") +
-        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-        theme(axis.text.x = element_text(angle = 0),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank()) +
-        theme(legend.key.height = unit(1, "cm"))
-      
-      ggplotly(indivlcplot) 
-      
-      
-    }) #close bracket and curly wo comma for loyalty tile
+    #User Selection
+    indivlc <- loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyA) %>% 
+      mutate(date = as.POSIXct.Date(timestamp))
     
-    #For DataTables (Specific Card)
+    #lc txn tile (fill by price)
+    indivlcplot <- ggplot(indivlc, aes(date, location)) +
+      geom_tile(aes(fill = price)) +
+      scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+      labs(title = "All Transactions (for Specified Loyalty Card)") +
+      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      theme(axis.text.x = element_text(angle = 0),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) +
+      theme(legend.key.height = unit(1, "cm"))
     
-    output$rtcctabletop <- renderDT({
-      
-      DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>%
-                      dplyr::select(date, time, location, price, last4ccnum), options = list(
-                        initComplete = JS(
-                          "function(settings, json) {",
-                          "$('body').css({'font-family': 'Helvetica'});",
-                          "}"
-                        )
-                      ))
-    }) #close bracket and curly wo comma for renderDT
-    
-    output$rtlctabletop <- renderDT({
-      
-      DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyA) %>%
-                      dplyr::select(timestamp, location, price, loyaltynum), options = list(
-                        initComplete = JS(
-                          "function(settings, json) {",
-                          "$('body').css({'font-family': 'Helvetica'});",
-                          "}"
-                        )
-                      ))
-      
-    }) #close bracket and curly wo comma for renderDT
+    ggplotly(indivlcplot) 
     
     
-    ## BOTTOM PLOTS AND DATATABLES
-    output$rtccpricebottom <- renderPlotly({
-      
-      #user selection
-      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>% 
-        mutate(date = as.POSIXct.Date(date))
-      
-      #cc txn tile (fill by price)
-      indivccplotA <- ggplot(indivcc, aes(date, location)) +
-        geom_tile(aes(fill = price)) +
-        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-        labs(title = "All Transactions (for Specified Credit Card)") +
-        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-        theme(axis.text.x = element_text(angle = 0),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank()) +
-        theme(legend.key.height = unit(1, "cm"))
-      
-      ggplotly(indivccplotA)
-      
-    }) #close curly and brackers for pricetiletop, without comma
+  }) #close bracket and curly wo comma for loyalty tile
+  
+  #For DataTables (Specific Card)
+  
+  output$rtcctabletop <- renderDT({
     
-    output$rtcctimebottom <- renderPlotly({
-      
-      #user selection
-      indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>% 
-        mutate(date = as.POSIXct.Date(date))
-      
-      indivccplotB <- ggplot(indivcc, aes(date, location)) +
-        geom_tile(aes(fill = TimeCat)) +
-        scale_color_brewer(palette = "Set2")+
-        labs(title = "All Transactions (for Specified Credit Card)") +
-        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-        theme(axis.text.x = element_text(angle = 0),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank()) +
-        theme(legend.key.height = unit(1, "cm"))
-      
-      ggplotly(indivccplotB)
-      
-    }) #close bracket and curly wo comma for credit time tile
+    DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>%
+                    dplyr::select(date, time, location, price, last4ccnum), options = list(
+                      initComplete = JS(
+                        "function(settings, json) {",
+                        "$('body').css({'font-family': 'Helvetica'});",
+                        "}"
+                      )
+                    ))
+  }) #close bracket and curly wo comma for renderDT
+  
+  output$rtlctabletop <- renderDT({
     
-    #For specific loyaltycard tile plot
+    DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyA) %>%
+                    dplyr::select(timestamp, location, price, loyaltynum), options = list(
+                      initComplete = JS(
+                        "function(settings, json) {",
+                        "$('body').css({'font-family': 'Helvetica'});",
+                        "}"
+                      )
+                    ))
     
-    output$rtlcbottom <- renderPlotly({
-      
-      #User Selection
-      indivlc <- loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyB) %>% 
-        mutate(date = as.POSIXct.Date(timestamp))
-      
-      #lc txn tile (fill by price)
-      indivlcplot <- ggplot(indivlc, aes(date, location)) +
-        geom_tile(aes(fill = price)) +
-        scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-        labs(title = "All Transactions (for Specified Loyalty Card)") +
-        scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
-        theme(axis.text.x = element_text(angle = 0),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank()) +
-        theme(legend.key.height = unit(1, "cm"))
-      
-      ggplotly(indivlcplot) 
-      
-      
-    }) #close bracket and curly wo comma for loyalty tile
+  }) #close bracket and curly wo comma for renderDT
+  
+  
+  ## BOTTOM PLOTS AND DATATABLES
+  output$rtccpricebottom <- renderPlotly({
     
-    #For DataTables (Specific Card)
+    #user selection
+    indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>% 
+      mutate(date = as.POSIXct.Date(date))
     
-    output$rtcctablebottom <- renderDT({
-      
-      DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>%
-                      dplyr::select(date, time, location, price, last4ccnum), options = list(
-                        initComplete = JS(
-                          "function(settings, json) {",
-                          "$('body').css({'font-family': 'Helvetica'});",
-                          "}"
-                        )
-                      ))
-    }) #close bracket and curly wo comma for renderDT
+    #cc txn tile (fill by price)
+    indivccplotA <- ggplot(indivcc, aes(date, location)) +
+      geom_tile(aes(fill = price)) +
+      scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+      labs(title = "All Transactions (for Specified Credit Card)") +
+      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      theme(axis.text.x = element_text(angle = 0),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) +
+      theme(legend.key.height = unit(1, "cm"))
     
-    output$rtlctablebottom <- renderDT({
-      
-      DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyB) %>%
-                      dplyr::select(timestamp, location, price, loyaltynum), options = list(
-                        initComplete = JS(
-                          "function(settings, json) {",
-                          "$('body').css({'font-family': 'Helvetica'});",
-                          "}"
-                        )
-                      ))
-      
-    }) #close bracket and curly wo comma for renderDT
+    ggplotly(indivccplotA)
     
+  }) #close curly and brackers for pricetiletop, without comma
+  
+  output$rtcctimebottom <- renderPlotly({
     
+    #user selection
+    indivcc <- cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>% 
+      mutate(date = as.POSIXct.Date(date))
+    
+    indivccplotB <- ggplot(indivcc, aes(date, location)) +
+      geom_tile(aes(fill = TimeCat)) +
+      scale_color_brewer(palette = "Set2")+
+      labs(title = "All Transactions (for Specified Credit Card)") +
+      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      theme(axis.text.x = element_text(angle = 0),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) +
+      theme(legend.key.height = unit(1, "cm"))
+    
+    ggplotly(indivccplotB)
+    
+  }) #close bracket and curly wo comma for credit time tile
+  
+  #For specific loyaltycard tile plot
+  
+  output$rtlcbottom <- renderPlotly({
+    
+    #User Selection
+    indivlc <- loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyB) %>% 
+      mutate(date = as.POSIXct.Date(timestamp))
+    
+    #lc txn tile (fill by price)
+    indivlcplot <- ggplot(indivlc, aes(date, location)) +
+      geom_tile(aes(fill = price)) +
+      scale_fill_gradient(low="#56B1F7", high = "#132B43") +
+      labs(title = "All Transactions (for Specified Loyalty Card)") +
+      scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      theme(axis.text.x = element_text(angle = 0),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank()) +
+      theme(legend.key.height = unit(1, "cm"))
+    
+    ggplotly(indivlcplot) 
     
     
+  }) #close bracket and curly wo comma for loyalty tile
+  
+  #For DataTables (Specific Card)
+  
+  output$rtcctablebottom <- renderDT({
+    
+    DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>%
+                    dplyr::select(date, time, location, price, last4ccnum), options = list(
+                      initComplete = JS(
+                        "function(settings, json) {",
+                        "$('body').css({'font-family': 'Helvetica'});",
+                        "}"
+                      )
+                    ))
+  }) #close bracket and curly wo comma for renderDT
+  
+  output$rtlctablebottom <- renderDT({
+    
+    DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyB) %>%
+                    dplyr::select(timestamp, location, price, loyaltynum), options = list(
+                      initComplete = JS(
+                        "function(settings, json) {",
+                        "$('body').css({'font-family': 'Helvetica'});",
+                        "}"
+                      )
+                    ))
+    
+  }) #close bracket and curly wo comma for renderDT
+  
+  
+  
+  
   ####RT Txn Box Plots Server Codes####  
   #########################
   ##### Txn Box Plot ######
   #########################
   
-    output$TxnBoxPlotA <- renderPlotly({
+  output$TxnBoxPlotA <- renderPlotly({
     
     #Combining the cc_data and loyalty_data
     ccloyal <- dplyr::bind_rows(list(cc_data = cc_data, loyalty_data = loyalty_data), .id='Source')
@@ -1980,7 +2015,7 @@ server <- function(input, output, session) {
       shinyjs::hide(id = "rtccpricetop")
     }
   })
-    
+  
   #For spec card bottom plots
   
   observeEvent(input$rtjellybottom, {

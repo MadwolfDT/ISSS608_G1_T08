@@ -27,6 +27,16 @@ loyalty_data <- loyalty_data %>%
                                     pattern = "Katerin.+",
                                     replacement = "Katrina\x27s Caf\xe9"))
 
+cc_locations <- cc_data %>%
+  distinct(location)
+
+ylim_locations <- cc_data %>%
+  mutate(day = weekdays(timestamp)) %>%
+  group_by(location, day) %>%
+  count(location, day, name = "count") %>%
+  ungroup()
+
+ylim_locations <- max(ylim_locations$count)
 
 location_gps <- gps %>%
   group_by(id) %>%

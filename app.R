@@ -54,6 +54,61 @@ ui <- navbarPage(
   navbarMenu(
     "Exploratory Data Analysis",
     
+    ####DT Locations Exploration UI####
+    tabPanel(title = "Locations - For Exploration!",
+             
+             fluidRow(
+               titlePanel("Locations Heat Map"),
+               
+               column(4,
+                      
+                      selectInput(
+                        
+                        inputId = "dtlocationdatefrom",
+                        label = "Date (From)",
+                        choices = c(gps_date$datestamp),
+                        
+                      ),#close bracket with comma for selectInput
+                      
+                      selectInput(
+                        
+                        inputId = "dtlocationdateto",
+                        label = "Date (To)",
+                        choices = c(gps_date$datestamp),
+                        
+                      ),#close bracket with comma for selectInput
+                      
+                      actionButton("plottxnheatmap", "Plot"),
+                      
+                      
+               ),#close brackets for column(), need comma
+               
+               column(8,
+                      
+                      girafeOutput(outputId = "dtlocationheatmap")
+                      
+               ),#close brackets for column(), need comma
+               
+             ),#close brackets for fluidRow(), need comma
+             
+             fluidRow(
+               
+               titlePanel("Specific Location Peak Periods"),
+               
+               column(4, "Inputs"
+                      
+                      
+               ),#close brackets for column(), need comma
+               
+               column(8, "Outputs"
+                      
+                      
+               ),#close brackets for column(), need comma
+               
+             ),#close brackets for fluidRow(), need comma
+             
+    ), #close brackets for tabPanel for Locations, need comma
+    
     ####RT Transactions Exploration UI####
     tabPanel(title = "Transactions - For Exploration!",
              
@@ -1496,6 +1551,54 @@ server <- function(input, output, session) {
     }
     
   })#close curly and brackers for observe, without comma
+  
+  ####DT Locations Heat Map Server Codes####
+  
+  observeEvent(input$plottxnheatmap,{
+    
+    # runif({
+    
+    fromdate <- input$dtlocationdatefrom
+    todate <- input$dtlocationdateto
+    
+    # fromdate <- cc_data$date[1]
+    # todate <- cc_data$date[840]
+    
+    heatmap_cc <- cc_data %>%
+      filter(date >= fromdate & date <= todate) %>%
+      mutate(daydate = weekdays(timestamp)) %>%
+      group_by(location, daydate, time) %>%
+      add_count(location, daydate, time, name = "count") %>%
+      dplyr::select(-c(timestamp, TimeCat, category))
+    
+    x1 <- length(unique(heatmap_cc$count))
+    
+    cc_colours1 <- colorRampPalette(c('green', 'yellow', 'orange', 'red'))(x1)
+    
+    p1 <- ggplot(heatmap_cc,
+                 aes(time, location)) + 
+      geom_tile_interactive(aes(fill = factor(count))) + 
+      scale_fill_manual(values = cc_colours1,
+                        name = "Frequency") +
+      #breaks = levels(count)[seq(1, x, by = 5)]) +
+      labs(y = "Locations", x = "Time (Static)", title = "Transactions/ Locations Heat Map") +
+      theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),
+            axis.text.y = element_text(size = 7),
+            plot.title = element_text(hjust = 0.5))
+    
+    output$dtlocationheatmap <- renderGirafe({
+      
+      girafe(
+        ggobj = p1,
+        width_svg = 6,
+        height_svg = 6*0.618)
+      
+    })#close curly and brackers for dtlocationheatmap, without comma
+    
+    # })#close bracket without comma for runif
+    
+  }) #close bracket without comma for eventReactive
+  
   
   ####RT Specific Card Tile Plots Server Codes####
   ################################

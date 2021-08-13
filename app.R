@@ -333,7 +333,7 @@ ui <- navbarPage(
                       selectInput(
                         inputId = "rtspeccreditA",
                         label = "Credit Card (Top)",
-                        choices = unique(cc_data$last4ccnum)
+                        choices = sort(unique(cc_data$last4ccnum))
                       ),#close bracket w comma for selectinput
                       
                       prettyRadioButtons(
@@ -354,7 +354,7 @@ ui <- navbarPage(
                       selectInput(
                         inputId = "rtspecloyaltyA",
                         label = "Loyalty Card No.",
-                        choices = unique(loyalty_data$loyaltynum)
+                        choices = sort(unique(loyalty_data$loyaltynum))
                       ), #close bracket w comma for selectinput
                       
                ), #close bracket w comma for column
@@ -392,7 +392,7 @@ ui <- navbarPage(
                       selectInput(
                         inputId = "rtspeccreditB",
                         label = "Credit Card (Bottom)",
-                        choices = unique(cc_data$last4ccnum)
+                        choices = sort(unique(cc_data$last4ccnum))
                       ),#close bracket w comma for selectinput
                       
                       prettyRadioButtons(
@@ -413,7 +413,7 @@ ui <- navbarPage(
                       selectInput(
                         inputId = "rtspecloyaltyB",
                         label = "Loyalty Card No.(Bottom)",
-                        choices = unique(loyalty_data$loyaltynum)
+                        choices = sort(unique(loyalty_data$loyaltynum))
                       ), #close bracket w comma for selectinput
                       
                ), #close bracket w comma for column
@@ -709,7 +709,7 @@ ui <- navbarPage(
                                  selectInput(
                                    inputId = "rtcreditcard",
                                    label = "Last 4 Digits of Card",
-                                   choices = unique(cc_data$last4ccnum)
+                                   choices = sort(unique(cc_data$last4ccnum))
                                  )
                                ),#close bracket with comma for conditionalPanel
                                conditionalPanel(
@@ -717,7 +717,7 @@ ui <- navbarPage(
                                  selectInput(
                                    inputId = "rtloyalcard",
                                    label = "Loyalty Card No.",
-                                   choices = unique(loyalty_data$loyaltynum)
+                                   choices = sort(unique(loyalty_data$loyaltynum))
                                  )
                                )#close bracket wo comma for conditionalPanel
                                
@@ -1921,11 +1921,14 @@ server <- function(input, output, session) {
     indivccplotA <- ggplot(indivcc, aes(date, location)) +
       geom_tile(aes(fill = price)) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-      labs(title = "All Transactions (for Specified Credit Card)") +
+      labs(title = "All Transactions (for Selected Credit Card)",
+           fill = "Price Range") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      scale_y_discrete(limits = rev) +
       theme(axis.text.x = element_text(angle = 0),
             axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
+            axis.title.y = element_blank(),
+            plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
     ggplotly(indivccplotA)
@@ -1941,11 +1944,14 @@ server <- function(input, output, session) {
     indivccplotB <- ggplot(indivcc, aes(date, location)) +
       geom_tile(aes(fill = TimeCat)) +
       scale_color_brewer(palette = "Set2")+
-      labs(title = "All Transactions (for Specified Credit Card)") +
+      labs(title = "All Transactions (for Selected Credit Card)",
+           fill = "Time of Day") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      scale_y_discrete(limits = rev) +
       theme(axis.text.x = element_text(angle = 0),
             axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
+            axis.title.y = element_blank(),
+            plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
     ggplotly(indivccplotB)
@@ -1964,11 +1970,14 @@ server <- function(input, output, session) {
     indivlcplot <- ggplot(indivlc, aes(date, location)) +
       geom_tile(aes(fill = price)) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-      labs(title = "All Transactions (for Specified Loyalty Card)") +
+      labs(title = "All Transactions (for Selected Loyalty Card)",
+           fill = "Price Range") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      scale_y_discrete(limits = rev) +
       theme(axis.text.x = element_text(angle = 0),
             axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
+            axis.title.y = element_blank(),
+            plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
     ggplotly(indivlcplot) 
@@ -2015,11 +2024,14 @@ server <- function(input, output, session) {
     indivccplotA <- ggplot(indivcc, aes(date, location)) +
       geom_tile(aes(fill = price)) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-      labs(title = "All Transactions (for Specified Credit Card)") +
+      labs(title = "All Transactions (for Selected Credit Card)",
+           fill = "Price Range") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      scale_y_discrete(limits = rev) +
       theme(axis.text.x = element_text(angle = 0),
             axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
+            axis.title.y = element_blank(),
+            plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
     ggplotly(indivccplotA)
@@ -2035,11 +2047,14 @@ server <- function(input, output, session) {
     indivccplotB <- ggplot(indivcc, aes(date, location)) +
       geom_tile(aes(fill = TimeCat)) +
       scale_color_brewer(palette = "Set2")+
-      labs(title = "All Transactions (for Specified Credit Card)") +
+      labs(title = "All Transactions (for Selected Credit Card)",
+           fill = "Time of Day") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      scale_y_discrete(limits = rev) +
       theme(axis.text.x = element_text(angle = 0),
             axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
+            axis.title.y = element_blank(),
+            plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
     ggplotly(indivccplotB)
@@ -2058,11 +2073,14 @@ server <- function(input, output, session) {
     indivlcplot <- ggplot(indivlc, aes(date, location)) +
       geom_tile(aes(fill = price)) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
-      labs(title = "All Transactions (for Specified Loyalty Card)") +
+      labs(title = "All Transactions (for Selected Loyalty Card)",
+           fill = "Price Range") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
+      scale_y_discrete(limits = rev) +
       theme(axis.text.x = element_text(angle = 0),
             axis.title.x = element_blank(),
-            axis.title.y = element_blank()) +
+            axis.title.y = element_blank(),
+            plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
     ggplotly(indivlcplot) 

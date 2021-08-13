@@ -328,7 +328,8 @@ ui <- navbarPage(
                                 label = 'Charts', 
                                 choices = c('Age Comparison',
                                             'Year Joined',
-                                            'Timings of Emails')
+                                            'Timings of Emails',
+                                            'Military Service')
                     )
                     
              ), # close bracket for column 1
@@ -775,7 +776,7 @@ server <- function(input, output, session) {
     
   })#close brackets for output$paracoord
   
-  ####NK Email Convo Server Codes####
+  #### NK Email Biodata Server Codes####
 
   
   observeEvent(input$view_select,{
@@ -825,7 +826,7 @@ server <- function(input, output, session) {
         ggplot(aes(x = Approx_age, y= FullName2)) +
         geom_point(aes(fill = CurrentEmploymentType), size=5, shape=21,stroke=0.1, color='black',alpha=0.7)  +
         scale_fill_manual(values=c("#97C2FC","#FFFF00", "#FB7E81", "#7BE141","#EB7DF4","#7C29F0"))+
-        geom_text(aes(label=FullName2), vjust = 3, size=3,fontface = "bold")+
+        geom_text(aes(label=FullName2), vjust = 3, size=3, fontface = "bold")+
         scale_x_continuous(breaks = c(10, 20, 25,30,35,40,45,50,55,60))+
         expand_limits( y = c(-3, length(levels(age_df$FullName)) + 3)) +
         labs(y="",x="Time",title = "Approximate Ages of GasTech Employees in 2014", color="Department") +
@@ -920,9 +921,36 @@ server <- function(input, output, session) {
       gg <- ggplotly(g)
       
       gg
+    
+    }else if(input$biodata_select2=='Military Service'){
+      
+      df.emp <- df.emp %>% 
+        mutate(army_year = year(MilitaryDischargeDate)) %>%
+        mutate(disch = paste(MilitaryServiceBranch, army_year)) %>%
+        mutate(MilitaryStartYear = year(MilitaryDischargeDate)-2) %>%
+        mutate(MilitaryDischargeYear = year(MilitaryDischargeDate))
+      
+      mil_data<-df.emp %>%
+           filter(!is.na(MilitaryDischargeYear)) %>%
+           mutate(ArmyLoc =  ifelse(str_detect(MilitaryServiceBranch,"Kronos"),"Kronos","Tethys")) 
       
       
-      
+      fig_1 <- ggplotly(mil_data %>%
+                       ggplot(aes(y = FullName, x = MilitaryStartYear)) +
+                       geom_point(size=2, color="#81b879") +
+                       geom_point(aes(MilitaryDischargeYear), color="#769ab5", size=2) +
+                       geom_segment(aes(x=MilitaryStartYear, xend=MilitaryDischargeYear, y=FullName,yend=FullName, color=ArmyLoc), size=0.5, alpha=0.7) +
+                       scale_x_continuous(breaks = seq(min(mil_data$MilitaryStartYear), max(mil_data$MilitaryDischargeYear), by=2))+
+                       #scale_color_manual(values = c("#97C2FC","#7BE141","#AD85E4"))+
+                       #facet_wrap(~ArmyLoc, scales = "free") +
+                       labs(x = "Year",y ="", title="Time Served in the Military in Kronos")+
+                       theme(panel.background = element_rect(fill ="white"),
+                             panel.grid.major.y = element_line(colour = "grey",linetype = 3),
+                             panel.grid.major.x = element_line(colour = "grey",linetype = 3),
+                             panel.border = element_rect(color="grey", fill=NA),
+                             axis.ticks.x  = element_blank(),
+                             axis.ticks.y  = element_blank())) %>% layout(hoverlabel=list(bgcolor="white"))
+      fig_1
       
     }
     

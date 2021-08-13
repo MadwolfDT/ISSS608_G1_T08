@@ -1833,7 +1833,7 @@ server <- function(input, output, session) {
                width = 0.5,
                fill = '#6FDDF8',
                color = "black") + 
-      labs(x = "Day", y = "Number of Transactions", title = "Location Visits") +
+      labs(x = "Day", y = "Number of Transactions", title = paste(selectedlocation, "Visits")) +
       ylim(0, ylim_locations) + 
       scale_x_discrete(limits = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")) + 
       theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),

@@ -2326,6 +2326,8 @@ server <- function(input, output, session) {
     
     fromdate <- input$dtlocationdaterange[1]
     todate <- input$dtlocationdaterange[2]
+    fromtime <- input$dtlocationtimerange[1]
+    totime <- input$dtlocationtimerange[2]
     isWeekday <- input$dtweekday
     isWeekend <- input$dtweekend
     

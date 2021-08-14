@@ -30,7 +30,7 @@ We would be using Shiny R to develop an online investigative tool to aid in the 
 
 # Motivation
 
-The motivation of this project is two-fold. First, the data presented to the investigators were raw and unprocessed, and to link and derive insights from these data would require tremendous man hours and effort. Second, while insights could be derived and useful information could be formed, there would be a need to present the information in a visually appealing format to facilitate information dissemination and to allow quick collective appreciation of events among the investigators.
+The motivation of this project would be two-fold. First, the data presented to the investigators were raw and unprocessed, and to link and derive insights from these data would require tremendous man hours and effort. Second, while insights could be derived and useful information could be formed, there would be a need to present the information in a visually appealing format to facilitate information dissemination and to allow quick collective appreciation of events among the investigators.
 
 To this end, we would be looking to develop a R Shiny app based on three principles: (a) informative; (b) intuitive and; (c) interactive. Our 3Is principles would have the data undergoing baseline cleaning, making them into suitable formats for subsequent processing for information delivery. The user-interface would be made intuitive so that the investigator would be able to use the application without much references to our user guide. The online investigative tool would also be interactive, such that the investigator would be able to provide varied inputs into the formation towards the final visualisation report.
 
@@ -89,6 +89,10 @@ Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor a
 
 ## Networks
 
+Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor aliquam ante, nec convallis nisl ornare eu. Morbi ut purus et justo commodo dignissim et nec nisl. Donec imperdiet tellus dolor, vel dignissim risus venenatis eu. Aliquam tempor imperdiet massa, nec fermentum tellus sollicitudin vulputate. Integer posuere porttitor pharetra. Praesent vehicula elementum diam a suscipit. Morbi viverra velit eget placerat pellentesque. Nunc congue augue non nisi ultrices tempor.
+
+## Employee Movement Plot
+
 ![](img/Movement.PNG)
 
 Under this module, the investigators would be able to select a specific employee and to choose the date to determine the route of the employees. The list of locations and route would be plotted onto the map, and the duration of the parking could be refined based on the tolerance of the investigators to define how a location should be identified.
@@ -96,10 +100,6 @@ Under this module, the investigators would be able to select a specific employee
 ![](img/Movement2.PNG)
 
 Under this sub-module, the locations that were visited by the employee would be made known, and listed in the order of sequence where he/she had visited. Possible location names may appear, if they had been identified prior, and the box plot of the duration spent at the said location, by employees, would be featured to determine whether there were any anomalies.
-
-## Employee Movement Plot
-
-Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor aliquam ante, nec convallis nisl ornare eu. Morbi ut purus et justo commodo dignissim et nec nisl. Donec imperdiet tellus dolor, vel dignissim risus venenatis eu. Aliquam tempor imperdiet massa, nec fermentum tellus sollicitudin vulputate. Integer posuere porttitor pharetra. Praesent vehicula elementum diam a suscipit. Morbi viverra velit eget placerat pellentesque. Nunc congue augue non nisi ultrices tempor.
 
 ## Transaction Amount Analysis
 

@@ -95,10 +95,10 @@ ui <- navbarPage(
               
               	<ul>
               		<li>
-              		<b>Email Network Analysis</b>: This function would allow the user to <b><i>(nikki to elaborate)</i></b>
+              		<b>Email Network Analysis</b>: This function would allow the user to search the email conversations by either the GasTech employee, or any keyword or both. The conversation chain is displayed as network graph for easy visualization. 
               		</li>
               		<li>
-              		<b>Networks</b>: This function would allow the user to <b><i>(nikki to elaborate)</i></b>
+              		<b>Networks</b>: This function would allow the user to build the entire email network by either links (To, From) or using text. The user is able to view the betweenness of each node. On click, a subgraph appears to help the user see in detail the connections of the employee via email. 
               		</li>
               		<li>
               		<b>Employment Movement Plot</b>: This function would allow the user to map the GPS routes and identify the specific locations which the employee had been to. The GPS route would be plotted on the map, against identified homes of GASTech employees and prominant locations. A data table would be generated to suggest the locations where the employee would had been to, with a box plot suggesting the average time spent at the said location.
@@ -1182,7 +1182,7 @@ server <- function(input, output, session) {
       temp_g <- temp_g %>% 
         select(From, From_title, To, To_title, Date.Date, Date.Time, Subject) 
       
-    }else{
+    }else if (input$dt_select == 'Both'){
       m <- x_full %>%
         mutate(s = str_replace(Subject,"RE: ","")) %>%
         mutate(s = str_to_lower(s))

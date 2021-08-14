@@ -466,10 +466,11 @@ ui <- navbarPage(
                     
                     div(id='bio_select1div',
                         h4('Select Employee')),
-                    selectInput(inputId = 'biodata_select', 
+                    div(id='xx',
+                        selectInput(inputId = 'biodata_select', 
                                 label = NULL, 
                                 choices = list_emp
-                                ),
+                                )),
             
                     div(id='bio_select2div',
                         h4('Select the Chart to Display')),
@@ -924,11 +925,7 @@ server <- function(input, output, session) {
     
   })#close brackets for output$paracoord
   
-  #### NK Email Biodata Server Codes####
-
-  shinyjs::show(id='biodata_select')
-  shinyjs::show("bio_select1div")
-  shinyjs::hide("biodata_select2")
+  #### NK Email Biodata Server Codes###
   
   observeEvent(input$view_select,{
     
@@ -938,6 +935,7 @@ server <- function(input, output, session) {
       shinyjs::hide("bio_select2div")
       shinyjs::show("bio_select1div")
       shinyjs::show(id='biodata_select')
+      shinyjs::show(id='xx')
       shinyjs::hide("biodata_select2")
       shinyjs::show(id = 'biodata_output')
       shinyjs::hide(id = 'overview_output')
@@ -946,6 +944,7 @@ server <- function(input, output, session) {
       
       shinyjs::hide("bio_select1div")
       shinyjs::show("bio_select2div")
+      shinyjs::hide(id='xx')
       shinyjs::hide(id='biodata_select')
       shinyjs::show("biodata_select2")
       shinyjs::hide(id = 'biodata_output')
@@ -956,16 +955,7 @@ server <- function(input, output, session) {
     
   })
   
-  observeEvent(input$biodata_select2, {
-    
-    if (input$biodata_select2 =='Timings of Emails'){
-      shinyjs::show(id = 'biodata_select')
-      
-    }else{
-      shinyjs::hide(id = "biodata_select")
-    }
-    
-  })
+
   
   output$overview_output <- renderPlotly({
     

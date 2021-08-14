@@ -619,6 +619,7 @@ ui <- navbarPage(
                                            label = "Display", 
                                            value = T),
                              h5("Scale the width of Edges"),
+                             
             
                              numericInput(inputId = 'min_width', 
                                           label='Minimum', 
@@ -633,7 +634,7 @@ ui <- navbarPage(
                       
                       column(width=6, 
                              h4("Main Network"),
-                             h5("Click a node on the Main Network, to see their sub-graphs"),
+                             h5("Click a node on the Main Network below, to see their sub-graph on the right"),
                              visNetworkOutput(outputId = 'vis_dept',
                                               width = 800, 
                                               height = 700) #,
@@ -645,11 +646,12 @@ ui <- navbarPage(
                              ),
                       
                       column(width=4, 
-                             h4("Sub Network"),
-                             
+                             div(id='sub_graph', 
+                                 h4("Sub Network"),
+                              
                              visNetworkOutput(outputId = 'vis_dept_sub',
                                               #width = 700, 
-                                              height = 700)
+                                              height = 700))
                              
                              ),
                       
@@ -1468,6 +1470,8 @@ server <- function(input, output, session) {
       email_text_nt <- CreateTextnet(email_text)
       return(email_text_nt)
     })
+
+  
   
   observeEvent(input$ntwk_select,{
     
@@ -1481,6 +1485,7 @@ server <- function(input, output, session) {
       toggle("text_div_MA")
       shinyjs::hide(id = "min_width")
       shinyjs::hide(id = "max_width")
+      shinyjs::hide(id='sub_graph')
       
     }else if(input$ntwk_select =='Email Correspondence'){
       
@@ -1492,6 +1497,7 @@ server <- function(input, output, session) {
       shinyjs::show(id = "about")
       shinyjs::show(id = "min_width")
       shinyjs::show(id = "max_width")
+      shinyjs::show(id='sub_graph')
       
     }
     
@@ -1561,22 +1567,22 @@ server <- function(input, output, session) {
       if (input$node_sizings2=='Betweenness'){
         
         nodes <- data.frame(id = V(pruned)$name, 
-                            title = paste0("Degree of Node: <br>",
-                                           V(pruned)$degree),
+                            #title = paste0("Degree of Node: <br>",
+                            #               V(pruned)$degree),
                             size =  ifelse(round(betweenness(pruned))==0,10,round(betweenness(pruned)))
                             )
         
       }else if (input$node_sizings2=='Degree'){
         nodes <- data.frame(id = V(pruned)$name, 
-                            title = paste0("Degree of Node: <br>",
-                                           V(pruned)$degree),
+                            #title = paste0("Degree of Node: <br>",
+                            #               V(pruned)$degree),
                             size =  round(degree(pruned))
         )
         
       }else{
         nodes <- data.frame(id = V(pruned)$name, 
-                            title = paste0("Degree of Node: <br>",
-                                           V(pruned)$degree),
+                            #title = paste0("Degree of Node: <br>",
+                            #               V(pruned)$degree),
                             size =  size
                             )
       }
@@ -1666,7 +1672,7 @@ server <- function(input, output, session) {
                                highlight = list(border = "#E129F0", background = "#EB7DF4"),
                                hover = list(background = "#E129F0", border = "#EB7DF4")
                   )) %>%
-        visLegend(zoom = T, addNodes = lnodes, useGroups = F)
+        visLegend(zoom = T, addNodes = lnodes, useGroups = F) 
       
     }
     
@@ -1860,7 +1866,8 @@ server <- function(input, output, session) {
                   ) %>%
         visLegend(zoom = T, addNodes = lnodes, useGroups = F, width = 0.15) %>%
         visEvents(selectNode = "function(nodes) {
-            Shiny.onInputChange('current_node_id', nodes);
+            Shiny.onInputChange('current_node_id', nodes)
+            
             ;}")
       p
       
@@ -1868,7 +1875,9 @@ server <- function(input, output, session) {
     })
   }
     
-    })
+  })
+
+  
   
   output$vis_email <- renderVisNetwork({
     
@@ -1908,7 +1917,7 @@ server <- function(input, output, session) {
                            color.border = rep('black',6),
                            font.align =  rep("center",6),
                            font.size = rep(20,6)
-      )
+                          )
       
       data <- toVisNetworkData(temp_graph)
       
@@ -2152,7 +2161,7 @@ server <- function(input, output, session) {
   }) #close brackets for output$vis_dept
   
   
-  ####NK observeEvent Server Codes####
+  #### NK observeEvent Server Codes####
 
   
   

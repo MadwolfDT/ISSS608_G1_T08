@@ -1,0 +1,5 @@
+employee <- read_csv("data/EmployeeRecords.csv")
+car_data <- read_csv("data/car-assignments.csv")
+cc_data <- read_csv("data/cc_data.csv")
+loyalty_data <- read_csv("data/loyalty_data.csv")
+gps <- read_csv("data/gps.csv")

@@ -1,7 +1,6 @@
 library(shiny)
 library(rsconnect)
 library(shinythemes)
-#library(clock)
 library(tidyverse)
 library(plotly)
 library(lubridate)
@@ -25,7 +24,6 @@ library(tidygraph)
 library(widyr)
 library(tidytext)
 library(ggwordcloud)
-#library(textnets)
 library(textdata)
 library(corporaexplorer) 
 library(topicmodels)
@@ -43,6 +41,7 @@ source('scripts/dt_clean_data.r')
 source('scripts/dt_variables.r')
 source('scripts/mc1_clean_and_import.r')
 source('scripts/rt_clean_data.r')
+
 
 # Define UI ####
 ui <- navbarPage(
@@ -448,7 +447,7 @@ ui <- navbarPage(
                     
                     selectInput(inputId = 'biodata_select', 
                                 label = 'Employee', 
-                                choices = unique(df.emp$FullName)
+                                choices = list_emp
                     ),
                     
                     selectInput(inputId = 'biodata_select2', 
@@ -500,7 +499,7 @@ ui <- navbarPage(
              h4('Select Employee'),
              selectInput(inputId = 'person', 
                          label= NULL, 
-                         choices = sort(unique(x_full$From)))
+                         choices = list_emp)
       ),
       
       column(width = 9, 
@@ -525,21 +524,25 @@ ui <- navbarPage(
              tabPanel("Email Network Analysis",
                       
                       column(width=3, 
-                             h4('Select Employee'),
-                             selectInput(inputId = 'person2', 
-                                         label= NULL, 
-                                         choices = sort(unique(x_full$From))
-                             ),
+                             
                              h4('Search by'),
                              radioButtons(inputId = 'dt_select', 
                                           label=NULL, 
-                                          choices = c('Person','Keywords', 'Both')
+                                          choices = c('Person','Keywords', 'Both'),
+                                          selected = 'Person'
                              ),
+                             h4('Select Employee'),
+                             selectInput(inputId = 'person2', 
+                                         label= NULL, 
+                                         choices = list_emp,
+                                         selected = list_emp[1]),
+                             textOutput(outputId = 'debug'),
                              h4("Text Input"),
                              h5("Separate the words by a comma"),
                              textInput(inputId = 'search', 
-                                       label = 'Email Text Search',
+                                       label = NULL,
                                        value = 'word1,word2'),
+                             h4('  '),
                              h4('Commit your Inputs/Filters'),
                              actionButton(inputId = 'go', label = "Commit & Display"
                                           )
@@ -813,7 +816,7 @@ ui <- navbarPage(
 
 #server codes
 server <- function(input, output, session) {
-  
+  output$debug <- renderText({input$person2})
   ####RT Parallel Coord Server Codes####
   #########################
   ###For Parallel Coord ###
@@ -1184,10 +1187,10 @@ server <- function(input, output, session) {
   temp_g_vf <- eventReactive(input$go, {
     
     if (input$dt_select == 'Person'){
+      
       m <- x_full %>%
-        mutate(s = str_replace(Subject,"RE: ","")) 
-      
-      
+        mutate(s = str_replace(Subject,"RE: ",""))
+        
       temp_g <- m %>% 
         filter(To == input$person2 | From == input$person2)
       
@@ -1989,7 +1992,13 @@ server <- function(input, output, session) {
   })
 
   
+  observeEvent(input$go, {
+    
+ 
   
+  
+  #### NK vis_email code ####
+    
   output$vis_email <- renderVisNetwork({
     
     tryCatch({
@@ -2087,6 +2096,8 @@ server <- function(input, output, session) {
     error = function(e){visNetwork(nodes = as.data.frame(unique(x_full$From)), edges = x_full[1:2])})
     
   }) # close brackets for output$vis_email
+  })
+  ####
   
   #### NK output$vis_dept_DEPT Server Codes ####
 

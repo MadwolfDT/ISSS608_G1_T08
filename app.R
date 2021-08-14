@@ -603,7 +603,7 @@ ui <- navbarPage(
                                                       'Betweenness', 
                                                       'Degree'),
                                           selected = 'None'),
-                             div(h4("Modifying Aesthetics")),
+                             div(id='text_div_MA', h4("Modifying Aesthetics")),
                              
                              checkboxInput(inputId = 'arrow',
                                            label = "Display Direction of Edges", 
@@ -623,9 +623,11 @@ ui <- navbarPage(
                       ), # close bracket for column
                       
                       
-                      column(width=7, 
+                      column(width=6, 
+                             h4("Main Network"),
+                             h5("Click a node on the Main Network, to see their sub-graphs"),
                              visNetworkOutput(outputId = 'vis_dept',
-                                              width = "100%", 
+                                              width = 800, 
                                               height = 700) #,
                              
                              #visNetworkOutput(outputId = 'text_ntwk',
@@ -634,9 +636,11 @@ ui <- navbarPage(
                              
                              ),
                       
-                      column(width=3, 
+                      column(width=4, 
+                             h4("Sub Network"),
+                             
                              visNetworkOutput(outputId = 'vis_dept_sub',
-                                              width = "100%", 
+                                              #width = 700, 
                                               height = 700)
                              
                              ),
@@ -1461,9 +1465,10 @@ server <- function(input, output, session) {
       
       shinyjs::hide(id = "node_sizings")
       shinyjs::show(id = "node_sizings2")
-      shinyjs::hide(id = "Modifying Aesthetics")
+      #shinyjs::hide(id = "Modifying Aesthetics")
       shinyjs::hide(id = "arrow")
       shinyjs::hide(id = "about")
+      toggle("text_div_MA")
       shinyjs::hide(id = "min_width")
       shinyjs::hide(id = "max_width")
       
@@ -1471,7 +1476,8 @@ server <- function(input, output, session) {
       
       shinyjs::show(id = "node_sizings")
       shinyjs::hide(id = "node_sizings2")
-      shinyjs::show(id = "Modifying Aesthetics")
+      #shinyjs::show(id = "text_div_MA")
+      #toggle("text_div_MA")
       shinyjs::show(id = "arrow")
       shinyjs::show(id = "about")
       shinyjs::show(id = "min_width")
@@ -1547,7 +1553,7 @@ server <- function(input, output, session) {
         nodes <- data.frame(id = V(pruned)$name, 
                             title = paste0("Degree of Node: <br>",
                                            V(pruned)$degree),
-                            size =  round(betweenness(pruned))
+                            size =  ifelse(round(betweenness(pruned))==0,10,round(betweenness(pruned)))
                             )
         
       }else if (input$node_sizings2=='Degree'){
@@ -1561,7 +1567,7 @@ server <- function(input, output, session) {
         nodes <- data.frame(id = V(pruned)$name, 
                             title = paste0("Degree of Node: <br>",
                                            V(pruned)$degree),
-                            size =  25
+                            size =  size
                             )
       }
       
@@ -2149,7 +2155,7 @@ server <- function(input, output, session) {
       
       output$vis_dept_sub <- renderVisNetwork({
         
-        
+       
         
         links <- df.emails %>% 
           mutate(To = str_split(To,pattern=',')) %>% 

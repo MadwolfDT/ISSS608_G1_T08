@@ -606,7 +606,7 @@ ui <- navbarPage(
                                           selected = 'None'),
                              div(id='text_div_MA', 
                                  
-                             h4("Modifying Aesthetics"),
+                             #h4("Modifying Aesthetics"),
                              
                              actionButton(inputId = 'about', 
                                           label=NULL, 
@@ -626,7 +626,21 @@ ui <- navbarPage(
                                           min =0.1, max=5, value = 0.5),
                              numericInput(inputId = 'max_width', 
                                           label='Maximum', 
-                                          min =5, max=15,value = 7)
+                                          min =5, max=15,value = 7),
+                             selectInput(inputId = 'communities',
+                                         label='Algorithm',
+                                         choices = c('None',
+                                                     'Cluster Lovain',
+                                                     'Betweeness',
+                                                     'Label Propagation',
+                                                     'Fast Greedy',
+                                                     'Leading Eigenvector')
+                                         ),
+                            checkboxInput(inputId = 'nearest',
+                                          label = 'Highlight Nearest',
+                                          value = T)
+                                         
+                             
                              ) # Close bracket for div
                              
                       ), # close bracket for column
@@ -1731,6 +1745,7 @@ server <- function(input, output, session) {
                             title = V(email_network)$name, 
                             group = V(email_network)$department,
                             size = sizing)
+        
       }else if (input$node_sizings=='Degree'){
         sizing <- data.frame(size = round(degree(email_network)*1.5))
         
@@ -1764,6 +1779,94 @@ server <- function(input, output, session) {
       
       
       
+      if (input$communities=='None'){
+        
+        nodes
+        
+      }else if (input$communities=="Cluster Lovain"){
+        
+        email_network2 <- as.undirected(email_network)
+        
+        communities<-cluster_louvain(email_network2)
+        
+        results<-data.frame(cbind(communities$names, 
+                                  communities$membership),
+                            stringsAsFactors = FALSE)
+        
+        names(results)<-c("id","group")
+        
+        nodes <- nodes %>% select(-c(group))
+        nodes <- nodes %>% left_join(results)
+        
+
+      }else if (input$communities=="Betweenness"){
+        
+        email_network2 <- as.undirected(email_network)
+        
+        communities<-cluster_edge_betweenness(email_network2)
+        
+        results<-data.frame(cbind(communities$names, 
+                                  communities$membership),
+                            stringsAsFactors = FALSE)
+        
+        names(results)<-c("id","group")
+        
+        nodes <- nodes %>% select(-c(group))
+        nodes <- nodes %>% left_join(results)
+        
+        
+      }else if (input$communities=="Label Propagation"){
+        
+        email_network2 <- as.undirected(email_network)
+        
+        communities<-cluster_label_prop(email_network2)
+        
+        results<-data.frame(cbind(communities$names, 
+                                  communities$membership),
+                            stringsAsFactors = FALSE)
+        
+        names(results)<-c("id","group")
+        
+        nodes <- nodes %>% select(-c(group))
+        nodes <- nodes %>% left_join(results)
+        
+        
+      }else if (input$communities=="Fast Greedy"){
+        
+        email_network2 <- as.undirected(email_network)
+        
+        communities<-cluster_fast_greedy(email_network2)
+        
+        results<-data.frame(cbind(communities$names, 
+                                  communities$membership),
+                            stringsAsFactors = FALSE)
+        
+        names(results)<-c("id","group")
+        
+        nodes <- nodes %>% select(-c(group))
+        nodes <- nodes %>% left_join(results)
+        
+        
+      }else if (input$communities=="Leading Eigenvector"){
+        
+        email_network2 <- as.undirected(email_network)
+        
+        communities<-cluster_leading_eigen(email_network2)
+        
+        results<-data.frame(cbind(communities$names, 
+                                  communities$membership),
+                            stringsAsFactors = FALSE)
+        
+        names(results)<-c("id","group")
+        
+        nodes <- nodes %>% select(-c(group))
+        nodes <- nodes %>% left_join(results)
+        
+        
+      }
+      
+      
+      
       edges <- get.data.frame(email_network, what="edges")[1:2]
       edges$value <- links$weight
       #edges$color.opacity <- 0.8
@@ -1777,18 +1880,18 @@ server <- function(input, output, session) {
       
       
       lnodes <- data.frame(shape = rep('square',6),
-                           label = c("Executive",
-                                     "Facilities",
-                                     "Engineering",
-                                     "Administration",
-                                     "Security",
-                                     "Information Technology"),
-                           color.background = c("#FB7E81",
-                                                "#7BE141",
-                                                "#FFFF00",
-                                                "#97C2FC",
-                                                "#AD85E4",
-                                                "#EB7DF4"),
+                           # label = c("Executive",
+                           #           "Facilities",
+                           #           "Engineering",
+                           #           "Administration",
+                           #           "Security",
+                           #           "Information Technology"),
+                           # color.background = c("#FB7E81",
+                           #                      "#7BE141",
+                           #                      "#FFFF00",
+                           #                      "#97C2FC",
+                           #                      "#AD85E4",
+                           #                      "#EB7DF4"),
                            color.border = rep('black',6),
                            font.align =  rep("center",6),
                            font.size = rep(20,6)
@@ -1802,6 +1905,13 @@ server <- function(input, output, session) {
         show<- NULL
       }
       
+      if (input$nearest){
+        hk <- T
+      }else{
+        hk <- F
+      }
+      
+      
       set.seed(399)
       
       p <- visNetwork(nodes = nodes, 
@@ -1810,8 +1920,8 @@ server <- function(input, output, session) {
                    #nodesIdSelection = T,
                    #selectedBy = "group"
                    
-        ) %>% 
-        visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=input$min_width, max=input$max_width)) %>% 
+        ) %>% #arrows = show, 
+        visEdges(width = 0.01,length = 10, scaling = list(min=input$min_width, max=input$max_width)) %>% 
         visLayout(randomSeed = 123) %>%
         visNodes(labelHighlightBold = T) %>%
         #visPhysics(stabilization = 5,
@@ -1820,51 +1930,52 @@ server <- function(input, output, session) {
         #                                   centralGravity = 0.5)) %>%
         visIgraphLayout(layout = "layout_nicely") %>%
         visInteraction(multiselect = TRUE) %>%
-        visLegend(enabled = T) %>%
-        visGroups(groupname = "Executive", 
-                  # Red
-                  color = list(border = "#FA0A10", 
-                               background = "#FB7E81", 
-                               highlight = list(border = "#FA0A10", background = "#FB7E81"),
-                               hover = list(background = "#FA0A10", border = "#FB7E81")
-                  )) %>%
-        visGroups(groupname = "Facilities", 
-                  # Green
-                  color = list(border = "#41A906", 
-                               background = "#7BE141", 
-                               highlight = list(border = "#41A906", background = "#7BE141"),
-                               hover = list(background = "#41A906", border = "#7BE141")
-                  )) %>%
-        visGroups(groupname = "Engineering", 
-                  # Yellow
-                  color = list(border = "#FFA500", 
-                               background = "#FFFF00", 
-                               highlight = list(border = "#FFA500", background = "#FFFF00"),
-                               hover = list(background = "#FFA500", border = "#FFFF00")
-                  )) %>%
-        visGroups(groupname = "Administration", 
-                  # Blue
-                  color = list(border = "#2B7CE9", 
-                               background = "#97C2FC", 
-                               highlight = list(border = "#2B7CE9", background = "#97C2FC"),
-                               hover = list(background = "#2B7CE9", border = "#97C2FC")
-                  )) %>%
-        visGroups(groupname = "Security", 
-                  # Purple
-                  color = list(border = "#7C29F0", 
-                               background = "#AD85E4", 
-                               highlight = list(border = "#7C29F0", background = "#AD85E4"),
-                               hover = list(background = "#7C29F0", border = "#AD85E4")
-                  )) %>%
-        visGroups(groupname = "Information Technology", 
-                  # Magenta
-                  color = list(border = "#E129F0", 
-                               background = "#EB7DF4", 
-                               highlight = list(border = "#E129F0", background = "#EB7DF4"),
-                               hover = list(background = "#E129F0", border = "#EB7DF4")
-                  )
-                  ) %>%
-        visLegend(zoom = T, addNodes = lnodes, useGroups = F, width = 0.15) %>%
+        visOptions(selectedBy = "group", highlightNearest = hk) %>%
+        # visLegend(enabled = T) %>%
+        # visGroups(groupname = "Executive", 
+        #           # Red
+        #           color = list(border = "#FA0A10", 
+        #                        background = "#FB7E81", 
+        #                        highlight = list(border = "#FA0A10", background = "#FB7E81"),
+        #                        hover = list(background = "#FA0A10", border = "#FB7E81")
+        #           )) %>%
+        # visGroups(groupname = "Facilities", 
+        #           # Green
+        #           color = list(border = "#41A906", 
+        #                        background = "#7BE141", 
+        #                        highlight = list(border = "#41A906", background = "#7BE141"),
+        #                        hover = list(background = "#41A906", border = "#7BE141")
+        #           )) %>%
+        # visGroups(groupname = "Engineering", 
+        #           # Yellow
+        #           color = list(border = "#FFA500", 
+        #                        background = "#FFFF00", 
+        #                        highlight = list(border = "#FFA500", background = "#FFFF00"),
+        #                        hover = list(background = "#FFA500", border = "#FFFF00")
+        #           )) %>%
+        # visGroups(groupname = "Administration", 
+        #           # Blue
+        #           color = list(border = "#2B7CE9", 
+        #                        background = "#97C2FC", 
+        #                        highlight = list(border = "#2B7CE9", background = "#97C2FC"),
+        #                        hover = list(background = "#2B7CE9", border = "#97C2FC")
+        #           )) %>%
+        # visGroups(groupname = "Security", 
+        #           # Purple
+        #           color = list(border = "#7C29F0", 
+        #                        background = "#AD85E4", 
+        #                        highlight = list(border = "#7C29F0", background = "#AD85E4"),
+        #                        hover = list(background = "#7C29F0", border = "#AD85E4")
+        #           )) %>%
+        # visGroups(groupname = "Information Technology", 
+        #           # Magenta
+        #           color = list(border = "#E129F0", 
+        #                        background = "#EB7DF4", 
+        #                        highlight = list(border = "#E129F0", background = "#EB7DF4"),
+        #                        hover = list(background = "#E129F0", border = "#EB7DF4")
+        #           )
+        #           ) %>%
+        visLegend(zoom = T, addNodes = lnodes, width = 0.15) %>%
         visEvents(selectNode = "function(nodes) {
             Shiny.onInputChange('current_node_id', nodes)
             

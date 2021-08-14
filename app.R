@@ -545,7 +545,8 @@ ui <- navbarPage(
                              ),
                              textInput(inputId = 'search', label = 'Email Text Search',value = 'meeting'),
                              
-                             actionButton(inputId = 'go', label = "Display")
+                             actionButton(inputId = 'go', label = "Display"
+                                          )
                       ), #close bracket without comma for column1
                       
                       column(width=9,
@@ -603,22 +604,29 @@ ui <- navbarPage(
                                                       'Betweenness', 
                                                       'Degree'),
                                           selected = 'None'),
-                             div(id='text_div_MA', h4("Modifying Aesthetics")),
-                             
-                             checkboxInput(inputId = 'arrow',
-                                           label = "Display Direction of Edges", 
-                                           value = T),
+                             div(id='text_div_MA', 
+                                 
+                             h4("Modifying Aesthetics"),
                              
                              actionButton(inputId = 'about', 
-                                          label=' ', 
-                                          icon = icon(name='info')),
+                                          label=NULL, 
+                                          icon = tags$i(class = "fas fa-info", style="font-size: 24px; color: black"),
+                                          style="color: #fff; background-color: #fff; border-color: #fff;"),
                              
+                             h5("Direction of Edges"),
+                             
+                             checkboxInput(inputId = 'arrow',
+                                           label = "Display", 
+                                           value = T),
+                             h5("Scale the width of Edges"),
+            
                              numericInput(inputId = 'min_width', 
-                                          label='Minimum Width of Edge', 
+                                          label='Minimum', 
                                           min =0.1, max=5, value = 0.5),
                              numericInput(inputId = 'max_width', 
-                                          label='Maximum Width of Edge', 
+                                          label='Maximum', 
                                           min =5, max=15,value = 7)
+                             ) # Close bracket for div
                              
                       ), # close bracket for column
                       
@@ -2074,7 +2082,7 @@ server <- function(input, output, session) {
       show <- 'middle'
       
     }else{
-      show<- NULL
+      show <- NULL
     }
     
     set.seed(399)
@@ -2089,10 +2097,6 @@ server <- function(input, output, session) {
       visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=input$min_width, max=input$max_width)) %>% 
       visLayout(randomSeed = 123) %>%
       visNodes(labelHighlightBold = T) %>%
-      #visPhysics(stabilization = 5,
-      #           barnesHut = list(springLength =230, avoidOverlap=0.2), 
-      #           forceAtlas2Based = list(gravitaionalConstant = -100,
-      #                                   centralGravity = 0.5)) %>%
       visIgraphLayout(layout = "layout_nicely") %>%
       visInteraction(multiselect = TRUE) %>%
       visLegend(enabled = T) %>%

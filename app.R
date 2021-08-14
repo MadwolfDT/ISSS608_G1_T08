@@ -456,6 +456,8 @@ ui <- navbarPage(
     ####NK Employee Bio-data Lookup UI####
     tabPanel(title = 'Employees of GasTech',
              titlePanel("Employee Bio-data Lookup"), 
+             
+             
              column(width=3,
                     h4('Select Look-Up'),
                   
@@ -481,6 +483,7 @@ ui <- navbarPage(
                                             #'Timings of Emails',
                                             'Military Service')
                           )
+                    
                     
                     
              ), # close bracket for column 1
@@ -730,7 +733,7 @@ ui <- navbarPage(
                              h5("Click a node on the Main Network below, to see their sub-graph on the right"),
                              visNetworkOutput(outputId = 'vis_dept',
                                               #width = 750, 
-                                              height = 700) #,
+                                              height = 900) #,
                              
                              #visNetworkOutput(outputId = 'text_ntwk',
                               #                width='100%',

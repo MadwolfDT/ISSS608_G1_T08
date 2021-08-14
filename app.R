@@ -638,7 +638,11 @@ ui <- navbarPage(
                                          ),
                             checkboxInput(inputId = 'nearest',
                                           label = 'Highlight Nearest',
-                                          value = T)
+                                          value = T),
+                            h5('Color Sub-Graph Nodes by Department'),
+                            checkboxInput(inputId = 'color_sub',
+                                          label = 'Yes',
+                                          value =T)
                                          
                              
                              ) # Close bracket for div
@@ -1921,7 +1925,7 @@ server <- function(input, output, session) {
                    #selectedBy = "group"
                    
         ) %>% #arrows = show, 
-        visEdges(width = 0.01,length = 10, scaling = list(min=input$min_width, max=input$max_width)) %>% 
+        visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=input$min_width, max=input$max_width)) %>% 
         visLayout(randomSeed = 123) %>%
         visNodes(labelHighlightBold = T) %>%
         #visPhysics(stabilization = 5,
@@ -2310,9 +2314,17 @@ server <- function(input, output, session) {
         
         email_network <- simplify(email_network)
         
-        nodes <- data.frame(id = V(email_network)$name, 
-                            title = V(email_network)$name, 
-                            group = V(email_network)$department)
+        if (input$color_sub){
+          nodes <- data.frame(id = V(email_network)$name, 
+                              title = V(email_network)$name, 
+                              group = V(email_network)$department)
+        }else{
+          nodes <- data.frame(id = V(email_network)$name, 
+                              title = V(email_network)$name,
+                              group=1)
+        }
+        
+        nodes$label <- nodes$id
         
         
         edges <- get.data.frame(email_network, what="edges")[1:2]
@@ -2326,24 +2338,6 @@ server <- function(input, output, session) {
                                   font.weight= 1000)
         
         
-        lnodes <- data.frame(shape = rep('square',6),
-                             label = c("Executive",
-                                       "Facilities",
-                                       "Engineering",
-                                       "Administration",
-                                       "Security",
-                                       "Information Technology"),
-                             color.background = c("#FB7E81",
-                                                  "#7BE141",
-                                                  "#FFFF00",
-                                                  "#97C2FC",
-                                                  "#AD85E4",
-                                                  "#EB7DF4"),
-                             color.border = rep('black',6),
-                             font.align =  rep("center",6),
-                             font.size = rep(20,6)
-        )
-        
         if (input$arrow){
           show <- 'middle'
           
@@ -2354,12 +2348,12 @@ server <- function(input, output, session) {
         set.seed(399)
         
         p <- visNetwork(nodes = nodes, 
-                        edges = edges,  width = "100%", height = 700) %>%
-          visOptions(highlightNearest = list(enabled = T, degree = 1)#, 
+                        edges = edges,  width = "100%", height = 700 #%>%
+          #visOptions(highlightNearest = list(enabled = T, degree = 1)#, 
                      #nodesIdSelection = T,
                      #selectedBy = "group"
                      
-          ) %>% 
+                        ) %>% 
           visEdges(arrows = show, width = 0.01,length = 10, scaling = list(min=0.1,max=3)) %>% 
           visLayout(randomSeed = 123) %>%
           visNodes(labelHighlightBold = T) %>%
@@ -2369,49 +2363,49 @@ server <- function(input, output, session) {
           #                                   centralGravity = 0.5)) %>%
           visIgraphLayout(layout = "layout_nicely") %>%
           visInteraction(multiselect = TRUE) %>%
-          visLegend(enabled = F) %>%
-          visGroups(groupname = "Executive", 
-                    # Red
-                    color = list(border = "#FA0A10", 
-                                 background = "#FB7E81", 
-                                 highlight = list(border = "#FA0A10", background = "#FB7E81"),
-                                 hover = list(background = "#FA0A10", border = "#FB7E81")
-                    )) %>%
-          visGroups(groupname = "Facilities", 
-                    # Green
-                    color = list(border = "#41A906", 
-                                 background = "#7BE141", 
-                                 highlight = list(border = "#41A906", background = "#7BE141"),
-                                 hover = list(background = "#41A906", border = "#7BE141")
-                    )) %>%
-          visGroups(groupname = "Engineering", 
-                    # Yellow
-                    color = list(border = "#FFA500", 
-                                 background = "#FFFF00", 
-                                 highlight = list(border = "#FFA500", background = "#FFFF00"),
-                                 hover = list(background = "#FFA500", border = "#FFFF00")
-                    )) %>%
-          visGroups(groupname = "Administration", 
-                    # Blue
-                    color = list(border = "#2B7CE9", 
-                                 background = "#97C2FC", 
-                                 highlight = list(border = "#2B7CE9", background = "#97C2FC"),
-                                 hover = list(background = "#2B7CE9", border = "#97C2FC")
-                    )) %>%
-          visGroups(groupname = "Security", 
-                    # Purple
-                    color = list(border = "#7C29F0", 
-                                 background = "#AD85E4", 
-                                 highlight = list(border = "#7C29F0", background = "#AD85E4"),
-                                 hover = list(background = "#7C29F0", border = "#AD85E4")
-                    )) %>%
-          visGroups(groupname = "Information Technology", 
-                    # Magenta
-                    color = list(border = "#E129F0", 
-                                 background = "#EB7DF4", 
-                                 highlight = list(border = "#E129F0", background = "#EB7DF4"),
-                                 hover = list(background = "#E129F0", border = "#EB7DF4")
-                    )) #%>%
+          visLegend(enabled = F) #%>%
+          # visGroups(groupname = "Executive", 
+          #           # Red
+          #           color = list(border = "#FA0A10", 
+          #                        background = "#FB7E81", 
+          #                        highlight = list(border = "#FA0A10", background = "#FB7E81"),
+          #                        hover = list(background = "#FA0A10", border = "#FB7E81")
+          #           )) %>%
+          # visGroups(groupname = "Facilities", 
+          #           # Green
+          #           color = list(border = "#41A906", 
+          #                        background = "#7BE141", 
+          #                        highlight = list(border = "#41A906", background = "#7BE141"),
+          #                        hover = list(background = "#41A906", border = "#7BE141")
+          #           )) %>%
+          # visGroups(groupname = "Engineering", 
+          #           # Yellow
+          #           color = list(border = "#FFA500", 
+          #                        background = "#FFFF00", 
+          #                        highlight = list(border = "#FFA500", background = "#FFFF00"),
+          #                        hover = list(background = "#FFA500", border = "#FFFF00")
+          #           )) %>%
+          # visGroups(groupname = "Administration", 
+          #           # Blue
+          #           color = list(border = "#2B7CE9", 
+          #                        background = "#97C2FC", 
+          #                        highlight = list(border = "#2B7CE9", background = "#97C2FC"),
+          #                        hover = list(background = "#2B7CE9", border = "#97C2FC")
+          #           )) %>%
+          # visGroups(groupname = "Security", 
+          #           # Purple
+          #           color = list(border = "#7C29F0", 
+          #                        background = "#AD85E4", 
+          #                        highlight = list(border = "#7C29F0", background = "#AD85E4"),
+          #                        hover = list(background = "#7C29F0", border = "#AD85E4")
+          #           )) %>%
+          # visGroups(groupname = "Information Technology", 
+          #           # Magenta
+          #           color = list(border = "#E129F0", 
+          #                        background = "#EB7DF4", 
+          #                        highlight = list(border = "#E129F0", background = "#EB7DF4"),
+          #                        hover = list(background = "#E129F0", border = "#EB7DF4")
+          #           )) #%>%
         #visLegend(zoom = T, addNodes = lnodes, useGroups = F) 
         
         

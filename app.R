@@ -461,26 +461,32 @@ ui <- navbarPage(
                   
                     radioButtons(inputId = 'view_select', 
                                  label=NULL, 
-                                 choices = c('Person','Overview')
-                    ),
-                    h4('Select Employee'),
+                                 choices = c('Person','Overview'),
+                                 selected = 'Person'),
+                    
+                    div(id='bio_select1div',
+                        h4('Select Employee')),
                     selectInput(inputId = 'biodata_select', 
                                 label = NULL, 
                                 choices = list_emp
-                    ),
-                    h4('Select the Chart to Display'),
+                                ),
+            
+                    div(id='bio_select2div',
+                        h4('Select the Chart to Display')),
                     selectInput(inputId = 'biodata_select2', 
                                 label = NULL, 
                                 choices = c('Age Comparison',
                                             'Year Joined',
                                             #'Timings of Emails',
                                             'Military Service')
-                    )
+                          )
+                    
                     
              ), # close bracket for column 1
              
              column(width=9,
-                    div(tableOutput(outputId = 'biodata_output'), 
+                    div( 
+                        tableOutput(outputId = 'biodata_output'), 
                         style='color:black;font-weight: bold;font-size: 20px;font-family:"News Cycle", "Arial Narrow Bold", sans-serif;'
                     ),
                     plotlyOutput(width = '100%', 
@@ -666,27 +672,27 @@ ui <- navbarPage(
                                           label=NULL, 
                                           min =5, max=15,value = 7),
                              h5(' '),
-                             h4('Select Layout of Graph'),
+                             h4('Select Layout Algorithm'),
                              selectInput(inputId = 'layout',
                                          label = NULL,
                                          choices = c(#"add_layout_", 
                                                      #"component_wise", 
                                                      #"layout_as_bipartite", 
-                                                     "layout_nicely",
-                                                     "layout_as_star", 
-                                                     "layout_as_tree", 
-                                                     "layout_in_circle", 
-                                                     "layout_on_grid", 
-                                                     "layout_on_sphere", 
-                                                     "layout_randomly", 
-                                                     'layout_with_dh', 
-                                                     "layout_with_fr", 
-                                                     'layout_with_gem', 
-                                                     "layout_with_graphopt", 
-                                                     "layout_with_kk", 
-                                                     "layout_with_lgl", 
-                                                     "layout_with_mds", 
-                                                     "layout_with_sugiyama"
+                                                     "Nicely" = "layout_nicely",
+                                                     "Star"= "layout_as_star", 
+                                                     "Tree"= "layout_as_tree", 
+                                                     "Circle"= "layout_in_circle", 
+                                                     "Grid"= "layout_on_grid", 
+                                                     "Sphere"= "layout_on_sphere", 
+                                                     "Randomly"= "layout_randomly", 
+                                                     "Davidson-Harel"= 'layout_with_dh', 
+                                                     "Fruchterman-Reingold"= "layout_with_fr", 
+                                                     "GEM"= 'layout_with_gem', 
+                                                     "Graphopt "= "layout_with_graphopt", 
+                                                     "Kamada-Kawai"= "layout_with_kk", 
+                                                     "Large Graph Layout"= "layout_with_lgl", 
+                                                     #"Multidimensional"= "layout_with_mds", 
+                                                     "Sugiyama"= "layout_with_sugiyama"
                                                      #"merge_coords", 
                                                      #"norm_coords", 
                                                      #"normalize"
@@ -722,7 +728,7 @@ ui <- navbarPage(
                              h4("Main Network"),
                              h5("Click a node on the Main Network below, to see their sub-graph on the right"),
                              visNetworkOutput(outputId = 'vis_dept',
-                                              width = 800, 
+                                              #width = 750, 
                                               height = 700) #,
                              
                              #visNetworkOutput(outputId = 'text_ntwk',
@@ -736,7 +742,7 @@ ui <- navbarPage(
                                  h4("Sub Network"),
                               
                              visNetworkOutput(outputId = 'vis_dept_sub',
-                                              #width = 700, 
+                                              #width = 750, 
                                               height = 700))
                              
                              ),
@@ -920,20 +926,28 @@ server <- function(input, output, session) {
   
   #### NK Email Biodata Server Codes####
 
+  shinyjs::show(id='biodata_select')
+  shinyjs::show("bio_select1div")
+  shinyjs::hide("biodata_select2")
   
   observeEvent(input$view_select,{
     
+    
     if (input$view_select=="Person"){
       
-      shinyjs::hide(id = "biodata_select2")
-      shinyjs::show(id = "biodata_select")
+      shinyjs::hide("bio_select2div")
+      shinyjs::show("bio_select1div")
+      shinyjs::show(id='biodata_select')
+      shinyjs::hide("biodata_select2")
       shinyjs::show(id = 'biodata_output')
       shinyjs::hide(id = 'overview_output')
       
     }else if(input$view_select=="Overview"){
       
-      shinyjs::hide(id = "biodata_select")
-      shinyjs::show(id = "biodata_select2")
+      shinyjs::hide("bio_select1div")
+      shinyjs::show("bio_select2div")
+      shinyjs::hide(id='biodata_select')
+      shinyjs::show("biodata_select2")
       shinyjs::hide(id = 'biodata_output')
       shinyjs::show(id = 'overview_output')
       

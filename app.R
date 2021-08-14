@@ -479,13 +479,15 @@ ui <- navbarPage(
       ####NK Email Correspondence UI####
       title = "Email Correspondence",
       column(width=3,
+             h4("Date Filter"),
              dateRangeInput(inputId = 'date', 
-                            label = 'Date Filter', 
+                            label = NULL, 
                             start = min(df.emails$Date.Date), 
                             end = max(df.emails$Date.Date)
              ),
+             h4('Time Filter'),
              sliderInput(inputId = 'time',
-                         label = 'Time Filter', 
+                         label = NULL, 
                          min = as.POSIXct("1990-01-01 00:00:05", tz = 'GMT'), 
                          max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
                          value = c(as.POSIXct("1990-01-01 00:00:05",tz = 'GMT'), 
@@ -495,16 +497,19 @@ ui <- navbarPage(
                          timeFormat = "%H:%M",
                          timezone = "GMT"
              ),
+             h4('Select Employee'),
              selectInput(inputId = 'person', 
-                         label= 'Employee', 
-                         choices = unique(df.emp$FullName))
+                         label= NULL, 
+                         choices = sort(unique(x_full$From)))
       ),
       
       column(width = 9, 
              fluidRow(plotlyOutput(outputId = 'email_convo')),
              fluidRow(
-               column(width = 6, plotlyOutput(outputId = 'timings_email_1')),
-               column(width = 6, plotlyOutput(outputId = 'timings_email_2'))
+               column(width = 6, 
+                      plotlyOutput(outputId = 'timings_email_1')),
+               column(width = 6, 
+                      plotlyOutput(outputId = 'timings_email_2'))
                )
              
       )
@@ -520,32 +525,23 @@ ui <- navbarPage(
              tabPanel("Email Network Analysis",
                       
                       column(width=3, 
-                             # dateRangeInput(inputId = 'date', 
-                             #                label = 'Date Filter', 
-                             #                start = min(df.emails$Date.Date), 
-                             #                end=max(df.emails$Date.Date)
-                             # ),
-                             # sliderInput(inputId = 'time',
-                             #             label = 'Time Filter', 
-                             #             min = as.POSIXct("1990-01-01 00:00:10", tz = 'GMT'), 
-                             #             max = as.POSIXct("1990-01-01 23:59:59", tz = 'GMT'), 
-                             #             value = c(as.POSIXct("1990-01-01 00:00:10",tz = 'GMT'), 
-                             #                       as.POSIXct("1990-01-01 23:59:59",tz = 'GMT')),
-                             #             step = 2*60*60,
-                             #             timeFormat = "%H:%M",
-                             #             timezone = "GMT"
-                             # ),
+                             h4('Select Employee'),
                              selectInput(inputId = 'person2', 
-                                         label= 'Employee', 
-                                         choices = unique(df.emp$FullName)
+                                         label= NULL, 
+                                         choices = sort(unique(x_full$From))
                              ),
+                             h4('Search by'),
                              radioButtons(inputId = 'dt_select', 
-                                          label='DataTable Displayed by:', 
+                                          label=NULL, 
                                           choices = c('Person','Keywords', 'Both')
                              ),
-                             textInput(inputId = 'search', label = 'Email Text Search',value = 'meeting'),
-                             
-                             actionButton(inputId = 'go', label = "Display"
+                             h4("Text Input"),
+                             h5("Separate the words by a comma"),
+                             textInput(inputId = 'search', 
+                                       label = 'Email Text Search',
+                                       value = 'word1,word2'),
+                             h4('Commit your Inputs/Filters'),
+                             actionButton(inputId = 'go', label = "Commit & Display"
                                           )
                       ), #close bracket without comma for column1
                       

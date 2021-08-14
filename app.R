@@ -1087,7 +1087,9 @@ server <- function(input, output, session) {
     
       
       tmp_person_email_From <- x_full %>% 
-        filter(From==input$person) 
+        filter(From==input$person) %>%
+        filter(Date.Date >= input$date[1], 
+               Date.Date <= input$date[2])
       
       tmp_person_email_From_word <- tmp_person_email_From %>% 
                                     unnest_tokens(word, Subject2) %>%
@@ -1143,7 +1145,9 @@ server <- function(input, output, session) {
     
     
     tmp_person_email_To <- x_full %>% 
-      filter(To==input$biodata_select) 
+      filter(To==input$biodata_select) %>%
+      filter(Date.Date >= input$date[1], 
+             Date.Date <= input$date[2])
     
     tmp_person_email_To_word <- tmp_person_email_To %>% 
       unnest_tokens(word, Subject2) %>%

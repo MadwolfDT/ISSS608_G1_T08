@@ -299,7 +299,15 @@ ui <- navbarPage(
                         height = "600px"
                       ),#close brackets for parcoordsOutput
                       
-                      screenshotButton("Take a Screenshot!")
+                      screenshotButton(
+                        label = "Capture Chart!",
+                        filename = "caseplotscreenshot",
+                        id = "rtparacoord",
+                        scale = 1,
+                        timer = 0
+                      ),
+                      
+                      screenshotButton(label = "Capture Entire Page!"),
                       
                ), #close brackets for column(10), need comma
                
@@ -426,9 +434,9 @@ ui <- navbarPage(
                       DT::dataTableOutput("rtcctablebottom"),
                       #plots loyalty
                       plotlyOutput(outputId = "rtlcbottom"),
-                      DT::dataTableOutput("rtlctablebottom")
+                      DT::dataTableOutput("rtlctablebottom"),
                       
-               ), #close bracket w comma for column
+                      ), #close bracket w comma for column
                
              ), #close bracket w comma for fluidRow  
              
@@ -2807,8 +2815,8 @@ server <- function(input, output, session) {
       theme(axis.text.x = element_text(angle = 0),
             axis.title.x = element_blank(),
             axis.title.y = element_blank(),
-            plot.title=element_text(face="bold")) +
-      theme(legend.key.height = unit(1, "cm"))
+            plot.title=element_text(face="bold")) #+
+      #theme(legend.key.height = unit(1, "cm"))
     
     ggplotly(indivccplotB, tooltip = c("text"))
     

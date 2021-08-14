@@ -2284,7 +2284,7 @@ server <- function(input, output, session) {
         dtemploy_boxplot <- ggplot(data = dtemply_loc_plot_data,
                                    aes(group = location,
                                        tooltip = as.character(seconds_to_period(Duration)))) +
-          labs(y = "Location (Order/ Name)", x = "Duration in Seconds", title = "Time Spent at Location") +
+          labs(y = "Location (Order/ Name)", x = "Duration (H:M:S)", title = "Time Spent at Location") +
           geom_boxplot_interactive(aes(as_hms(Duration), location)) +
           #scale_x_time(name = "Duration") +
           theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),

@@ -2072,7 +2072,7 @@ server <- function(input, output, session) {
     p
     
     
-  })#close brackets for output$vis_dept
+  }) #close brackets for output$vis_dept
   
   
   ####NK observeEvent Server Codes####
@@ -2222,7 +2222,6 @@ server <- function(input, output, session) {
       })#close brackets for output$vis_dept_sub, no comma
       
     }#close curly bracket for observeEvent, no comma
-    
   )#close bracket for observeEvent, no comma
   
   ####DT Map Plotting Server Codes####

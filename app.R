@@ -578,17 +578,17 @@ ui <- navbarPage(
                       
                       
                       column(width = 2,
-                             h3("Select the Network to Build"),
+                             h4("Select the Network to Build By:"),
                              radioButtons(inputId='ntwk_select',
-                                          label = 'Build By',
-                                          choices = c('Department',
-                                                     'Email (Text)'),
-                                          selected = 'Department'
+                                          label = ' ',
+                                          choices = c('Email Correspondence',
+                                                      'Email Subjects'),
+                                          selected =  'Email Correspondence',
                                           ),
                             
-                             h3("Node Sizing"),
+                             h4("Node Sizing"),
                              radioButtons(inputId = 'node_sizings',
-                                          label=NULL,
+                                          label=' ',
                                           choices = c('None',
                                                       'Betweenness', 
                                                       'Degree', 
@@ -597,14 +597,28 @@ ui <- navbarPage(
                                                       'Closeness'),
                                           selected = 'None'),
                              
-                             h3("Modifying Aesthetics"),
+                             radioButtons(inputId = 'node_sizings2',
+                                          label=' ',
+                                          choices = c('None',
+                                                      'Betweenness', 
+                                                      'Degree'),
+                                          selected = 'None'),
+                             div(h4("Modifying Aesthetics")),
                              
-                             checkboxInput(inputId = 'arrow',label = "Show Direction of Edges", value = T),
+                             checkboxInput(inputId = 'arrow',
+                                           label = "Display Direction of Edges", 
+                                           value = T),
+                             
                              actionButton(inputId = 'about', 
-                                          label=NULL, 
+                                          label=' ', 
                                           icon = icon(name='info')),
-                             numericInput(inputId = 'min_width', label='Minimum Width', min =0.1, max=5, value = 0.5),
-                             numericInput(inputId = 'max_width', label='Maximum Width', min =5, max=15,value = 7)
+                             
+                             numericInput(inputId = 'min_width', 
+                                          label='Minimum Width of Edge', 
+                                          min =0.1, max=5, value = 0.5),
+                             numericInput(inputId = 'max_width', 
+                                          label='Maximum Width of Edge', 
+                                          min =5, max=15,value = 7)
                              
                       ), # close bracket for column
                       
@@ -808,6 +822,7 @@ server <- function(input, output, session) {
   observeEvent(input$view_select,{
     
     if (input$view_select=="Person"){
+      
       shinyjs::hide(id = "biodata_select2")
       shinyjs::show(id = "biodata_select")
       shinyjs::show(id = 'biodata_output')
@@ -821,13 +836,14 @@ server <- function(input, output, session) {
       shinyjs::show(id = 'overview_output')
       
     }
+    
+    
   })
   
   observeEvent(input$biodata_select2, {
     
     if (input$biodata_select2 =='Timings of Emails'){
       shinyjs::show(id = 'biodata_select')
-      
       
     }else{
       shinyjs::hide(id = "biodata_select")
@@ -1185,10 +1201,10 @@ server <- function(input, output, session) {
                   rownames = F)
   }) #close brackets for output$table
 
-  ####NK output$vis_ntwork_build Server Codes####
+  ####NK output$vis_dept_TEXT Server Codes####
   
   get_data <- reactive(
-    if(input$ntwk_select =='Email (Text)'){
+    if(input$ntwk_select =='Email Subjects'){
       
       PrepText <- function(textdata, groupvar, textvar, node_type = c("groups","words"), 
                            tokenizer = c("words", "tweets"), pos = c("all", "nouns"),
@@ -1437,263 +1453,40 @@ server <- function(input, output, session) {
       
       email_text_nt <- CreateTextnet(email_text)
       return(email_text_nt)
+    })
+  
+  observeEvent(input$ntwk_select,{
+    
+    if (input$ntwk_select =='Email Subjects'){
+      
+      shinyjs::hide(id = "node_sizings")
+      shinyjs::show(id = "node_sizings2")
+      shinyjs::hide(id = "Modifying Aesthetics")
+      shinyjs::hide(id = "arrow")
+      shinyjs::hide(id = "about")
+      shinyjs::hide(id = "min_width")
+      shinyjs::hide(id = "max_width")
+      
+    }else if(input$ntwk_select =='Email Correspondence'){
+      
+      shinyjs::show(id = "node_sizings")
+      shinyjs::hide(id = "node_sizings2")
+      shinyjs::show(id = "Modifying Aesthetics")
+      shinyjs::show(id = "arrow")
+      shinyjs::show(id = "about")
+      shinyjs::show(id = "min_width")
+      shinyjs::show(id = "max_width")
+      
     }
-  )
+    
+  })
   
   observeEvent(input$ntwk_select, {
-  if (input$ntwk_select =='Email (Text)') {
+  if (input$ntwk_select =='Email Subjects') {
     
   output$vis_dept <- renderVisNetwork({
-    
-    # PrepText <- function(textdata, groupvar, textvar, node_type = c("groups","words"), 
-    #                      tokenizer = c("words", "tweets"), pos = c("all", "nouns"),
-    #                      language = "english", remove_stop_words = FALSE, 
-    #                      remove_numbers = NULL, compound_nouns = FALSE,
-    #                      udmodel_lang = NULL,
-    #                      ...) {
-    #   
-    #   # remove non-UTF8 characters
-    #   textdata[[textvar]] <- iconv(textdata[[textvar]],  to="UTF-8", sub='')
-    #   
-    #   # remove emojis, symbols, and meta characters from tweets
-    #   if (tokenizer=="tweets") {
-    #     textdata[[textvar]] <- gsub("&amp;|&lt;|&gt;|RT", "", textdata[[textvar]])
-    #     if (!is.null(remove_numbers) && isTRUE(remove_numbers)) { # && evaluates arg two only if arg one is true
-    #       textdata[[textvar]]<-gsub("\\b\\d+\\b", "",textdata[[textvar]])
-    #     }
-    #   }
-    #   
-    #   if(is.null(udmodel_lang)){
-    #     # udpipe setup
-    #     # download udpipe language model
-    #     lang_mod <- udpipe_download_model(language = language)
-    #     # set up udpipe language model for pos tagging
-    #     udmodel_lang <- udpipe_load_model(file = lang_mod$file_model)
-    #   }
-    #   
-    #   ## DEFAULT: ANNOTATE WORDS NOT COMPOUND NOUNS
-    #   if (isFALSE(compound_nouns)){
-    #     
-    #     textdata_tokens <- as_tibble({{textdata}}) %>%
-    #       select({{groupvar}}, {{textvar}}) %>%
-    #       unnest_tokens(output = "word", input = {{textvar}}, token = {{tokenizer}}, ...)
-    #     
-    #     # get part of speech with udpipe
-    #     # annotate for pos only w/ pre-tokenized data
-    #     # following: https://cran.r-project.org/web/packages/udpipe/vignettes/udpipe-annotation.html#annotate_your_text
-    #     textdata_pos <- as.data.frame(udpipe_annotate(udmodel_lang, x = textdata_tokens$word,
-    #                                                   tagger = "default", parser = "none",
-    #                                                   tokenizer = "vertical"))
-    #     
-    #     # combine part of speech and textdata
-    #     textdata <- bind_cols(textdata_tokens, textdata_pos[, c("upos", "lemma")])
-    #   }
-    #   
-    #   
-    #   ## IF SPECIFIED: ANNOTATE WORDS AND COMPOUND NOUNS
-    #   if (isTRUE(compound_nouns)){
-    #     
-    #     # we use tidytext to flexibly tokenize words or tweets
-    #     textdata_tokens <- as_tibble({{textdata}}) %>%
-    #       select({{groupvar}}, {{textvar}}) %>%
-    #       unnest_tokens(output = "word", input = {{textvar}}, token = {{tokenizer}}, strip_punct = FALSE, ...)
-    #     
-    #     # then we prepare the tokenized documents for dependency parsing
-    #     textdata_tokens <- textdata_tokens %>% 
-    #       group_by_({{groupvar}}) %>% 
-    #       summarise(documents = paste(word, collapse = "\n"))
-    #     
-    #     # parse dependencies with udpipe
-    #     textdata_dep <- as.data.frame(udpipe_annotate(udmodel_lang, x = textdata_tokens$documents,
-    #                                                   doc_id = textdata_tokens[[groupvar]],
-    #                                                   tagger = "default", parser = "default"))
-    #     
-    #     # NOUN COMPOUNDS
-    #     # retrieve noun compounds
-    #     # row numbers of all compound elements
-    #     noun_compound <- which(textdata_dep$dep_rel=="compound")
-    #     # list of consecutive compound elements
-    #     compound_elements <- split(noun_compound, cumsum(c(1, diff(noun_compound) != 1)))
-    #     # vector of compound bases
-    #     compound_bases <- mapply(`[[`, compound_elements, lengths(compound_elements))+1
-    #     # add compound bases to compound list
-    #     all_compound_elements <- mapply(c, compound_elements, compound_bases, SIMPLIFY = FALSE)
-    #     # retrieve all text elements and collapse them to get compound nouns
-    #     compound_nouns <- sapply(all_compound_elements, function(x) paste0(textdata_dep$lemma[x], collapse = " "))
-    #     
-    #     # assign compound nouns to compound bases 
-    #     textdata_dep$lemma[compound_bases] <- compound_nouns
-    #     
-    #     # remove compound elements and punctuation from dataframe
-    #     textdata_dep <- textdata_dep %>% 
-    #       filter(dep_rel!="compound" & upos!="PUNCT")
-    #     
-    #     # rename df and groupvar to avoid redudant coding
-    #     textdata <- textdata_dep
-    #     names(textdata)[1] <- groupvar
-    #   }
-    #   
-    #   # remove stopwords
-    #   if (remove_stop_words) {
-    #     textdata <- {{textdata}} %>% 
-    #       anti_join(get_stopwords(language = language), by = c("lemma" = "word"))
-    #   }
-    #   
-    #   # subset to nouns and proper nouns (if desired)
-    #   if (length(pos)>1){
-    #     warning(paste0("You did not specify `pos`. Function defaults to all parts of speech."))
-    #     pos <- "all"
-    #   }
-    #   if (pos=="nouns"){
-    #     textdata <- {{textdata}} %>% 
-    #       filter(upos%in%c("NOUN", "PROPN"))
-    #   }
-    #   
-    #   # count word occurences within grouping variable
-    #   if (length(node_type)>1){
-    #     warning(paste0("You did not specify a `node_type`. Returned nodes are ", groupvar, "."))
-    #     node_type <- "groups"
-    #   }
-    #   
-    #   if (node_type=="groups"){
-    #     # count terms by group
-    #     textdata <- {{textdata}} %>%
-    #       group_by_({{groupvar}}) %>%
-    #       count(lemma) %>%
-    #       rename(count = n)
-    #   }
-    #   
-    #   if (node_type=="words"){
-    #     # count groups by term
-    #     textdata <- {{textdata}} %>%
-    #       group_by(lemma) %>%
-    #       count_({{groupvar}}) %>%
-    #       rename(count = n)
-    #   }
-    #   
-    #   return({{textdata}})
-    # }
-    # 
-    # CreateTextnet <- function(tidytextobject){
-    #   
-    #   # determine network type
-    #   node_type <- ifelse(names(tidytextobject)[1]=="lemma",
-    #                       "words",
-    #                       "groups")
-    #   
-    #   # determine if regular or signed nets
-    #   nets_type <- ifelse(ncol(tidytextobject)>3,
-    #                       "signed",
-    #                       "regular")
-    #   
-    #   # remove grouping allow arranging after adding tfidf
-    #   tidytextobject <- ungroup(tidytextobject)
-    #   
-    #   # create adjacency matrix for node_type groups
-    #   if(node_type=="groups"){
-    #     
-    #     # rename grouping variable for easier referencing
-    #     names(tidytextobject)[1] <- "group"
-    #     
-    #     # add tfidf for adjacency matrix
-    #     for_adjacency <- tidytextobject %>%
-    #       # calculate tfidf
-    #       bind_tf_idf(lemma, group, count) %>%
-    #       # sort on lemma
-    #       arrange(lemma)
-    #     
-    #     # remove lemmas used by only one author
-    #     for_adjacency <- for_adjacency %>% 
-    #       group_by(lemma) %>%
-    #       filter(n() > 1) %>% 
-    #       ungroup()
-    #     
-    #     # create sparse matrix of tfidfs
-    #     # this appears to work and provides a convenient wrapper around sparseMatrix
-    #     # the error appears to be related to some deprecated functions
-    #     suppressWarnings(for_crossprod <- cast_sparse(for_adjacency, row = group, col = lemma, value = tf_idf))
-    #     for_crossprod <- for_crossprod[sort(rownames(for_crossprod)),]
-    #     
-    #     # create sparse matrix of sentiment scores and multiply with tfidf matrix
-    #     if(nets_type=="signed"){
-    #       suppressWarnings(sent_matrix <- cast_sparse(for_adjacency, row = group, col = lemma, value = sentiment))
-    #       sent_matrix <- sent_matrix[sort(rownames(sent_matrix)),]
-    #       for_crossprod <- sent_matrix * for_crossprod
-    #     }
-    #     
-    #     # the line above is not working with the noun phrase function
-    #     # create weighted adjacency matrix
-    #     weighted_adjacency <- Matrix::tcrossprod(for_crossprod)
-    #     # create igraph object
-    #     text_network <- graph.adjacency(weighted_adjacency, mode="undirected", weighted = TRUE, diag = FALSE)
-    #   }
-    #   
-    #   # create adjacency matrix for node_type words
-    #   if(node_type=="words"){
-    #     
-    #     # rename grouping variable for easier referencing
-    #     names(tidytextobject)[2] <- "group"
-    #     
-    #     # add tfidf for adjacency matrix
-    #     for_adjacency <- tidytextobject %>%
-    #       # calculate tfidf
-    #       bind_tf_idf(group, lemma, count) %>%
-    #       # sort on lemma
-    #       arrange(group)
-    #     
-    #     # create sparse matrix
-    #     # this appears to work and provides a convenient wrapper around sparseMatrix
-    #     # the error appears to be related to some deprecated functions
-    #     suppressWarnings(for_crossprod <- cast_sparse(for_adjacency, row = lemma, col = group, value = tf_idf))
-    #     for_crossprod <- for_crossprod[sort(rownames(for_crossprod)),]
-    #     
-    #     # create sparse matrix of sentiment scores and multiply with tfidf matrix
-    #     if(nets_type=="signed"){
-    #       suppressWarnings(sent_matrix <- cast_sparse(for_adjacency, row = group, col = lemma, value = sentiment))
-    #       sent_matrix <- sent_matrix[sort(rownames(sent_matrix)),]
-    #       for_crossprod <- sent_matrix * for_crossprod
-    #     }
-    #     
-    #     # create weighted adjacency matrix
-    #     weighted_adjacency <- Matrix::tcrossprod(for_crossprod)
-    #     # create igraph object
-    #     text_network <- graph.adjacency(weighted_adjacency, mode="undirected", weighted = TRUE, diag = FALSE)
-    #   }
-    #   
-    #   return(text_network)
-    #   
-    # }
-    
-    
+
     showModal(modalDialog("Network under Construction!", footer="Please wait.."))
-    
-    # emails_grouped<- df.emails %>% 
-    #   mutate(To = str_split(To,pattern=',')) %>% 
-    #   unnest_longer(To) %>% 
-    #   mutate(To = str_trim(To),
-    #          From = str_trim(From)) %>%
-    #   filter(!(From==To)) %>%
-    #   unnest_tokens(word, Subject) %>%
-    #   anti_join(stop_words) %>% 
-    #   group_by(From,To) %>%
-    #   count(word) %>%
-    #   summarise(word = paste(word, collapse = ",")) %>%
-    #   ungroup() %>%
-    #   group_by(From) %>%
-    #   left_join(df.emp, by=c("From"="FullName")) %>%
-    #   select(c(From, To, word, CurrentEmploymentType)) %>%
-    #   rename(group = CurrentEmploymentType) %>%
-    #   replace_na(replace=list(From_dep = "Executive"))
-    # 
-    # 
-    # isolate({email_text <- PrepText(emails_grouped, 
-    #                        groupvar = "From", 
-    #                        textvar = "word", 
-    #                        node_type = "groups", 
-    #                        tokenizer = "words", 
-    #                        compound_nouns = TRUE)})
-    # 
-    # isolate({email_text_nt <- CreateTextnet(email_text)})
     
     VisTextNet_e_2 <- function(text_network, alpha = .25, label_degree_cut=0, df){
       
@@ -1749,7 +1542,7 @@ server <- function(input, output, session) {
       
       size <- 25
       
-      if (input$node_sizings=='Betweenness'){
+      if (input$node_sizings2=='Betweenness'){
         
         nodes <- data.frame(id = V(pruned)$name, 
                             title = paste0("Degree of Node: <br>",
@@ -1757,7 +1550,7 @@ server <- function(input, output, session) {
                             size =  round(betweenness(pruned))
                             )
         
-      }else if (input$node_sizings=='Degree'){
+      }else if (input$node_sizings2=='Degree'){
         nodes <- data.frame(id = V(pruned)$name, 
                             title = paste0("Degree of Node: <br>",
                                            V(pruned)$degree),
@@ -1866,6 +1659,7 @@ server <- function(input, output, session) {
     p<-VisTextNet_e_2(get_data(), df = df.emp)
     
     removeModal()
+    
     p
     
   })
@@ -2158,7 +1952,7 @@ server <- function(input, output, session) {
     
   }) # close brackets for output$vis_email
   
-  #### NK output$vis_dept Server Codes ####
+  #### NK output$vis_dept_DEPT Server Codes ####
 
   output$vis_dept <- renderVisNetwork({
     

@@ -714,7 +714,9 @@ ui <- navbarPage(
                         ),#close bracket with comma for column(2)
                         
                         column(10,
-                               plotlyOutput(outputId = "TxnBoxPlotA")
+                               plotlyOutput(outputId = "TxnBoxPlotA",
+                                            width = "100%",
+                                            height = "700px")
                         )#close bracket with comma for column(10)
                         
                       ),#close bracket with comma for fluidRow()
@@ -2563,7 +2565,14 @@ server <- function(input, output, session) {
     
     #cc txn tile (fill by price)
     indivccplotA <- ggplot(indivcc, aes(date, location)) +
-      geom_tile(aes(fill = price)) +
+      geom_tile(aes(fill = price,
+                    text = sprintf("Location: %s<br>Date: %s<br>Period: %s<br>Amount: $%s<br>CC No.: %s",
+                                   location,
+                                   timestamp,
+                                   TimeCat,
+                                   price,
+                                   last4ccnum
+                                   ))) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
       labs(title = "All Transactions (for Selected Credit Card)",
            fill = "Price Range") +
@@ -2575,7 +2584,7 @@ server <- function(input, output, session) {
             plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
-    ggplotly(indivccplotA)
+    ggplotly(indivccplotA, tooltip = c("text"))
     
   }) #close curly and brackers for pricetiletop, without comma
   
@@ -2586,8 +2595,16 @@ server <- function(input, output, session) {
       mutate(date = as.POSIXct.Date(date))
     
     indivccplotB <- ggplot(indivcc, aes(date, location)) +
-      geom_tile(aes(fill = TimeCat)) +
-      scale_color_brewer(palette = "Set2")+
+      geom_tile(aes(fill = TimeCat,
+                    text = sprintf("Location: %s<br>Date: %s<br>Period: %s<br>Amount: $%s<br>CC No.: %s",
+                                   location,
+                                   timestamp,
+                                   TimeCat,
+                                   price,
+                                   last4ccnum
+                                   ))) +
+      scale_color_brewer(palette = "Set2",
+                         labels = c("Morning", "Pre-Lunch", "LunchTime", "Afternoon", "Evening", "Night","Midnight"))+
       labs(title = "All Transactions (for Selected Credit Card)",
            fill = "Time of Day") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
@@ -2598,7 +2615,7 @@ server <- function(input, output, session) {
             plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
-    ggplotly(indivccplotB)
+    ggplotly(indivccplotB, tooltip = c("text"))
     
   }) #close bracket and curly wo comma for credit time tile
   
@@ -2612,7 +2629,12 @@ server <- function(input, output, session) {
     
     #lc txn tile (fill by price)
     indivlcplot <- ggplot(indivlc, aes(date, location)) +
-      geom_tile(aes(fill = price)) +
+      geom_tile(aes(fill = price,
+                    text = sprintf("Location: %s<br>Date: %s<br>Amount: $%s<br>LC No.: %s",
+                                   location,
+                                   timestamp,
+                                   price,
+                                   loyaltynum))) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
       labs(title = "All Transactions (for Selected Loyalty Card)",
            fill = "Price Range") +
@@ -2624,7 +2646,7 @@ server <- function(input, output, session) {
             plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
-    ggplotly(indivlcplot) 
+    ggplotly(indivlcplot, tooltip = c("text")) 
     
     
   }) #close bracket and curly wo comma for loyalty tile
@@ -2666,7 +2688,14 @@ server <- function(input, output, session) {
     
     #cc txn tile (fill by price)
     indivccplotA <- ggplot(indivcc, aes(date, location)) +
-      geom_tile(aes(fill = price)) +
+      geom_tile(aes(fill = price,
+                    text = sprintf("Location: %s<br>Date: %s<br>Period: %s<br>Amount: $%s<br>CC No.: %s",
+                                   location,
+                                   timestamp,
+                                   TimeCat,
+                                   price,
+                                   last4ccnum
+                                   ))) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
       labs(title = "All Transactions (for Selected Credit Card)",
            fill = "Price Range") +
@@ -2678,7 +2707,7 @@ server <- function(input, output, session) {
             plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
-    ggplotly(indivccplotA)
+    ggplotly(indivccplotA, tooltip = c("text"))
     
   }) #close curly and brackers for pricetiletop, without comma
   
@@ -2689,10 +2718,18 @@ server <- function(input, output, session) {
       mutate(date = as.POSIXct.Date(date))
     
     indivccplotB <- ggplot(indivcc, aes(date, location)) +
-      geom_tile(aes(fill = TimeCat)) +
-      scale_color_brewer(palette = "Set2")+
-      labs(title = "All Transactions (for Selected Credit Card)",
-           fill = "Time of Day") +
+      geom_tile(aes(fill = TimeCat,
+                    text = sprintf("Location: %s<br>Date: %s<br>Period: %s<br>Amount: $%s<br>CC No.: %s",
+                                   location,
+                                   timestamp,
+                                   TimeCat,
+                                   price,
+                                   last4ccnum
+                                   ))) +
+      scale_color_brewer(palette = "Set2",
+                         labels = c("Morning", "Pre-Lunch", "LunchTime", "Afternoon", "Evening", "Night","Midnight")) +
+            labs(title = "All Transactions (for Selected Credit Card)",
+            fill = "Time of Day") +
       scale_x_datetime(breaks = breaks_pretty(14), labels = label_date_short()) +
       scale_y_discrete(limits = rev) +
       theme(axis.text.x = element_text(angle = 0),
@@ -2701,7 +2738,7 @@ server <- function(input, output, session) {
             plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
-    ggplotly(indivccplotB)
+    ggplotly(indivccplotB, tooltip = c("text"))
     
   }) #close bracket and curly wo comma for credit time tile
   
@@ -2715,7 +2752,14 @@ server <- function(input, output, session) {
     
     #lc txn tile (fill by price)
     indivlcplot <- ggplot(indivlc, aes(date, location)) +
-      geom_tile(aes(fill = price)) +
+      geom_tile(aes(fill = price,
+                    text = sprintf("Location: %s<br>Date: %s<br>Amount: $%s<br>LC No.: %s",
+                                   location,
+                                   timestamp,
+                                   price,
+                                   loyaltynum
+                      
+                    ))) +
       scale_fill_gradient(low="#56B1F7", high = "#132B43") +
       labs(title = "All Transactions (for Selected Loyalty Card)",
            fill = "Price Range") +
@@ -2727,7 +2771,7 @@ server <- function(input, output, session) {
             plot.title=element_text(face="bold")) +
       theme(legend.key.height = unit(1, "cm"))
     
-    ggplotly(indivlcplot) 
+    ggplotly(indivlcplot, tooltip = c("text")) 
     
     
   }) #close bracket and curly wo comma for loyalty tile
@@ -2773,19 +2817,28 @@ server <- function(input, output, session) {
     ccloyal <- dplyr::bind_rows(list(cc_data = cc_data, loyalty_data = loyalty_data), .id='Source')
     
     p2c <- ccloyal %>% filter(category == input$rtlocationcat) %>% 
-      ggplot(aes(x=location, y=price, text=paste("Timestamp:", timestamp,"<br />CC No.:", last4ccnum, "<br />LC No.:", loyaltynum))) +
+      ggplot(aes(x=location, y=price)) +
       geom_boxplot(aes(fill = Source), 
                    position = position_dodge(1)) +
-      geom_point(alpha=0) + scale_y_log10() +
-      ggtitle("Boxplot of Transaction Amounts by Category") +
+      geom_point(alpha=0, position = position_dodge(1), 
+                 aes(text = sprintf("Location: %s<br>Date: %s<br>Amount: $%s<br>CC No.: %s<br>LC No.: %s",
+                                    location,
+                                    timestamp,
+                                    price,
+                                    last4ccnum,
+                                    loyaltynum))
+                 ) + scale_y_log10() +
+      ggtitle("Boxplot of Transaction Amounts") +
       theme(axis.title=element_blank(),
             plot.title=element_text(size=16, face="bold"),
             legend.position = "bottom") +
-      scale_x_discrete(limits = rev) + coord_flip()
+      scale_x_discrete(limits = rev) +
+      scale_fill_manual(values=c("#56B1F7","#132B43")) +
+      coord_flip()
     
-    plotp2c <- p2c %>% ggplotly() %>% 
+    plotp2c <- p2c %>% ggplotly(tooltip=c("text")) %>% 
       layout(boxmode = "group",
-             legend = list(orientation = "h", x=0.2, y=-0.1))
+             legend = list(orientation = "h", x=0.4, y=-0.1))
     plotp2c$x$data[[1]]$marker$line$color = "red"
     plotp2c$x$data[[1]]$marker$color = "red"
     plotp2c$x$data[[1]]$marker$outliercolor = "red"
@@ -2807,18 +2860,26 @@ server <- function(input, output, session) {
     
     p2e <- ccselection %>%  
       ggplot(aes(x=location, y=price, text=paste("CC No.:", last4ccnum))) +
-      geom_point(alpha=1) + scale_y_log10() + coord_flip() +
+      geom_point(alpha = 0.8,
+                 size = 6,
+                 shape = 18,
+                 aes(color = price,
+                     text = sprintf("Location: %s<br>Date: %s<br>Amount: $%s<br>CC No.: %s",
+                                    location,
+                                    timestamp,
+                                    price,
+                                    last4ccnum
+                                    ))) + scale_y_log10() + coord_flip() +
       
       ggtitle("Card-Specific Transaction Amounts (Credit Card)") +
       theme(axis.title=element_blank(),
             plot.title=element_text(size=16, face="bold")) +
       xlab("Transaction Amount") +
-      scale_x_discrete(limits = rev)
+      labs(color = "Price Range") +
+      scale_x_discrete(limits = rev) +
+      scale_color_gradient(low = "#56B1F7", high = "#132B43")
     
-    plotp2e <- ggplotly(p2e, width_svg = 7, height_svg = 7)
-    plotp2e$x$data[[1]]$marker$line$color = "red"
-    plotp2e$x$data[[1]]$marker$color = "red"
-    plotp2e$x$data[[1]]$marker$outliercolor = "red"
+    plotp2e <- ggplotly(p2e, width_svg = 7, height_svg = 7, tooltip = c("text"))
     
     plotp2e
     
@@ -2836,19 +2897,27 @@ server <- function(input, output, session) {
     lcselection <- loyalty_data %>% filter(loyaltynum == input$rtloyalcard)
     
     p2f <- lcselection %>%  
-      ggplot(aes(x=location, y=price, text=paste("LC No.:", loyaltynum))) +
-      geom_point(alpha=1) + scale_y_log10() + coord_flip() +
+      ggplot(aes(x=location, y=price)) +
+      geom_point(alpha=0.8,
+                 size = 6,
+                 shape = 18,
+                 aes(color = price,
+                     text = sprintf("Location: %s<br>Date: %s<br>Amount: $%s<br>LC No.: %s",
+                                    location,
+                                    timestamp,
+                                    price,
+                                    loyaltynum))) + 
+      scale_y_log10() + coord_flip() +
       
       ggtitle("Card-Specific Transaction Amounts (Loyalty)") +
       theme(axis.title=element_blank(),
             plot.title=element_text(size=16, face="bold")) +
       xlab("Transaction Amount") +
-      scale_x_discrete(limits = rev)
+      labs(color = "Price Range") +
+      scale_x_discrete(limits = rev) +
+      scale_color_gradient(low = "#56B1F7", high = "#132B43")
     
-    plotp2f <- ggplotly(p2f, width_svg = 7, height_svg = 7)
-    plotp2f$x$data[[1]]$marker$line$color = "red"
-    plotp2f$x$data[[1]]$marker$color = "red"
-    plotp2f$x$data[[1]]$marker$outliercolor = "red"
+    plotp2f <- ggplotly(p2f, width_svg = 7, height_svg = 7, tooltip = c("text"))
     
     plotp2f
     

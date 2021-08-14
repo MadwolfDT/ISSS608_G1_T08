@@ -138,6 +138,16 @@ ui <- navbarPage(
                         
                       ),#close bracket with comma for dateInput
                       
+                      sliderInput("dtlocationtimerange", 
+                                  "Choose Time Range:", 
+                                  min = as.POSIXct("00:00:00", format = "%H:%M", tz = "GMT"),
+                                  max = as.POSIXct("23:59:00", format = "%H:%M", tz = "GMT"),
+                                  value = c(as.POSIXct("06:00:00", format = "%H:%M", tz = "GMT"),
+                                            as.POSIXct("20:00:00", format = "%H:%M", tz = "GMT")),
+                                  timeFormat = "%H:%M",
+                                  timezone = "+0000"
+                      ),#close bracket with comma for sliderInput
+                      
                       checkboxInput(
                         
                         inputId = "dtweekday",
@@ -2314,6 +2324,7 @@ server <- function(input, output, session) {
     if(isWeekday == TRUE & isWeekend == TRUE){
       heatmap_cc <- cc_data %>%
         filter(date >= fromdate & date <= todate) %>%
+        filter(time >= fromtime & time <= totime) %>%
         mutate(daydate = weekdays(timestamp)) %>%
         group_by(location, daydate, time) %>%
         add_count(location, daydate, time, name = "count") %>%
@@ -2323,6 +2334,7 @@ server <- function(input, output, session) {
     if(isWeekday == TRUE & isWeekend == FALSE){
       heatmap_cc <- cc_data %>%
         filter(date >= fromdate & date <= todate) %>%
+        filter(time >= fromtime & time <= totime) %>%
         mutate(daydate = weekdays(timestamp)) %>%
         group_by(location, daydate, time) %>%
         add_count(location, daydate, time, name = "count") %>%
@@ -2334,6 +2346,7 @@ server <- function(input, output, session) {
     if(isWeekday == FALSE & isWeekend == TRUE){
       heatmap_cc <- cc_data %>%
         filter(date >= fromdate & date <= todate) %>%
+        filter(time >= fromtime & time <= totime) %>%
         mutate(daydate = weekdays(timestamp)) %>%
         group_by(location, daydate, time) %>%
         add_count(location, daydate, time, name = "count") %>%
@@ -2363,7 +2376,7 @@ server <- function(input, output, session) {
         scale_fill_manual(values = cc_colours1,
                           name = "Frequency") +
         #breaks = levels(count)[seq(1, x, by = 5)]) +
-        labs(y = "Locations", x = "Time (Static)", title = "Transactions/ Locations Heat Map") +
+        labs(y = "Locations", x = "Time (H:M:S)", title = "Transactions/ Locations Heat Map") +
         theme(axis.text.x = element_text(size = 8, angle = 45, vjust = 1.1, hjust = 1.1),
               axis.text.y = element_text(size = 7),
               plot.title = element_text(hjust = 0.5))

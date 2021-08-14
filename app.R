@@ -2219,7 +2219,7 @@ server <- function(input, output, session) {
       tmap_dtemply_locations <- tm_shape(dtemply_locations_sf) + 
         tm_dots(size = 0.05,
                 alpha = 1,
-                col = "red")
+                col = "#E6A923")
       
       tmap_gps_path <- tm_shape(dtemply_gps_path_sf) + 
         tm_lines()

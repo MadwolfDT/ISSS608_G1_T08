@@ -1,5 +1,5 @@
 ---
-title: "Project Proposal"
+title: "R Shiny Investigative Tool"
 description: |
   Group 1 Team 8 - VAST Challenge 2021.
 author:
@@ -10,7 +10,11 @@ author:
 date: 06-19-2021
 output:
   distill::distill_article:
-    self_contained: false
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    toc_collapsed: true
+    self_contained: true
 ---
 
 
@@ -18,13 +22,15 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-# VAST Challenge 2021
+# Our Project Proposal
+
+## VAST Challenge 2021
 As part of our module ISSS608 - Visual Analytics and Applications and VAST Challenge 2021, our team would be embarking on a project based on the context provided within VAST Challenge 2021.
 
-# Context
+## Context
 In January, 2014, the leaders of GAStech are celebrating their new-found fortune as a result of the initial public offering of their very successful company. In the midst of this celebration, several employees of GAStech go missing. An organization known as the Protectors of Kronos (POK) is suspected in the disappearance, but things may not be what they seem. - *extracted from VAST Challenge 2021 website [here](https://vast-challenge.github.io/2021/)*
 
-# Motivation of the Project
+## Motivation of the Project
 We are the Visual Analytics Project Team that are called in to help the law enforcement from Kronos and Tethys. In broad, we would be attempting to merge/ link the insights discovered in Mini-Challenge 1 and Mini-Challenge 2. We would attempt to:
 
 * Establish linkages between organisations, people, places and events.
@@ -32,7 +38,7 @@ We are the Visual Analytics Project Team that are called in to help the law enfo
 * Pick up any anomalies with regard to people, activities and locations.
 * Establish possible linkages between the insights discovered
 
-# Our Approach
+## Our Approach
 The following are the broad approaches that we would be exploring:
 
 * Transactions and Location Analysis and Visualization: Gain insights based on possible linkage between credit card and loyalty card transactions. In addition, with the GPS data, discover insights or linkages among them. We envisage development of a geographical trajectory of car movement with time for visualization.
@@ -41,7 +47,7 @@ The following are the broad approaches that we would be exploring:
 * New Analysis: To establish a timeline of a series of events, analysing trending articles from primary/ derivative sources.
 * Facilitate story telling and aid in investigation via interesting and interactive Visuals
 
-# The Tasks
+## The Tasks
 **Mini-Challenge 1**
 
 * Establish possible relationships between personnel. (Sources: resumes, email correspondences) 
@@ -65,9 +71,20 @@ The following are the broad approaches that we would be exploring:
   + Trace the person who is making the purchase via location and timing incidences of cars
   + Identify any possible links with data from Mini-Challenge 1
 
-# R Shiny Plans
+## R Shiny Plans
 * Transactions Tab (Transactional data)
 * Social Network Tab (Mapping relationships, both personal and professional)
 * Person Location Tracking Tab (Map of the island, person's whereabout, path tracking)
 * News Tab
 
+# Our Research Paper
+
+You may download a copy of our Research Paper here.
+
+# Our R Shiny Web App
+
+You may access our R Shiny Web App here.
+
+# Our Poster
+
+[to include poster here, with a clickable download link]

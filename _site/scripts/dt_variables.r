@@ -313,9 +313,9 @@ tmap_Base <- tm_shape(bgmap) +
 tmap_home <- tm_shape(m_simplified_home_list_sf) + 
   tm_dots(size = 0.05,
           alpha = 1,
-          col = "blue")
+          col = "#77B9EF")
 
 tmap_refinedPOI <- tm_shape(refinedPOI_gps_sf) + 
   tm_dots(size = 0.02,
           alpha = 1,
-          col = "cyan")
+          col = "#80EF77")

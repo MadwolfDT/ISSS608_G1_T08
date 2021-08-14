@@ -1,6 +1,6 @@
 df.news <- read_csv('data/df_news.csv')
 #df.news <- df.news %>% select(-c(X1,caseno))
-df.emails <- read_csv('data/email headers.csv')
+df.emails <- read_csv('data/email headers2.csv')
 df.emails <- df.emails %>% 
   mutate(To = str_remove_all(To,"@gastech.com.kronos|@gastech.com.tethys")) %>%
   mutate(From = str_remove_all(From,"@gastech.com.kronos|@gastech.com.tethys")) %>%
@@ -40,3 +40,6 @@ x_full <- df.emails %>%
   rename(From_title = CurrentEmploymentTitle, From_dep =  CurrentEmploymentType) %>% 
   left_join(select(df.emp, FullName, CurrentEmploymentTitle, CurrentEmploymentType), by = c("To"="FullName")) %>%
   rename(To_title = CurrentEmploymentTitle, To_dep =  CurrentEmploymentType)
+
+
+list_emp <- sort(unique(x_full$From))

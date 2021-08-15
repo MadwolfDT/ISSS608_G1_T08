@@ -36,6 +36,13 @@ knitr::opts_chunk$set(echo = FALSE)
 
 **Click on the pages to see an enlarged version**
 
+```{r echo=FALSE}
+# a single file
+xfun::embed_file('www/to_insert.pdf')
+
+```
+
+
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-1.jpg")
 ```

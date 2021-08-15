@@ -59,11 +59,12 @@ Our R Shiny Investigative Tool's design would be based on our 3Is principle.
 ![](img/Locations.PNG)
 
 
-Under this module, the investigators could explore the popularity of specific locations across other locations based on the date and time filter which they had provided. A heatmap, indicating the number of transactions, would be plotted against all locations residing inside the credit card data. Within the date and time range, the investigators would be able to select to show either weekdays or weekends data, or both.
+The intention of this module would to be allow the investigators to explore the popularity of the locations through the analysis of transaction records. It would be conducted in a manner by aggregating the transaction records based on the time of transactions. The transaction counts would be plotted against the aggregated time of transactions and locations using a heatmap to infer the peak periods for the locations. The selected records would be filtered based on the range of date inputs, time range of transactions, with the ability to toggle between weekdays, weekends or both.
+
 
 ![](img/Locations2.PNG)
 
-Under this module, the investigators could explore number of transactions made at the specific locations across 7 days of the week, within a 2 week period. With this, anomalies could be detected such as U-Pump only having transactions on Monday, Frank's Fuel on Wednesday and Saturday, and Daily Dealz having a transaction on Monday.
+The function of this module would be to identify the operating days of the locations through the analysis 
 
 ## Transactions - For Exploration!
 

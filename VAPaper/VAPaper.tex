@@ -60,6 +60,31 @@ Management University}\\
 % Pandoc syntax highlighting
 
 % Pandoc citation processing
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+% for Pandoc 2.8 to 2.10.1
+\newenvironment{cslreferences}%
+  {}%
+  {\par}
+% For Pandoc 2.11+
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc} % for calculating minipage widths
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 
 \begin{document}
@@ -242,7 +267,32 @@ would be clearly displayed in the form of the series of lines.
 \subsection{Individual Card
 Transactions}\label{individual-card-transactions}}
 
-To paste
+This module allows the investigator to visualize the transactions made
+by individual cards for a more in-depth exploration. The page allows the
+investigator to select two different cards to be displayed, akin to a
+workspace for comparison between cards. This is essentially a deep-dive
+compared to the parallel coordinate plot, which gives an overview.
+
+\includegraphics{img/P06WorkSpace.png} The investigator could select the
+card type, credit card or loyalty card. If credit card is selected, an
+additional field would appear to allow selection of type of fill for the
+tiles.
+
+\includegraphics{img/P02SpecCard.jpg}
+
+\includegraphics{img/P05SpecCardTable.jpg}
+
+Location is plotted against each day. If there was a transaction at the
+location for that day, a tile would appear. For this module, the tile
+plot is chosen as its uniform tiles allow a straightforward view of
+whether transactions were made consecutively for each day, or on
+separate days. The color intensity of the tile would give an indication
+of the magnitude of the transaction amount - the darker the intensity,
+the higher the amount. Hovering over each tile would display a tooltip
+indicating the details of that particular transaction. A data table for
+the selected card would also appear below the tile plot to list down all
+observations, it can be sorted and filtered, to allow for the
+investigator's further exploration.
 
 \hypertarget{employees-of-gastech}{%
 \subsection{Employees of GasTech}\label{employees-of-gastech}}
@@ -322,7 +372,35 @@ the duration of stop, by visitors, to the locations.
 \subsection{Transaction Amount
 Analysis}\label{transaction-amount-analysis}}
 
-To paste.
+This module provides statistical analysis on the transactions made at
+each location, by each card type. The distribution of the spread of the
+transaction amounts is shown by boxplots. Outliers are highlighted in
+red to gain the investigator's attention.
+
+\includegraphics{img/P03BoxPlot.jpg} The plots are categorized by the
+location types, as we believe transaction amounts should be compared
+with those made at similar locations (For e.g.~F\&B with F\&B,
+Industrial with Industrial). It would not be logical to compare a
+transaction made at a supermarket, with one made at a chemical
+production factory. This would be useful if the investigator wishes to
+understand what is a normal range of transaction price for each
+location, and which transactions deviated from the normal ranges. An
+additional value-added feature that can be derived from this plot, is
+the investigator can identify credit card and loyalty card pairs as they
+would have the same transaction price, on the same day.
+
+A further deep dive can be performed with the specific card transactions
+scatter plot positioned below the overall boxplot.
+
+\includegraphics{img/P04SpecCardTxn.jpg}
+
+This is a scatter plot of all transactions made by the card selected by
+the investigator. Each point represents one transaction, and positioned
+according to the transaction amount. How the amounts made at the same
+location are relative to each other can be seen by their colors as well
+- the darker the intensity, the higher the amount. As it is possible to
+have multiple points clustered close together, some transparency is set
+so that any overlaps are clearly visible.
 
 \hypertarget{future-works}{%
 \section{Future Works}\label{future-works}}
@@ -363,50 +441,42 @@ Management University for his extensive guidance and support during this
 project.
 
 \hypertarget{references}{%
-\section{References}\label{references}}
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{0.06}}@{}}
-\toprule
-\endhead
-references: - id: IIITH title: VAST Challenge 2014 Mini Challenge 2
-author: ``Pochampally, Yashaswi; Yarrabelly, Navya; Chikka, Veera
-Raghavendra and Karlapalem, Karlapalem'' container-title:
-`\url{http://visualdata.wustl.edu/varepository/VAST\%20Challenge\%202014/challenges/MC2\%20-\%20Patterns\%20of\%20Life\%20Analysis/entries/International\%20Institute\%20of\%20Information\%20Technology\%20Hyderabad/}'
-URL:
-`\url{http://visualdata.wustl.edu/varepository/VAST\%20Challenge\%202014/challenges/MC2\%20-\%20Patterns\%20of\%20Life\%20Analysis/entries/International\%20Institute\%20of\%20Information\%20Technology\%20Hyderabad/}'
-type: website issued: year: 2014 \\
-- id: UC title: VAST Challenge 2014 Mini Challenge 2 author: ``Sahaf,
-Zahra et al.'' container-title:
-`\url{http://visualdata.wustl.edu/varepository/VAST\%20Challenge\%202014/challenges/MC2\%20-\%20Patterns\%20of\%20Life\%20Analysis/entries/University\%20of\%20Calgary/}'
-URL:
-`\url{http://visualdata.wustl.edu/varepository/VAST\%20Challenge\%202014/challenges/MC2\%20-\%20Patterns\%20of\%20Life\%20Analysis/entries/University\%20of\%20Calgary/}'
-type: website issued: year: 2014 \\
-- id: profkam title: ``Hands-On Exercise 8: Creating Parallel Coordinate
-Plot'' author: ``Kam, Tin Seong'' container-title:
-`\url{https://rpubs.com/tskam/PCP}' URL:
-`\url{https://rpubs.com/tskam/PCP}' type: website issued: year: 2020
-month: 03 day: 13
-\textless\textless\textless\textless\textless\textless\textless{}
-HEAD \\
-======= \\
-- id: IIITH title: VAST Challenge 2014 Mini Challenge 1 author: ``Avil,
-Pilar; Burgos, Valeria; Chikka, Guaymás Amalia'' container-title:
-`\url{https://www.cs.umd.edu/hcil/varepository/VAST\%20Challenge\%202014/challenges/MC1\%20-\%20Disappearance\%20at\%20GASTech/entries/University\%20of\%20Buenos\%20Aires\%20-\%20Avila/}'
-URL:
-`\url{https://www.cs.umd.edu/hcil/varepository/VAST\%20Challenge\%202014/challenges/MC1\%20-\%20Disappearance\%20at\%20GASTech/entries/University\%20of\%20Buenos\%20Aires\%20-\%20Avila/}'
-type: website issued: year: 2014 \\
-- id: IIITH title: VAST Challenge 2014 Mini Challenge 1 author:
-``Zhuang, Cai; Mengyao Chen;, Hanqing Zhao; Ying Zhao; Fangfang Zhou;
-Kang Zhang;'' container-title:
-`\url{https://www.cs.umd.edu/hcil/varepository/VAST\%20Challenge\%202014/challenges/MC1\%20-\%20Disappearance\%20at\%20GASTech/entries/Tianjin\%20University\%20-\%20Cai/}'
-URL:
-`\url{https://www.cs.umd.edu/hcil/varepository/VAST\%20Challenge\%202014/challenges/MC1\%20-\%20Disappearance\%20at\%20GASTech/entries/Tianjin\%20University\%20-\%20Cai/}'
-type: website issued: year: 2014
-\textgreater\textgreater\textgreater\textgreater\textgreater\textgreater\textgreater{}
-parent of 86ead62 (adjust reference) \\
-\bottomrule
-\end{longtable}
+\hypertarget{refs}{}
+\begin{CSLReferences}{0}{0}
+\leavevmode\hypertarget{ref-Avil}{}%
+\CSLLeftMargin{{[}1{]} }
+\CSLRightInline{Avil, Pilar; Burgos, Valeria; Chikka, Guaymás Amalia
+2014. VAST Challenge 2014 Mini Challenge 1.
+\emph{\url{https://www.cs.umd.edu/hcil/varepository/VAST\%20Challenge\%202014/challenges/MC1\%20-\%20Disappearance\%20at\%20GASTech/entries/University\%20of\%20Buenos\%20Aires\%20-\%20Avila/}}.}
+
+\leavevmode\hypertarget{ref-profkam}{}%
+\CSLLeftMargin{{[}2{]} }
+\CSLRightInline{Kam, Tin Seong 2020. Hands-On Exercise 8: Creating
+Parallel Coordinate Plot. \emph{\url{https://rpubs.com/tskam/PCP}}.}
+
+\leavevmode\hypertarget{ref-IIITH}{}%
+\CSLLeftMargin{{[}3{]} }
+\CSLRightInline{Pochampally, Yashaswi; Yarrabelly, Navya; Chikka, Veera
+Raghavendra and Karlapalem, Karlapalem 2014. VAST Challenge 2014 Mini
+Challenge 2.
+\emph{\url{http://visualdata.wustl.edu/varepository/VAST\%20Challenge\%202014/challenges/MC2\%20-\%20Patterns\%20of\%20Life\%20Analysis/entries/International\%20Institute\%20of\%20Information\%20Technology\%20Hyderabad/}}.}
+
+\leavevmode\hypertarget{ref-UC}{}%
+\CSLLeftMargin{{[}4{]} }
+\CSLRightInline{Sahaf, Zahra et al. 2014. VAST Challenge 2014 Mini
+Challenge 2.
+\emph{\url{http://visualdata.wustl.edu/varepository/VAST\%20Challenge\%202014/challenges/MC2\%20-\%20Patterns\%20of\%20Life\%20Analysis/entries/University\%20of\%20Calgary/}}.}
+
+\leavevmode\hypertarget{ref-Zhuang}{}%
+\CSLLeftMargin{{[}5{]} }
+\CSLRightInline{Zhuang, Cai; Mengyao Chen;, Hanqing Zhao; Ying Zhao;
+Fangfang Zhou; Kang Zhang; 2014. VAST Challenge 2014 Mini Challenge 1.
+\emph{\url{https://www.cs.umd.edu/hcil/varepository/VAST\%20Challenge\%202014/challenges/MC1\%20-\%20Disappearance\%20at\%20GASTech/entries/Tianjin\%20University\%20-\%20Cai/}}.}
+
+\end{CSLReferences}
 \setlength{\parindent}{0in}
 
 \end{document}

@@ -44,6 +44,14 @@ Taking reference on a submission by students from International Institute of Inf
 
 While credit card data and loyalty card data were provided for, to the investigators, there are no direct linkages between both set of data, except for the locations and price of item. The timestamp for both data are recorded differently with the credit card indicating the time of transaction while loyalty data indicating date of transactions only. Reviewing past work from members of University of Calgary, they attempted Parallel Coordinates plot by linking the locations, timestamp, price and employees, to establish possible linkages among the four variables. Inspired by their work and the sharing from Prof Kam on using Parallel Coordinates Plot on R, we would attempt to create parallel plots and allow the investigators to decide the variables that they are keen to establish linkages with.
 
+This application and charts, focused on the GPS movements of the vehicle. This provides the investigator with the time and location dimension, however, there will be the question unanswered,'What were they doing there?'. This question was addressed in the first mini-challenge data of The Vast Challenge.
+
+Submission from the University of Buenos Aires documented suspicious emails by combining the use of a visual network plot of the participants in an email chain and corresponding a table of emails. Like with most submissions, they were static and only highlighted emails that they deemed as suspicious with the search by employee.  The merging of a visual and table representation of the data would be enhanced in our application so that the investigator can not only search by person, but also by key words (or both) that his analysis has deemed suspicious. 
+
+In addition to that, in the submission by Tianjin University, their application showed the movement of the email with time between recipients. This was narrowed down between 2 recipients only when certain emails are sent to many people at once or replied to many other people. This inspired us to build a network that shows the entire network of the particular subject.
+
+While the email subjects raise suspicion and the analysis was subsequently based their search, the role that each of the employee plays in the network was not studied in the submissions. This will be built on in our application.  
+
 # Design Frame
 
 Our R Shiny Investigative Tool's design would be based on our 3Is principle.
@@ -90,21 +98,43 @@ Location is plotted against each day. If there was a transaction at the location
 
 ## Employees of GasTech
 
-Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor aliquam ante, nec convallis nisl ornare eu. Morbi ut purus et justo commodo dignissim et nec nisl. Donec imperdiet tellus dolor, vel dignissim risus venenatis eu. Aliquam tempor imperdiet massa, nec fermentum tellus sollicitudin vulputate. Integer posuere porttitor pharetra. Praesent vehicula elementum diam a suscipit. Morbi viverra velit eget placerat pellentesque. Nunc congue augue non nisi ultrices tempor.
+This module explores the general data of the employees. Like with most investigative portals, this tab will allows the investigator to understand basic bio-data of the employee in question. As shown below, the tab will react to the drop down under *Select Employee* and update to display the respective information. 
+
+![](img/BioData.png)
+
+The tab was extended with three charts. On selection of *Overview*, this allowed the comparison of biodata that is comparable accross, for example, the year joined in the company, ages and military service. This are useful as they allow the investigator to understand possible relationship or acquintances outside of GasTech. 
+
+![](img/BioData2.png)
 
 ## Email Correspondence
 
-Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor aliquam ante, nec convallis nisl ornare eu. Morbi ut purus et justo commodo dignissim et nec nisl. Donec imperdiet tellus dolor, vel dignissim risus venenatis eu. Aliquam tempor imperdiet massa, nec fermentum tellus sollicitudin vulputate. Integer posuere porttitor pharetra. Praesent vehicula elementum diam a suscipit. Morbi viverra velit eget placerat pellentesque. Nunc congue augue non nisi ultrices tempor.
+This module is a exploratory part, setting the ground for the Inferential Statistics in the network analysis. Investigators will be able to filter by data, time and employee to understand their email conversation. The main plot will show all emails to and from the employee across the day, while the 2 subplots highlight the unique words shared between filtered employee and their recipients. 
+
+![](img/EmailConvo.png)
+
+The subplots also highlight oddly timed emails and frequency of conversation between the filtered employee and others. 
 
 # Inferential Statistics
 
 ## Email Network Analysis
 
-Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor aliquam ante, nec convallis nisl ornare eu. Morbi ut purus et justo commodo dignissim et nec nisl. Donec imperdiet tellus dolor, vel dignissim risus venenatis eu. Aliquam tempor imperdiet massa, nec fermentum tellus sollicitudin vulputate. Integer posuere porttitor pharetra. Praesent vehicula elementum diam a suscipit. Morbi viverra velit eget placerat pellentesque. Nunc congue augue non nisi ultrices tempor.
+This module will allow the investigator to make searches by person, keyword or both. The search will bring up both the visual representation of the conversation and also the corresponding data table. 
+
+![](img/Network1.png)
+
+In the submission by University of Abila, the network was colored by suspected POK members too. As this application is meant for analytic deduction by the user, the nodes are colored by department to see inter-department activities. The network is directed. This will highlight nodes of different nature: Authoritative(tend to receive more emails), hubs (tend to receive more emails) and other critical intermediary nodes that facilitate the transfer of information. In addition to that, the network is interactive, the nodes highlight their nearest neighbours on click, showing flow of information. The nodes can be moved around to handle overlap issues.
+
+This tab works in cohesion with the *Networks* tab.
 
 ## Networks
 
-Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor aliquam ante, nec convallis nisl ornare eu. Morbi ut purus et justo commodo dignissim et nec nisl. Donec imperdiet tellus dolor, vel dignissim risus venenatis eu. Aliquam tempor imperdiet massa, nec fermentum tellus sollicitudin vulputate. Integer posuere porttitor pharetra. Praesent vehicula elementum diam a suscipit. Morbi viverra velit eget placerat pellentesque. Nunc congue augue non nisi ultrices tempor.
+This tab will allow the investigator to see the overall email network at GasTech, and run layout, community detection algorithms and identify key nodes through centrality measures. There are one of 2 options the investigator can see, network by email converstaion or network by content of the email subjects. 
+
+The side panel contains all the measures that can be changed, this includes node sizing, community algorithm and layout algorithms. 
+
+![](img/Network2.png)
+
+This tab allows the use of network analysis algorithm to identify key nodes within the network. Similar to previous, the user has freedom to enable multi-select, highlight nearest nodes and also direct interaction with the network.
 
 ## Employee Movement Plot
 
@@ -127,8 +157,7 @@ A further deep dive can be performed with the specific card transactions scatter
 
 ![](img/P04SpecCardTxn.jpg)
 
-This is a scatter plot of all transactions made by the card selected by the investigator. Each point represents one transaction, and positioned according to the transaction amount. How the amounts made at the same location are relative to each other can be seen by their colors as well - the darker the intensity, the higher the amount. As it is possible to have multiple points clustered close together, some transparency is set so that any overlaps are clearly visible. 
- 
+This is a scatter plot of all transactions made by the card selected by the investigator. Each point represents one transaction, and positioned according to the transaction amount. How the amounts made at the same location are relative to each other can be seen by their colors as well - the darker the intensity, the higher the amount. As it is possible to have multiple points clustered close together, some transparency is set so that any overlaps are clearly visible.
 
 # Future Works
 
@@ -191,5 +220,5 @@ references:
   type: website
   issued:
     year: 2014
-
 ...
+

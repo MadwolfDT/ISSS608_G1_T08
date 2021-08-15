@@ -1,11 +1,14 @@
 ---
-title: "Welcome Detective"
-description: 'The Kronos Incident' 
+title: "&nbsp;"
+
 site: distill::distill_website
 ---
 
+```{r, echo=F}
+knitr::include_graphics('azw7xEn4Ot.gif')
+```
 
-```{r, out.width=1400, echo=F,fig.align='center'}
+```{r, out.width=1400, echo=F,fig.align='center', eval=F}
 knitr::include_graphics('index_image.png')
 ```
 
@@ -21,7 +24,6 @@ Employees with company cars are happy to have these vehicles, because the compan
 This vehicle tracking data has been made available to law enforcement to support their investigation. Unfortunately, data is not available for the day the GAStech employees went missing. Data is only available for the two weeks prior to the disappearance.
 
 To promote local businesses, Kronos based companies provide a Kronos Kares benefit card to GASTech employees giving them discounts and rewards in exchange for collecting information about their credit card purchases and preferences as recorded on loyalty cards. This data has been made available to investigators in the hopes that it can help resolve the situation. However, Kronos Kares does not collect personal information beyond purchases.
-
 
 
 

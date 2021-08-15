@@ -42,6 +42,11 @@ Taking reference on a submission by students from International Institute of Inf
 
 While credit card data and loyalty card data were provided for, to the investigators, there are no direct linkages between both set of data, except for the locations and price of item. The timestamp for both data are recorded differently with the credit card indicating the time of transaction while loyalty data indicating date of transactions only. Reviewing past work from members of University of Calgary, they attempted Parallel Coordinates plot by linking the locations, timestamp, price and employees, to establish possible linkages among the four variables. Inspired by their work and the sharing from Prof Kam on using Parallel Coordinates Plot on R, we would attempt to create parallel plots and allow the investigators to decide the variables that they are keen to establish linkages with.
 
+This application and charts, focused on the GPS movements of the vehicle. This provides the investigator with the time and location dimension, however, there will be the question unanswered,'What were they doing there?'. This question was addressed in the first challenge. Submission from the University of Buenos Aires documented suspicious emails by combining the use of a visual network plot and a data table. Like with most submissions, they were static and only highlighted emails that they deemed as suspicious with the search by employee.  The merging of a visual and table representation of the data would be built on in our application so that the investigator can not only search by person, but also by key words (or both) that his analysis has deemed suspicious. 
+
+
+
+
 # Design Frame
 
 Our R Shiny Investigative Tool's design would be based on our 3Is principle.
@@ -76,7 +81,16 @@ Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor a
 
 ## Employees of GasTech
 
-Duis nec purus sed neque porttitor tincidunt vitae quis augue. Donec porttitor aliquam ante, nec convallis nisl ornare eu. Morbi ut purus et justo commodo dignissim et nec nisl. Donec imperdiet tellus dolor, vel dignissim risus venenatis eu. Aliquam tempor imperdiet massa, nec fermentum tellus sollicitudin vulputate. Integer posuere porttitor pharetra. Praesent vehicula elementum diam a suscipit. Morbi viverra velit eget placerat pellentesque. Nunc congue augue non nisi ultrices tempor.
+This module explores the general data of the employees. Like with most investigative portals, this tab will allows the investigator to understand basic bio-data of the employee in question. As shown below, the tab will react to the drop down under Select Employee and update to display the respective information. 
+
+![](img/BioData.png)
+
+The app was extended
+
+![](img/BioData2.png)
+
+
+
 
 ## Email Correspondence
 
@@ -154,5 +168,13 @@ references:
     year: 2020
     month: 03
     day: 13
-
+    
+- id: IIITH
+  title: VAST Challenge 2014 Mini Challenge 1
+  author: "Avil, Pilar; Burgos, Valeria; Chikka, Guaymás Amalia"
+  container-title: 'https://www.cs.umd.edu/hcil/varepository/VAST%20Challenge%202014/challenges/MC1%20-%20Disappearance%20at%20GASTech/entries/University%20of%20Buenos%20Aires%20-%20Avila/'
+  URL: 'https://www.cs.umd.edu/hcil/varepository/VAST%20Challenge%202014/challenges/MC1%20-%20Disappearance%20at%20GASTech/entries/University%20of%20Buenos%20Aires%20-%20Avila/'
+  type: website
+  issued:
+    year: 2014
 ---

@@ -15,7 +15,7 @@
 
 html {
   /*-- Main font sizes --*/
-  --title-size:      50px;
+  --title-size:      40px;
   --body-size:       1.075rem;                   /* edited */
   --code-size:       14px;
   --aside-size:      12px;
@@ -61,7 +61,7 @@ d-appendix {
 .distill-site-header {
   --title-size:       24px;
   --text-color:       #000;                     /* edited */
-  --text-size:        20px;
+  --text-size:        18px;
   --hover-color:      #fa575d;                  /* edited */
   --bkgd-color:       #fff;                     /* edited */
 }
@@ -86,7 +86,7 @@ p a:hover  {
 
 /* Change appearance of headers */
 h1, h2, h3, h4, h5 {
-    font-weight: 700;
+    font-weight: 1000;
 }
 
 /* Use specific font in the body of the text */
@@ -100,3 +100,10 @@ ul > li::marker {
     font-weight: 700;
     font-size: 1.125em;
 }
+
+
+
+
+
+
+

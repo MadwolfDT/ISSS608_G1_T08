@@ -1,8 +1,14 @@
 ---
-title: "Untitled"
-description: |
-  A new article created using the Distill format.
-output: distill::distill_article
+title: "Research Paper"
+description: ' '
+
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    toc_collapsed: true
+    self_contained: true
 ---
 
 ```{r setup, include=FALSE}

@@ -86,26 +86,29 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Visual Analytics Project</title>
+  <title>Visual Analytics Project: Welcome Detective</title>
   
+  <meta property="description" itemprop="description" content="The Kronos Incident"/>
   
   
   
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Visual Analytics Project"/>
+  <meta property="og:title" content="Visual Analytics Project: Welcome Detective"/>
   <meta property="og:type" content="article"/>
+  <meta property="og:description" content="The Kronos Incident"/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="Visual Analytics Project"/>
   
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Visual Analytics Project"/>
+  <meta property="twitter:title" content="Visual Analytics Project: Welcome Detective"/>
+  <meta property="twitter:description" content="The Kronos Incident"/>
   
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","site","listing"]}},"value":[{"type":"character","attributes":{},"value":["Visual Analytics Project"]},{"type":"character","attributes":{},"value":["distill::distill_website"]},{"type":"character","attributes":{},"value":["posts"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","site"]}},"value":[{"type":"character","attributes":{},"value":["Welcome Detective"]},{"type":"character","attributes":{},"value":["The Kronos Incident"]},{"type":"character","attributes":{},"value":["distill::distill_website"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2118,13 +2121,13 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   
   /* Optional: embed custom fonts here with `@import`          */
   /* This must remain at the top of this file.                 */
-  @import url('https://fonts.googleapis.com/css2?family=Cardo');
+  @import url('https://fonts.googleapis.com/css2?family=Francois+One&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Alata');
   
   
   html {
     /*-- Main font sizes --*/
-    --title-size:      50px;
+    --title-size:      40px;
     --body-size:       1.075rem;                   /* edited */
     --code-size:       14px;
     --aside-size:      12px;
@@ -2136,10 +2139,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --aside-color:     rgba(0, 0, 0, 0.6);
     --fig-cap-color:   rgba(0, 0, 0, 0.6);
     /*-- Specify custom fonts ~~~ must be imported above   --*/
-    --heading-font:    'Alata', sans-serif;        /* edited */
+    --heading-font:    'Francois One', sans-serif;        /* edited */
     --mono-font:       monospace;
-    --body-font:       'Cardo', serif;             /* edited */
-    --navbar-font:     'Alata', sans-serif;        /* edited */
+    --body-font:       'Alata', serif;             /* edited */
+    --navbar-font:     'Francois One', sans-serif;        /* edited */
   }
   
   /*-- ARTICLE METADATA --*/
@@ -2168,10 +2171,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   /* These properties only apply to Distill sites and blogs  */
   
   .distill-site-header {
-    --title-size:       18px;
+    --title-size:       24px;
     --text-color:       #000;                     /* edited */
-    --text-size:        15px;
-    --hover-color:      #ff00ff;                  /* edited */
+    --text-size:        18px;
+    --hover-color:      #fa575d;                  /* edited */
     --bkgd-color:       #fff;                     /* edited */
   }
   
@@ -2195,7 +2198,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   
   /* Change appearance of headers */
   h1, h2, h3, h4, h5 {
-      font-weight: 700;
+      font-weight: 1000;
   }
   
   /* Use specific font in the body of the text */
@@ -2208,7 +2211,14 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   ul > li::marker {
       font-weight: 700;
       font-size: 1.125em;
-  }</style>
+  }
+  
+  
+  
+  
+  
+  
+  </style>
   <style type="text/css">
   /* base style */
   
@@ -2378,12 +2388,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 </head>
 
-<body class="layout-listing">
+<body>
 
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Visual Analytics Project","authors":[]}
+{"title":"Welcome Detective","description":"The Kronos Incident","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2410,157 +2420,25 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_navigation_before_body-->
 <!--radix_placeholder_site_before_body-->
 <!--/radix_placeholder_site_before_body-->
-<!--radix_placeholder_article_listing-->
-
-
-<script type="application/javascript">
-
-function init_posts_list() {
-
-  function load_image(img) {
-    var src = $(img).attr('data-src');
-    if (src) {
-      $(img).attr('src', src);
-      $(img).load(function() {
-        img.removeAttribute('data-src');
-      });
-    }
-  }
-
-  function set_posts_visible(posts, visible) {
-    if (visible) {
-
-      // show bottom border by default
-      $(posts).removeClass('post-preview-last');
-
-      // apply limits if need be
-      var max_posts = 25;
-      var apply_limits = $('.posts-container').hasClass('posts-apply-limit');
-      if (apply_limits && posts.length > max_posts) {
-        posts = $(posts).slice(0, max_posts);
-      } else {
-        $('.posts-more a').addClass('hidden');
-      }
-
-      // apply last style
-      $(posts.slice(-1)[0]).addClass('post-preview-last');
-
-      $(posts).removeClass('hidden');
-      $(posts).find('img[data-src]').each(function(i, img) {
-        load_image(img);
-      });
-    } else {
-      $(posts).addClass('hidden');
-    }
-  }
-
-  function apply_hash_filter() {
-
-    // clear active state
-    $('.categories .active').removeClass('active');
-
-    // mark all posts invisible to start
-    set_posts_visible($('.posts-list').children('a'), false);
-
-    // if we have a hash filter
-    if (window.location.hash && window.location.hash.startsWith("#category:")) {
-
-      // mark posts that match the category visible
-      var page_category = window.location.hash.replace(/^#category:/, "");
-      var posts = $('.post-metadata').map(function(idx, script) {
-        var metadata = $.parseJSON($(script).html());
-        var post = null;
-        $.each(metadata.categories, function(idx, category) {
-          category = category.replace(/ /g,"_");
-          if ((page_category || '').toLowerCase() === "articles" || category === page_category) {
-            post = $(script).parent().get();
-            return false;
-          }
-        });
-        return post;
-      });
-      set_posts_visible(posts, true);
-
-      // mark the hash active
-      $('.categories li>a[href="' + window.location.hash + '"]').addClass('active');
-
-      // update the list_caption
-      var list_caption = $('.posts-list-caption');
-      var caption = (page_category || '').toLowerCase() === "articles"
-        ? list_caption.attr('data-caption')
-        : ('Category: ' + page_category.replace(/_/g," "));
-      list_caption.text(caption);
-
-    } else {
-
-      // no hash filter, make all posts visible (subject to max display)
-      set_posts_visible($('.posts-list').children(), true);
-
-      // reset list caption
-      var list_caption = $('.posts-list-caption');
-      list_caption.text(list_caption.attr('data-caption'));
-
-
-    }
-  }
-
-  // more articles
-  function apply_post_limits(apply) {
-    if (apply) {
-      $('.posts-container').addClass('posts-apply-limit');
-      $('.posts-more a').removeClass('hidden');
-    } else {
-      $('.posts-container').removeClass('posts-apply-limit');
-      $('.posts-more a').addClass('hidden');
-    }
-  }
-
-  // click handling for tags
-  $('.dt-tag').click(function(ev) {
-    window.location.hash = '#category:' + $(this).text().replace(/ /g, "_");
-    return false;
-  })
-
-  // hash filter handling
-  apply_hash_filter();
-  $(window).on('hashchange',function() {
-    apply_post_limits(true);
-    apply_hash_filter();
-  });
-
-  // more articles link
-  $('.posts-more a').click(function(e) {
-    e.preventDefault();
-    apply_post_limits(false);
-    apply_hash_filter();
-    return false;
-  });
-
-}
-
-</script>
-
-
-
-<div class="posts-container posts-apply-limit l-page">
-<div class="posts-list">
-<h1 class="posts-list-caption" data-caption="Visual Analytics Project">Visual Analytics Project</h1>
-</div>
-<div class="posts-more">
-<a href="#">More articles &raquo;</a>
-</div>
-</div>
-<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
-<h1>Visual Analytics Project</h1>
+<h1>Welcome Detective</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-
+<p>The Kronos Incident</p>
 </div>
 
 
 <div class="d-article">
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="index_image.png" width="1400" style="display: block; margin: auto;" /></p>
+</div>
+<p>In the roughly twenty years that Tethys-based GAStech has been operating a natural gas production site in the island country of Kronos, it has produced remarkable profits and developed strong relationships with the government of Kronos. However, GAStech has not been as successful in demonstrating environmental stewardship.</p>
+<p>In January, 2014, the leaders of GAStech are celebrating their new-found fortune as a result of the initial public offering of their very successful company. In the midst of this celebration, several employees of GAStech go missing. An organization known as the Protectors of Kronos (POK) is suspected in the disappearances.</p>
+<p>Many of the Abila, Kronos-based employees of GAStech have company cars which are approved for both personal and business use. Those who do not have company cars have the ability to check out company trucks for business use, but these trucks cannot be used for personal business.</p>
+<p>Employees with company cars are happy to have these vehicles, because the company cars are generally much higher quality than the cars they would be able to afford otherwise. However, GAStech does not trust their employees. Without the employees? knowledge, GAStech has installed geospatial tracking software in the company vehicles. The vehicles are tracked periodically as long as they are moving.</p>
+<p>This vehicle tracking data has been made available to law enforcement to support their investigation. Unfortunately, data is not available for the day the GAStech employees went missing. Data is only available for the two weeks prior to the disappearance.</p>
+<p>To promote local businesses, Kronos based companies provide a Kronos Kares benefit card to GASTech employees giving them discounts and rewards in exchange for collecting information about their credit card purchases and preferences as recorded on loyalty cards. This data has been made available to investigators in the hopes that it can help resolve the situation. However, Kronos Kares does not collect personal information beyond purchases.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

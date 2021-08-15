@@ -4,7 +4,7 @@ description: ' '
 
 output:
   distill::distill_article:
-    toc: true
+    toc: false
     toc_depth: 2
     toc_float: true
     toc_collapsed: true
@@ -30,6 +30,7 @@ script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
   });
 ```
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
@@ -43,25 +44,37 @@ xfun::embed_file('ResearchPaper/ResearchPaper.pdf')
 
 **Click on the pages to see an enlarged version**
 
+### Research Paper Page 1
+
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-1.jpg")
 ```
+
+### Research Paper Page 2
 
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-2.jpg")
 ```
 
+### Research Paper Page 3
+
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-3.jpg")
 ```
+
+### Research Paper Page 4
 
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-4.jpg")
 ```
 
+### Research Paper Page 5
+
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-5.jpg")
 ```
+
+### Research Paper Page 6
 
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-6.jpg")

@@ -5,8 +5,7 @@ description: ' '
 
 output:
   distill::distill_article:
-    toc: true
-    toc_depth: 2
+    toc: false
     toc_float: true
     toc_collapsed: true
     self_contained: true
@@ -44,61 +43,91 @@ xfun::embed_file('User Guide/R Shiny User Guide.pdf')
 
 **Click on the pages to see an enlarged version**
 
+### User Guide Page 1
+
 ```{r, fig.}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-01.jpg")
 ```
+
+### User Guide Page 2
 
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-02.jpg")
 ```
 
+### User Guide Page 3
+
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-03.jpg")
 ```
+
+### User Guide Page 4
 
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-04.jpg")
 ```
 
+### User Guide Page 5
+
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-05.jpg")
 ```
+
+### User Guide Page 6
 
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-06.jpg")
 ```
 
+### User Guide Page 7
+
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-07.jpg")
 ```
+
+### User Guide Page 8
 
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-08.jpg")
 ```
 
+### User Guide Page 9
+
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-09.jpg")
 ```
+
+### User Guide Page 10
 
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-10.jpg")
 ```
 
+### User Guide Page 11
+
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-11.jpg")
 ```
+
+### User Guide Page 12
 
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-12.jpg")
 ```
 
+### User Guide Page 13
+
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-13.jpg")
 ```
 
+### User Guide Page 14
+
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-14.jpg")
 ```
+
+### User Guide Page 15
 
 ```{r}
 knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-15.jpg")

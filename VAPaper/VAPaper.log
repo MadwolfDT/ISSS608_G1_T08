@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.8.15)  15 AUG 2021 15:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.8.15)  15 AUG 2021 14:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -444,75 +444,46 @@ tex.map}
 
 
 ]
-<img/Locations.PNG, id=77, 654.94687pt x 267.24844pt>
+<img/Locations.PNG, id=85, 654.94687pt x 267.24844pt>
 File: img/Locations.PNG Graphic file (type png)
 <use img/Locations.PNG>
 Package pdftex.def Info: img/Locations.PNG  used on input line 199.
 (pdftex.def)             Requested size: 240.0pt x 97.93022pt.
-<img/Locations2.PNG, id=79, 649.67719pt x 331.99031pt>
+<img/Locations2.PNG, id=87, 649.67719pt x 331.99031pt>
 File: img/Locations2.PNG Graphic file (type png)
 <use img/Locations2.PNG>
 Package pdftex.def Info: img/Locations2.PNG  used on input line 211.
 (pdftex.def)             Requested size: 240.0pt x 122.64198pt.
-<img/P01Para.jpg, id=80, 883.80188pt x 463.7325pt>
-File: img/P01Para.jpg Graphic file (type jpg)
-<use img/P01Para.jpg>
-Package pdftex.def Info: img/P01Para.jpg  used on input line 228.
-(pdftex.def)             Requested size: 240.0pt x 125.92412pt.
 pdfTeX warning (ext4): destination with the same identifier (name{page.}) has b
 een already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.245 ...ons}\label{individual-card-transactions}}
-                                                   [2 <./img/Locations.PNG> <./
-img/Locations2.PNG> <./img/P01Para.jpg>]
-<img/P06WorkSpace.png, id=91, 399.894pt x 336.384pt>
-File: img/P06WorkSpace.png Graphic file (type png)
-<use img/P06WorkSpace.png>
-Package pdftex.def Info: img/P06WorkSpace.png  used on input line 253.
-(pdftex.def)             Requested size: 240.0pt x 201.88327pt.
-<img/P02SpecCard.jpg, id=92, 938.50626pt x 337.76187pt>
-File: img/P02SpecCard.jpg Graphic file (type jpg)
-<use img/P02SpecCard.jpg>
-Package pdftex.def Info: img/P02SpecCard.jpg  used on input line 258.
-(pdftex.def)             Requested size: 240.0pt x 86.37294pt.
-<img/P05SpecCardTable.jpg, id=93, 780.41562pt x 386.94562pt>
-File: img/P05SpecCardTable.jpg Graphic file (type jpg)
-<use img/P05SpecCardTable.jpg>
-Package pdftex.def Info: img/P05SpecCardTable.jpg  used on input line 260.
-(pdftex.def)             Requested size: 240.0pt x 118.99539pt.
-<img/Movement.PNG, id=94, 840.13875pt x 372.64218pt>
+l.259 
+       [2 <./img/Locations.PNG> <./img/Locations2.PNG>]
+<img/Movement.PNG, id=99, 840.13875pt x 372.64218pt>
 File: img/Movement.PNG Graphic file (type png)
 <use img/Movement.PNG>
-Package pdftex.def Info: img/Movement.PNG  used on input line 328.
+Package pdftex.def Info: img/Movement.PNG  used on input line 314.
 (pdftex.def)             Requested size: 240.0pt x 106.44862pt.
-pdfTeX warning (ext4): destination with the same identifier (name{page.}) has b
-een already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.339 
-       [3 <./img/P06WorkSpace.png> <./img/P02SpecCard.jpg> <./img/P05SpecCardTa
-ble.jpg> <./img/Movement.PNG>]
-<img/Movement2.PNG, id=107, 1416.04031pt x 593.21625pt>
+
+Underfull \vbox (badness 3557) has occurred while \output is active []
+
+<img/Movement2.PNG, id=100, 1416.04031pt x 593.21625pt>
 File: img/Movement2.PNG Graphic file (type png)
 <use img/Movement2.PNG>
-Package pdftex.def Info: img/Movement2.PNG  used on input line 340.
+Package pdftex.def Info: img/Movement2.PNG  used on input line 326.
 (pdftex.def)             Requested size: 240.0pt x 100.53766pt.
-<img/P03BoxPlot.jpg, id=108, 929.4725pt x 473.26813pt>
-File: img/P03BoxPlot.jpg Graphic file (type jpg)
-<use img/P03BoxPlot.jpg>
-Package pdftex.def Info: img/P03BoxPlot.jpg  used on input line 357.
-(pdftex.def)             Requested size: 240.0pt x 122.20189pt.
-<img/P04SpecCardTxn.jpg, id=109, 930.97812pt x 309.155pt>
-File: img/P04SpecCardTxn.jpg Graphic file (type jpg)
-<use img/P04SpecCardTxn.jpg>
-Package pdftex.def Info: img/P04SpecCardTxn.jpg  used on input line 372.
-(pdftex.def)             Requested size: 240.0pt x 79.69438pt.
 
-Overfull \hbox (2.4294pt too wide) in paragraph at lines 389--396
+Overfull \hbox (2.4294pt too wide) in paragraph at lines 354--361
 []\T1/aer/m/n/9 An im-prove-ment to-wards the Em-ployee Move-ment Plot could
  []
 
+pdfTeX warning (ext4): destination with the same identifier (name{page.}) has b
+een already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.361 
+       [3 <./img/Movement.PNG> <./img/Movement2.PNG>]
 
 ! LaTeX Error: Environment longtable undefined.
 
@@ -520,13 +491,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.407 \begin{longtable}
+l.372 \begin{longtable}
                        []{@{} 
 Here is how much of TeX's memory you used:
- 9182 strings out of 480502
- 135080 string characters out of 5898081
- 447755 words of memory out of 5000000
- 26680 multiletter control sequences out of 15000+600000
+ 9146 strings out of 480502
+ 134216 string characters out of 5898081
+ 447842 words of memory out of 5000000
+ 26648 multiletter control sequences out of 15000+600000
  445568 words of font info for 75 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  87i,12n,94p,268b,475s stack positions out of 5000i,500n,10000p,200000b,80000s

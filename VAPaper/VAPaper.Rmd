@@ -160,26 +160,5 @@ references:
     year: 2020
     month: 03
     day: 13
-<<<<<<< HEAD
 
-=======
-    
-- id: Avil
-  title: VAST Challenge 2014 Mini Challenge 1
-  author: "Avil, Pilar; Burgos, Valeria; Chikka, Guaymás Amalia"
-  container-title: 'https://www.cs.umd.edu/hcil/varepository/VAST%20Challenge%202014/challenges/MC1%20-%20Disappearance%20at%20GASTech/entries/University%20of%20Buenos%20Aires%20-%20Avila/'
-  URL: 'https://www.cs.umd.edu/hcil/varepository/VAST%20Challenge%202014/challenges/MC1%20-%20Disappearance%20at%20GASTech/entries/University%20of%20Buenos%20Aires%20-%20Avila/'
-  type: website
-  issued:
-    year: 2014
-
-- id: Zhuang
-  title: VAST Challenge 2014 Mini Challenge 1
-  author: "Zhuang, Cai; Mengyao Chen;, Hanqing Zhao; Ying Zhao; Fangfang Zhou; Kang Zhang;"
-  container-title: 'https://www.cs.umd.edu/hcil/varepository/VAST%20Challenge%202014/challenges/MC1%20-%20Disappearance%20at%20GASTech/entries/Tianjin%20University%20-%20Cai/'
-  URL: 'https://www.cs.umd.edu/hcil/varepository/VAST%20Challenge%202014/challenges/MC1%20-%20Disappearance%20at%20GASTech/entries/Tianjin%20University%20-%20Cai/'
-  type: website
-  issued:
-    year: 2014
->>>>>>> 86ead62d8f36b5426a590f12ade0911e3d7176b7
 ---

@@ -1,12 +1,20 @@
 name: "ISSS608_G1_T08"
 title: "Visual Analytics Project"
+theme: theme.css
 description: |
   Visual Analytics Project
 output_dir: "_site"
 navbar:
+  left:
+    - text: "Proposal"
+      href: final.html
+    - text: "Poster"
+      href: poster.html
+    - text: "Application & User Guide"
+      href: app.html
+    - text: "Research Paper"
+      href: researchpaper.html
   right:
-    - text: "Home"
-      href: index.html
     - text: "Rhoda Tong"
       href: https://mttong.netlify.app/
     - text: "Nikki"

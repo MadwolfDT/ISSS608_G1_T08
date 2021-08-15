@@ -35,11 +35,18 @@ script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-**Click the link below to download**
+**Click the link below to go to the application page**
+
+[Link To Application](https://dtcs.shinyapps.io/ISSS608_G1_T08/)
+
+
+**Click the link below to download the User Guide**
+
 
 ```{r echo=FALSE}
 xfun::embed_file('User Guide/R Shiny User Guide.pdf')
 ```
+
 
 **Click on the pages to see an enlarged version**
 

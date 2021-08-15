@@ -5,7 +5,7 @@ site: distill::distill_website
 ---
 
 ```{r, echo=F}
-knitr::include_graphics('azw7xEn4Ot.gif')
+knitr::include_graphics('ezgif.com-gif-maker.gif')
 ```
 
 ```{r, out.width=1400, echo=F,fig.align='center', eval=F}

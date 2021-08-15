@@ -10,16 +10,52 @@ output:
     toc_collapsed: true
     self_contained: true
 ---
+```{css zoom-lib-src, echo = FALSE}
+script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+```
+
+
+```{js zoom-jquery, echo = FALSE}
+ $(document).ready(function() {
+    $('body').prepend('<div class=\"zoomDiv\"><img src=\"\" class=\"zoomImg\"></div>');
+    // onClick function for all plots (img's)
+    $('img:not(.zoomImg)').click(function() {
+      $('.zoomImg').attr('src', $(this).attr('src')).css({width: '100%'});
+      $('.zoomDiv').css({opacity: '1', width: 'auto', border: '1px solid white', borderRadius: '5px', position: 'fixed', top: '50%', left: '50%', marginRight: '-50%', transform: 'translate(-50%, -50%)', boxShadow: '0px 0px 50px #888888', zIndex: '50', overflow: 'auto', maxHeight: '100%'});
+    });
+    // onClick function for zoomImg
+    $('img.zoomImg').click(function() {
+      $('.zoomDiv').css({opacity: '0', width: '0%'}); 
+    });
+  });
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-Distill is a publication format for scientific and technical writing, native to the web. 
+**Click on the pages to see an enlarged version**
 
-Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+```{r}
+knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-1.jpg")
+```
 
+```{r}
+knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-2.jpg")
+```
 
+```{r}
+knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-3.jpg")
+```
 
+```{r}
+knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-4.jpg")
+```
 
+```{r}
+knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-5.jpg")
+```
 
+```{r}
+knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-6.jpg")
+```

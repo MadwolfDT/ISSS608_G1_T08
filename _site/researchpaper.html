@@ -2430,8 +2430,46 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
 <div class="d-article">
-<p>Distill is a publication format for scientific and technical writing, native to the web.</p>
-<p>Learn more about using Distill for R Markdown at <a href="https://rstudio.github.io/distill" class="uri">https://rstudio.github.io/distill</a>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<style type="text/css">
+script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+</style>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<script type="text/javascript">
+ $(document).ready(function() {
+    $('body').prepend('<div class=\"zoomDiv\"><img src=\"\" class=\"zoomImg\"></div>');
+    // onClick function for all plots (img's)
+    $('img:not(.zoomImg)').click(function() {
+      $('.zoomImg').attr('src', $(this).attr('src')).css({width: '100%'});
+      $('.zoomDiv').css({opacity: '1', width: 'auto', border: '1px solid white', borderRadius: '5px', position: 'fixed', top: '50%', left: '50%', marginRight: '-50%', transform: 'translate(-50%, -50%)', boxShadow: '0px 0px 50px #888888', zIndex: '50', overflow: 'auto', maxHeight: '100%'});
+    });
+    // onClick function for zoomImg
+    $('img.zoomImg').click(function() {
+      $('.zoomDiv').css({opacity: '0', width: '0%'}); 
+    });
+  });
+</script>
+</div>
+<p><strong>Click on the pages to see an enlarged version</strong></p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="ResearchPaper_IMAGES/ResearchPaper-1.jpg" width="827" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="ResearchPaper_IMAGES/ResearchPaper-2.jpg" width="827" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="ResearchPaper_IMAGES/ResearchPaper-3.jpg" width="827" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="ResearchPaper_IMAGES/ResearchPaper-4.jpg" width="827" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="ResearchPaper_IMAGES/ResearchPaper-5.jpg" width="827" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="ResearchPaper_IMAGES/ResearchPaper-6.jpg" width="827" /></p>
+</div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

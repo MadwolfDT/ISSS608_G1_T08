@@ -10,6 +10,7 @@ output:
     toc_collapsed: true
     self_contained: true
 ---
+
 ```{css zoom-lib-src, echo = FALSE}
 script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
 ```
@@ -37,68 +38,12 @@ knitr::opts_chunk$set(echo = FALSE)
 **Click the link below to download**
 
 ```{r echo=FALSE}
-xfun::embed_file('User Guide/R Shiny User Guide.pdf')
+xfun::embed_file('VAPoster/VAPoster.png')
 ```
 
-**Click on the pages to see an enlarged version**
-
-```{r, fig.}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-01.jpg")
-```
+**Click on the image to see an enlarged version**
 
 ```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-02.jpg")
-```
+knitr::include_graphics('VAPoster/VAPoster.png')
 
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-03.jpg")
 ```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-04.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-05.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-06.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-07.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-08.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-09.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-10.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-11.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-12.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-13.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-14.jpg")
-```
-
-```{r}
-knitr::include_graphics("UserGuide_IMAGES/R Shiny User Guide-15.jpg")
-```
-

@@ -2540,8 +2540,16 @@ server <- function(input, output, session) {
   
   output$rtcctabletop <- renderDT({
     
-    DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditA) %>%
-                    dplyr::select(date, time, location, price, last4ccnum), options = list(
+    cctable <- cc_data %>%
+      rename("Date" = "date",
+             "Time" = "time",
+             "Location" = "location",
+             "Amount" = "price",
+             "CC_Number" = "last4ccnum",
+             )
+    
+    DT::datatable(cctable %>% filter(CC_Number == input$rtspeccreditA) %>%
+                    dplyr::select(Date, Time, Location, Amount, CC_Number), options = list(
                       initComplete = JS(
                         "function(settings, json) {",
                         "$('body').css({'font-family': 'Helvetica'});",
@@ -2552,8 +2560,16 @@ server <- function(input, output, session) {
   
   output$rtlctabletop <- renderDT({
     
-    DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyA) %>%
-                    dplyr::select(timestamp, location, price, loyaltynum), options = list(
+    lctable <- loyalty_data %>%
+      rename("Date" = "timestamp",
+             "Location" = "location",
+             "Amount" = "price",
+             "LC_number" = "loyaltynum"
+             
+      )
+    
+    DT::datatable(lctable %>% filter(LC_number == input$rtspecloyaltyA) %>%
+                    dplyr::select(Date, Location, Amount, LC_number), options = list(
                       initComplete = JS(
                         "function(settings, json) {",
                         "$('body').css({'font-family': 'Helvetica'});",
@@ -2663,10 +2679,18 @@ server <- function(input, output, session) {
   
   #For DataTables (Specific Card)
   
+  cctable <- cc_data %>%
+    rename("Date" = "date",
+           "Time" = "time",
+           "Location" = "location",
+           "Amount" = "price",
+           "CC_Number" = "last4ccnum",
+    )
+  
   output$rtcctablebottom <- renderDT({
     
-    DT::datatable(cc_data %>% filter(last4ccnum == input$rtspeccreditB) %>%
-                    dplyr::select(date, time, location, price, last4ccnum), options = list(
+    DT::datatable(cctable %>% filter(CC_Number == input$rtspeccreditB) %>%
+                    dplyr::select(Date, Time, Location, Amount, CC_Number), options = list(
                       initComplete = JS(
                         "function(settings, json) {",
                         "$('body').css({'font-family': 'Helvetica'});",
@@ -2675,10 +2699,18 @@ server <- function(input, output, session) {
                     ))
   }) #close bracket and curly wo comma for renderDT
   
+  lctableB <- loyalty_data %>%
+    rename("Date" = "timestamp",
+           "Location" = "location",
+           "Amount" = "price",
+           "LC_number" = "loyaltynum"
+           
+    )
+  
   output$rtlctablebottom <- renderDT({
     
-    DT::datatable(loyalty_data %>% filter(loyaltynum == input$rtspecloyaltyB) %>%
-                    dplyr::select(timestamp, location, price, loyaltynum), options = list(
+    DT::datatable(lctableB %>% filter(LC_number == input$rtspecloyaltyB) %>%
+                    dplyr::select(Date, Location, Amount, LC_number), options = list(
                       initComplete = JS(
                         "function(settings, json) {",
                         "$('body').css({'font-family': 'Helvetica'});",

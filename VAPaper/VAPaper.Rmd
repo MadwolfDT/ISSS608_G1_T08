@@ -130,9 +130,11 @@ This is a scatter plot of all transactions made by the card selected by the inve
 
 # Future Works
 
-(Additional point from Nikki on how the modules could be improved.)
+For the email network analysis, the data did not provide us with the actual content of the email. While subjects can be useful for the investigator to make reasonable judgments, there could be confirmation biases and logical fallacies with that for e.g. suspected members of the POK using similar subjects for different email content. 
 
-(Additional point from Rhoda on how the modules could be improved.)
+This can be addressed with the provision of the email content data. In addition to that, the text network can become more accurately with better data.
+
+The parallel coordinate plot in the Transactions Analysis Overview page is currently only based on pure transactions data. Further insights could be drawn, if the plot could be joined with data on vehicle IDs which made stops at that particular location, in that particular period. This would allow the investigator to narrow down which are the possible vehicle IDs that could have made the transaction, or owned the credit card/loyalty card. Linking to vehicle ID would enable the investigator to link to the personnel based on who the vehicle is assigned to.
 
 An improvement towards the Employee Movement Plot could include further analysis on the movement route, in terms of the distance/ speed, which may suggest the vehicle were kept in idle mode, which is currently unable to detected under the current module. In addition, the streets of Abila could be identified based on the movement routes, and thus, and analysis could be conducted whether the vehicle was travelling in a suspicious manner.
 

@@ -34,14 +34,14 @@ script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-**Click on the pages to see an enlarged version**
+
+**Click the link below to download**
 
 ```{r echo=FALSE}
-# a single file
-xfun::embed_file('www/to_insert.pdf')
-
+xfun::embed_file('ResearchPaper/ResearchPaper.pdf')
 ```
 
+**Click on the pages to see an enlarged version**
 
 ```{r}
 knitr::include_graphics("ResearchPaper_IMAGES/ResearchPaper-1.jpg")
